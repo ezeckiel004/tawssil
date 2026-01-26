@@ -95,33 +95,116 @@ class LivreurCourseController extends Controller
      */
     public function complete(string $id): JsonResponse
     {
-        $livreur = $this->getLivreur();
+        try {
+            $livreur = $this->getLivreur();
 
-        $query = Livraison::where('id', $id);
+            if (!$livreur) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Livreur non trouvé.',
+                ], 401);
+            }
 
-        if ($livreur->type === 'distributeur') {
-            $query->where('livreur_distributeur_id', $livreur->id);
-        } elseif ($livreur->type === 'ramasseur') {
-            $query->where('livreur_ramasseur_id', $livreur->id);
-        } else {
-            $query->where(function ($q) use ($livreur) {
-                $q->where('livreur_distributeur_id', $livreur->id)
-                    ->orWhere('livreur_ramasseur_id', $livreur->id);
-            });
+            $livreurId = $livreur->id;
+            \Log::info('Complete action - Livreur ID: ' . $livreurId . ', Course ID: ' . $id);
+
+            // Trouver la course assignée à ce livreur
+            $course = Livraison::where('id', $id)
+                ->where(function ($q) use ($livreurId) {
+                    $q->where('livreur_distributeur_id', $livreurId)
+                        ->orWhere('livreur_ramasseur_id', $livreurId);
+                })
+                ->first();
+
+            if (!$course) {
+                $allCourses = Livraison::where(function ($q) use ($livreurId) {
+                    $q->where('livreur_distributeur_id', $livreurId)
+                        ->orWhere('livreur_ramasseur_id', $livreurId);
+                })->get(['id', 'livreur_distributeur_id', 'livreur_ramasseur_id', 'status']);
+
+                \Log::warning('Course not found for ID: ' . $id . ' with Livreur ID: ' . $livreurId);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Livraison introuvable ou non assignée à ce livreur.',
+                    'debug' => [
+                        'livreur_id' => $livreurId,
+                        'course_id_searched' => $id,
+                        'available_courses' => $allCourses,
+                    ]
+                ], 404);
+            }
+
+            $currentStatus = $course->status;
+            $nextStatus = null;
+
+            // 🔄 Déterminer le rôle du livreur DANS CETTE LIVRAISON
+            // (pas selon $livreur->type, mais selon qui est assigné)
+            $userRoleInThisDelivery = '';
+            
+            if ($course->livreur_ramasseur_id === $livreurId) {
+                $userRoleInThisDelivery = 'ramasseur';
+            } elseif ($course->livreur_distributeur_id === $livreurId) {
+                $userRoleInThisDelivery = 'distributeur';
+            }
+
+            \Log::info('Role determination - Livreur ID: ' . $livreurId . 
+                       ', Ramasseur ID: ' . $course->livreur_ramasseur_id . 
+                       ', Distributeur ID: ' . $course->livreur_distributeur_id . 
+                       ', Determined Role: ' . $userRoleInThisDelivery);
+
+            // 🔄 Déterminer le prochain statut selon le rôle du livreur DANS CETTE LIVRAISON
+            if ($userRoleInThisDelivery === 'ramasseur') {
+                $ramasseurTransitions = [
+                    'en_attente' => 'prise_en_charge_ramassage',
+                    'prise_en_charge_ramassage' => 'ramasse',
+                    'ramasse' => 'en_transit',
+                ];
+                $nextStatus = $ramasseurTransitions[$currentStatus] ?? null;
+            } elseif ($userRoleInThisDelivery === 'distributeur') {
+                // ✅ Distributeur: 3 étapes
+                $distributeurTransitions = [
+                    'en_transit' => 'prise_en_charge_livraison',
+                    'prise_en_charge_livraison' => 'livre',
+                ];
+                $nextStatus = $distributeurTransitions[$currentStatus] ?? null;
+            }
+
+            if (!$nextStatus) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transition de statut invalide ou impossible',
+                    'current_status' => $currentStatus,
+                    'user_role_in_delivery' => $userRoleInThisDelivery,
+                    'livreur_id' => $livreurId,
+                    'debug' => 'Aucune transition valide pour ce statut et ce rôle dans cette livraison'
+                ], 422);
+            }
+
+            // Mettre à jour le statut
+            $course->update(['status' => $nextStatus]);
+            
+            \Log::info("Course transition: {$currentStatus} → {$nextStatus} (Livreur Role: {$userRoleInThisDelivery})");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Statut mis à jour de "' . $this->getStatusLabel($currentStatus) . '" à "' . $this->getStatusLabel($nextStatus) . '"',
+                'data' => [
+                    'id' => $course->id,
+                    'previous_status' => $currentStatus,
+                    'new_status' => $nextStatus,
+                    'user_role_in_delivery' => $userRoleInThisDelivery,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Error completing course: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du statut',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $course = $query->first();
-
-        if (!$course) {
-            return response()->json(['success' => false, 'message' => 'Course introuvable ou non assignée à ce livreur.'], 404);
-        }
-
-        if ($course->status === 'livre') {
-            return response()->json(['success' => false, 'message' => 'Course déjà terminée.'], 422);
-        }
-
-        $course->update(['status' => 'livre']);
-        return response()->json(['success' => true, 'message' => 'Course marquée comme terminée.', 'data' => $course], 200);
     }
 
     /**
@@ -244,6 +327,15 @@ class LivreurCourseController extends Controller
             $colisData['status'] = $course->status;
             $colisData['livraison_id'] = $course->id;
             
+             
+            // ✅ AJOUT CRUCIAL - IDs des livreurs assignés à cette livraison
+            $colisData['livreur_ramasseur_id'] = $course->livreur_ramasseur_id;
+            $colisData['livreur_distributeur_id'] = $course->livreur_distributeur_id;
+            
+            // 💰 AJOUTER LES PRIX - Dynamiquement depuis la base de données
+            $colisData['prix_colis'] = (float) ($demande->colis->colis_prix ?? 0);
+            $colisData['prix_livraison'] = (float) ($demande->prix ?? 0);
+            
             return $colisData;
         })->filter(); // enlève les null
 
@@ -252,5 +344,308 @@ class LivreurCourseController extends Controller
             'total_colis' => $colis->count(),
             'data' => $colis->values(),
         ], 200);
+    }
+    
+    
+    /**
+     * Les 7 statuts de livraison possibles
+     */
+    const STATUSES = [
+        'en_attente',                    // 1. En attente de ramassage
+        'prise_en_charge_ramassage',     // 2. Livreur/Ramasseur prend en charge le ramassage
+        'ramasse',                       // 3. Colis a été ramassé
+        'en_transit',                    // 4. Colis en transit
+        'prise_en_charge_livraison',     // 5. Distributeur prend en charge la livraison
+        'livre',                         // 6. Colis livré avec succès
+        'annule',                        // 7. Colis annulé
+    ];
+
+    /**
+     * Met à jour le statut d'une livraison avec validation du type de livreur
+     * 
+     * @param Request $request
+     * @param string $id ID de la livraison
+     * @return JsonResponse
+     */
+    public function updateStatusByLivreurType(Request $request, $id): JsonResponse
+    {
+        try {
+            $livraison = Livraison::with(['livreurDistributeur', 'livreurRamasseur'])->find($id);
+
+            if (!$livraison) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Livraison introuvable',
+                ], 404);
+            }
+
+            $validated = $request->validate([
+                'new_status' => 'required|string|in:' . implode(',', self::STATUSES),
+                'comment' => 'nullable|string|max:500',
+            ]);
+
+            $currentStatus = $livraison->status;
+            $newStatus = $validated['new_status'];
+            $livreur = auth()->user()->livreur ?? null;
+
+            // Valider la transition de statut selon le type de livreur
+            if (!$this->isValidStatusTransition($currentStatus, $newStatus, $livreur)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transition de statut invalide pour votre type de livreur',
+                    'current_status' => $currentStatus,
+                    'requested_status' => $newStatus,
+                ], 422);
+            }
+
+            // Mettre à jour le statut
+            $livraison->update([
+                'status' => $newStatus,
+            ]);
+
+            // Enregistrer un commentaire si fourni
+            if (!empty($validated['comment'])) {
+                \Log::info("Transition de statut pour la livraison {$id}: {$currentStatus} → {$newStatus}. Comment: {$validated['comment']}");
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Statut mis à jour à '" . $this->getStatusLabel($newStatus) . "'",
+                'data' => $livraison->refresh(),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du statut',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Valide la transition d'un statut à un autre selon le type de livreur
+     * 
+     * @param string $currentStatus
+     * @param string $newStatus
+     * @param Livreur|null $livreur
+     * @return bool
+     */
+    private function isValidStatusTransition(string $currentStatus, string $newStatus, ?Livreur $livreur): bool
+    {
+        // Définir les transitions valides par type de livreur
+        $transitionsRamasseur = [
+            'en_attente' => ['prise_en_charge_ramassage', 'annule'],
+            'prise_en_charge_ramassage' => ['ramasse', 'annule'],
+            'ramasse' => ['en_transit', 'annule'],
+        ];
+
+        $transitionsDistributeur = [
+            'en_transit' => ['prise_en_charge_livraison', 'annule'],
+            'prise_en_charge_livraison' => ['livre', 'annule'],
+        ];
+
+        $livreurType = $livreur->type ?? null;
+
+        if ($livreurType === 'ramasseur') {
+            if (!isset($transitionsRamasseur[$currentStatus])) {
+                return false;
+            }
+            return in_array($newStatus, $transitionsRamasseur[$currentStatus]);
+        } elseif ($livreurType === 'distributeur') {
+            if (!isset($transitionsDistributeur[$currentStatus])) {
+                return false;
+            }
+            return in_array($newStatus, $transitionsDistributeur[$currentStatus]);
+        }
+
+        // Administrateur peut faire n'importe quelle transition valide
+        return true;
+    }
+
+    /**
+     * Récupère le label lisible d'un statut
+     * 
+     * @param string $status
+     * @return string
+     */
+    private function getStatusLabel(string $status): string
+    {
+        $labels = [
+            'en_attente' => 'En attente',
+            'prise_en_charge_ramassage' => 'Prise en charge (ramassage)',
+            'ramasse' => 'Ramassé',
+            'en_transit' => 'En transit',
+            'prise_en_charge_livraison' => 'Prise en charge (livraison)',
+            'livre' => 'Livré',
+            'annule' => 'Annulé',
+        ];
+
+        return $labels[$status] ?? $status;
+    }
+
+    /**
+     * Récupère les livraisons selon le statut et le type de livreur
+     * 
+     * @param Request $request
+     * @param string $status
+     * @return JsonResponse
+     */
+    public function getByStatusAndLivreurType(Request $request, string $status): JsonResponse
+    {
+        try {
+            $livreur = auth()->user()->livreur;
+
+            if (!$livreur) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous n\'êtes pas un livreur',
+                ], 403);
+            }
+
+            $query = Livraison::where('status', $status);
+
+            // Filtrer selon le type de livreur
+            if ($livreur->type === 'ramasseur') {
+                $query->where('livreur_ramasseur_id', $livreur->id);
+            } elseif ($livreur->type === 'distributeur') {
+                $query->where('livreur_distributeur_id', $livreur->id);
+            }
+
+            $livraisons = $query->with([
+                'client',
+                'demandeLivraison',
+                'livreurDistributeur',
+                'livreurRamasseur',
+            ])->get();
+
+            return response()->json([
+                'success' => true,
+                'status_label' => $this->getStatusLabel($status),
+                'count' => $livraisons->count(),
+                'data' => $livraisons,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des livraisons',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupère les transitions valides pour le statut actuel selon le type de livreur
+     * 
+     * @param Request $request
+     * @param string $livraisonId
+     * @return JsonResponse
+     */
+    public function getValidTransitions(Request $request, string $livraisonId): JsonResponse
+    {
+        try {
+            $livraison = Livraison::find($livraisonId);
+
+            if (!$livraison) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Livraison introuvable',
+                ], 404);
+            }
+
+            $livreur = auth()->user()->livreur;
+            $currentStatus = $livraison->status;
+            $validTransitions = [];
+
+            // Obtenir les transitions valides selon le type de livreur
+            $transitionsRamasseur = [
+                'en_attente' => ['prise_en_charge_ramassage', 'annule'],
+                'prise_en_charge_ramassage' => ['ramasse', 'annule'],
+                'ramasse' => ['en_transit', 'annule'],
+            ];
+
+            $transitionsDistributeur = [
+                'en_transit' => ['prise_en_charge_livraison', 'annule'],
+                'prise_en_charge_livraison' => ['livre', 'annule'],
+            ];
+
+            if ($livreur && $livreur->type === 'ramasseur') {
+                $validTransitions = $transitionsRamasseur[$currentStatus] ?? [];
+            } elseif ($livreur && $livreur->type === 'distributeur') {
+                $validTransitions = $transitionsDistributeur[$currentStatus] ?? [];
+            }
+
+            // Formater la réponse avec les labels
+            $formattedTransitions = array_map(function ($status) {
+                return [
+                    'status' => $status,
+                    'label' => $this->getStatusLabel($status),
+                ];
+            }, $validTransitions);
+
+            return response()->json([
+                'success' => true,
+                'current_status' => $currentStatus,
+                'current_status_label' => $this->getStatusLabel($currentStatus),
+                'livreur_type' => $livreur->type ?? 'admin',
+                'valid_transitions' => $formattedTransitions,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des transitions valides',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupère les statistiques de livraison par statut pour le livreur connecté
+     * 
+     * @return JsonResponse
+     */
+    public function getStatistiquesByStatus(): JsonResponse
+    {
+        try {
+            $livreur = auth()->user()->livreur;
+
+            if (!$livreur) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous n\'êtes pas un livreur',
+                ], 403);
+            }
+
+            $query = Livraison::query();
+
+            // Filtrer selon le type de livreur
+            if ($livreur->type === 'ramasseur') {
+                $query->where('livreur_ramasseur_id', $livreur->id);
+            } elseif ($livreur->type === 'distributeur') {
+                $query->where('livreur_distributeur_id', $livreur->id);
+            }
+
+            $stats = [];
+            foreach (self::STATUSES as $status) {
+                $count = (clone $query)->where('status', $status)->count();
+                $stats[] = [
+                    'status' => $status,
+                    'label' => $this->getStatusLabel($status),
+                    'count' => $count,
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'livreur_type' => $livreur->type,
+                'statistics' => $stats,
+                'total' => $query->count(),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des statistiques',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

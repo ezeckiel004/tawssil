@@ -13,6 +13,15 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use Barryvdh\DomPDF\Facade\Pdf;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Illuminate\Support\Str;
+use Carbon\Carbon; 
 
 class LivraisonController extends Controller
 {
@@ -746,4 +755,335 @@ class LivraisonController extends Controller
         }
        
     }
+    
+
+public function trackByColisLabel($colis_label): JsonResponse
+{
+    try {
+        \Log::info('Recherche du colis: ' . $colis_label);
+        
+        // 1. Trouver le colis
+        $colis = \App\Models\Colis::where('colis_label', $colis_label)->first();
+        
+        if (!$colis) {
+            \Log::warning('Colis non trouvé: ' . $colis_label);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Colis introuvable avec ce code de suivi'
+            ], 404);
+        }
+        
+        \Log::info('Colis trouvé, ID: ' . $colis->id);
+        
+        // 2. Trouver la demande de livraison qui a ce colis_id
+        $demandeLivraison = \App\Models\DemandeLivraison::where('colis_id', $colis->id)->first();
+        
+        if (!$demandeLivraison) {
+            \Log::warning('Aucune demande de livraison pour le colis ID: ' . $colis->id);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Aucune demande de livraison trouvée pour ce colis'
+            ], 404);
+        }
+        
+        \Log::info('Demande de livraison trouvée, ID: ' . $demandeLivraison->id);
+        
+        // 3. Trouver la livraison associée à cette demande
+        $livraison = Livraison::where('demande_livraisons_id', $demandeLivraison->id)
+            ->with([
+                'livreurDistributeur.user',
+                'livreurRamasseur.user',
+                'client.user',
+                'demandeLivraison.client.user',
+                'demandeLivraison.destinataire.user',
+                'demandeLivraison.colis',
+                'commentaires',
+                'bordereau'
+            ])
+            ->first();
+        
+        if (!$livraison) {
+            \Log::warning('Aucune livraison pour la demande ID: ' . $demandeLivraison->id);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Aucune livraison en cours pour ce colis'
+            ], 404);
+        }
+        
+        \Log::info('Livraison trouvée, ID: ' . $livraison->id . ', Status: ' . $livraison->status);
+        
+        // 4. Retourner les données formatées
+        return response()->json([
+            'id' => $livraison->id,
+            'client_id' => $livraison->client_id,
+            'demande_livraisons_id' => $livraison->demande_livraisons_id,
+            'livreur_distributeur_id' => $livraison->livreur_distributeur_id,
+            'livreur_ramasseur_id' => $livraison->livreur_ramasseur_id,
+            'bordereau_id' => $livraison->bordereau_id,
+            'code_pin' => $livraison->code_pin,
+            'date_ramassage' => $livraison->date_ramassage,
+            'date_livraison' => $livraison->date_livraison,
+            'status' => $livraison->status,
+            'livreur_distributeur' => $livraison->livreurDistributeur?->user,
+            'livreur_ramasseur' => $livraison->livreurRamasseur?->user,
+            'demande_livraison' => $livraison->demandeLivraison,
+            'destinataire' => $livraison->demandeLivraison->destinataire?->user,
+            'client' => $livraison->client?->user,
+            'commentaires' => $livraison->commentaires,
+            'bordereau' => $livraison->bordereau,
+            'colis' => $colis,
+        ], 200);
+        
+    } catch (\Exception $e) {
+        \Log::error('Erreur trackByColisLabel: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        
+        return response()->json([
+            'success' => false, 
+            'message' => 'Erreur lors de la recherche de la livraison',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+/**
+ * Générer le HTML pour impression
+ */
+public function generatePrintHTML($id): JsonResponse
+{
+    try {
+        $livraison = Livraison::find($id);
+        
+        if (!$livraison) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Livraison introuvable',
+            ], 404);
+        }
+        
+        $data = $this->preparePrintData($livraison);
+        
+        $html = View::make('pdf.bordereau', $data)->render();
+        
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+        ], 200);
+        
+    } catch (\Exception $e) {
+        \Log::error('Erreur génération HTML: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la génération du HTML',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+/**
+ * Générer et télécharger le PDF du bordereau
+ */
+public function generateBordereauPDF($id)
+{
+    try {
+        $livraison = Livraison::find($id);
+        
+        if (!$livraison) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Livraison introuvable',
+            ], 404);
+        }
+        
+        $data = $this->preparePrintData($livraison);
+        
+        $pdf = Pdf::loadView('pdf.bordereau', $data);
+        
+        $pdf->setPaper([0, 0, 380, 700], 'portrait');
+        $pdf->setOption('enable_html5_parser', true);
+        $pdf->setOption('enable_remote', true);
+        $pdf->setOption('defaultFont', 'DejaVu Sans');
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isPhpEnabled', false);
+        
+        $fileName = 'bordereau_livraison_' . $livraison->id . '_' . date('Ymd_His') . '.pdf';
+        
+        return $pdf->download($fileName);
+        
+    } catch (\Exception $e) {
+        \Log::error('Erreur génération PDF: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la génération du PDF',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
+
+/**
+ * Préparer les données pour l'impression
+ */
+private function preparePrintData($livraison): array
+{
+    $livraison->load([
+        'demandeLivraison.client.user',
+        'demandeLivraison.destinataire.user',
+        'demandeLivraison.colis',
+        'livreurRamasseur.user',
+        'livreurDistributeur.user',
+    ]);
+    
+    $demande = $livraison->demandeLivraison;
+    $colis = $demande->colis ?? null;
+    $client = $demande->client->user ?? null;
+    $destinataire = $demande->destinataire->user ?? null;
+    $livreurRamasseur = $livraison->livreurRamasseur->user ?? null;
+    $livreurDistributeur = $livraison->livreurDistributeur->user ?? null;
+    
+    $qrCodeData = json_encode([
+        'id' => $livraison->id,
+        'code_pin' => $livraison->code_pin,
+        'colis_label' => $colis->colis_label ?? 'N/A',
+        'status' => $livraison->status,
+        'client' => ($client->prenom ?? '') . ' ' . ($client->nom ?? ''),
+        'destinataire' => ($destinataire->prenom ?? '') . ' ' . ($destinataire->nom ?? ''),
+        'date' => now()->toISOString(),
+    ]);
+    
+    $qrCode = $this->generateQRCode($qrCodeData);
+    
+    $barcodeValue = $colis->colis_label ?? 'COLIS-' . $livraison->id;
+    $barcode = $this->generateBarcode($barcodeValue);
+    
+    $createdAt = $livraison->created_at
+        ? Carbon::parse($livraison->created_at)->locale('fr_FR')->isoFormat('DD/MM/YYYY HH:mm')
+        : 'Non définie';
+        
+    $dateLivraison = $livraison->date_livraison
+        ? Carbon::parse($livraison->date_livraison)->locale('fr_FR')->isoFormat('DD/MM/YYYY HH:mm')
+        : 'Non définie';
+        
+    $printDate = now()->locale('fr_FR')->isoFormat('DD/MM/YYYY');
+    
+    $statusLabels = [
+        'en_attente' => 'En attente',
+        'prise_en_charge_ramassage' => 'Prise en charge',
+        'ramasse' => 'Ramasse',
+        'en_transit' => 'En transit',
+        'prise_en_charge_livraison' => 'En livraison',
+        'livre' => 'Livré',
+        'annule' => 'Annulé',
+    ];
+    
+    $statusLabel = $statusLabels[$livraison->status] ?? str_replace('_', ' ', $livraison->status);
+    
+    return [
+        'livraison' => $livraison,
+        'demande' => $demande,
+        'colis' => $colis,
+        'client' => $client,
+        'destinataire' => $destinataire,
+        'livreurRamasseur' => $livreurRamasseur,
+        'livreurDistributeur' => $livreurDistributeur,
+        'qrCode' => $qrCode,
+        'barcode' => $barcode,
+        'colisLabel' => $barcodeValue,
+        'createdAt' => $createdAt,
+        'dateLivraison' => $dateLivraison,
+        'printDate' => $printDate,
+        'statusLabel' => $statusLabel,
+    ];
+}
+
+/**
+ * Générer un QR Code en base64
+ */
+private function generateQRCode(string $data): string
+{
+    try {
+        if (class_exists('BaconQrCode\Writer')) {
+            $renderer = new ImageRenderer(
+                new RendererStyle(90),
+                new ImagickImageBackEnd()
+            );
+            
+            $writer = new Writer($renderer);
+            $qrCode = $writer->writeString($data);
+            
+            return 'data:image/png;base64,' . base64_encode($qrCode);
+        }
+    } catch (\Exception $e) {
+        \Log::warning('Erreur génération QR Code local: ' . $e->getMessage());
+    }
+    
+    $encodedData = urlencode($data);
+    return "https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={$encodedData}&format=png&margin=1";
+}
+
+/**
+ * Générer un code-barres en base64
+ */
+private function generateBarcode(string $value): string
+{
+    try {
+        if (class_exists('Picqer\Barcode\BarcodeGeneratorPNG')) {
+            $generator = new BarcodeGeneratorPNG();
+            $barcode = $generator->getBarcode($value, $generator::TYPE_CODE_128, 2, 50);
+            
+            return 'data:image/png;base64,' . base64_encode($barcode);
+        }
+    } catch (\Exception $e) {
+        \Log::warning('Erreur génération code-barres local: ' . $e->getMessage());
+    }
+    
+    return $this->generateSimpleBarcode($value);
+}
+
+/**
+ * Générer un code-barres simplifié (fallback)
+ */
+private function generateSimpleBarcode(string $value): string
+{
+    if (!function_exists('imagecreatetruecolor')) {
+        return 'data:image/svg+xml;base64,' . base64_encode('
+            <svg width="250" height="50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="250" height="50" fill="white"/>
+                <text x="125" y="30" text-anchor="middle" font-family="Arial" font-size="12">' . htmlspecialchars($value) . '</text>
+            </svg>
+        ');
+    }
+    
+    $width = 250;
+    $height = 50;
+    
+    $image = imagecreatetruecolor($width, $height);
+    $white = imagecolorallocate($image, 255, 255, 255);
+    $black = imagecolorallocate($image, 0, 0, 0);
+    
+    imagefill($image, 0, 0, $white);
+    
+    $charWidth = 3;
+    $x = 10;
+    
+    for ($i = 0; $i < strlen($value); $i++) {
+        $char = ord($value[$i]);
+        $barHeight = ($char % 40) + 10;
+        
+        imagefilledrectangle($image, $x, 10, $x + $charWidth, 10 + $barHeight, $black);
+        $x += $charWidth + 1;
+    }
+    
+    imagestring($image, 2, $width / 2 - (strlen($value) * 3), $height - 15, $value, $black);
+    
+    ob_start();
+    imagepng($image);
+    $barcode = ob_get_clean();
+    imagedestroy($image);
+    
+    return 'data:image/png;base64,' . base64_encode($barcode);
+}
 }

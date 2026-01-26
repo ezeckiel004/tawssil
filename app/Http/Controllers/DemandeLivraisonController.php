@@ -65,17 +65,18 @@ class DemandeLivraisonController extends Controller
         $validated = Validator::make($request->all(), [
             'client_id' => 'required|string|exists:clients,id',
             'addresse_depot' => 'required|string|max:255',
-            'addresse_delivery' => 'required|string|max:255',
-            'info_additionnel' => 'required|string',
+            'addresse_delivery' => 'nullable|string|max:255',
+            'info_additionnel' => 'nullable|string',
             'lat_depot' => 'required|numeric',
             'lng_depot' => 'required|numeric',  // Latitude et longitude du point de départ
             'lat_delivery' => 'required|numeric', // Latitude du point de livraison
             'lng_delivery' => 'required|numeric', // Longitude du point de livraison
             'destinataire_nom' => 'required|string|max:255', // Nom du destinataire
-            'destinataire_email' => 'required|email|max:255', // Email du destinataire
+            'destinataire_email' => 'nullable|email|max:255', // Email du destinataire
             'destinataire_telephone' => 'required|string|max:20', // Téléphone du destinataire
             'colis_poids' => 'required|numeric|min:0.1', // Poids du colis
-            'prix' => 'required|numeric|min:0.1', // Poids du colis
+            'colis_prix' => 'required|numeric|min:0.1', // Prix du colis
+            'prix' => 'required|numeric|min:0.1', // Tarif de livraison
             'colis_type' => 'string',
             'colis_photo' => 'nullable|file|max:10240', // Validation de la photo (10MB max)
 
@@ -135,9 +136,19 @@ class DemandeLivraisonController extends Controller
         */
         
         // Recherche d'un utilisateur existant par email ou téléphone
-	$user = User::where('email', $validatedData['destinataire_email'])
-		    ->orWhere('telephone', $validatedData['destinataire_telephone'])
-		    ->first();
+	$user = null;
+	
+	// Si email est fourni, chercher par email
+	if (!empty($validatedData['destinataire_email'])) {
+		$user = User::where('email', $validatedData['destinataire_email'])
+				->first();
+	}
+	
+	// Si pas trouvé par email, chercher par téléphone
+	if (!$user) {
+		$user = User::where('telephone', $validatedData['destinataire_telephone'])
+				->first();
+	}
 
 	if (!$user) {
 	    $parts = explode(' ', $validatedData['destinataire_nom']); // suppose qu'on a le nom complet
@@ -145,8 +156,7 @@ class DemandeLivraisonController extends Controller
 	    $user = User::create([
 		'nom'       => implode(' ', $parts),
 		'prenom'    => array_pop($parts),
-		'email'     => $validatedData['destinataire_email'],
-		'telephone' => $validatedData['destinataire_telephone'],
+		'email'     => !empty($validatedData['destinataire_email']) ? $validatedData['destinataire_email'] : null,
 		'password'  => bcrypt('default_password'), // À remplacer plus tard
 		'role'      => 'client',
 		'actif'     => true,
@@ -183,6 +193,7 @@ class DemandeLivraisonController extends Controller
             'colis_label' => $colisLabel,
             'colis_photo' => $photoPath,
             'colis_photo_url' => $photoPath ? asset('storage/' . $photoPath) : null, // URL de la photo
+            'colis_prix' => $validatedData['colis_prix'], // Prix du colis défini par le client
 
         ]);
 

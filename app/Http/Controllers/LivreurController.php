@@ -139,4 +139,6 @@ class LivreurController extends Controller
             'message' => 'Livreur supprimé avec succès',
         ], 200);
     }
+    
+    
 }

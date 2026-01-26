@@ -55,17 +55,16 @@ class DemandeAdhesionController extends Controller
     {
         $validated = Validator::make($request->all(), [
             'message' => 'nullable|string|max:255',
-            'drivers_license' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Accepte les images et les PDF
-            'vehicule' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Accepte les images et les PDF
+            'drivers_license' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'vehicule' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
             'vehicule_type' => 'required|string|max:255',
             'id_card_type' => 'required|string|max:255',
             'id_card_number' => 'required|string|max:255|unique:demande_adhesions,id_card_number',
-            'id_card_image' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Accepte les images et les PDF
+            'id_card_image' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
             'id_card_expiry_date' => 'nullable|date',
             'date' => 'nullable|date',
             'info' => 'nullable|string',
         ]);
-
 
         if ($validated->fails()) {
             return response()->json([
@@ -79,74 +78,58 @@ class DemandeAdhesionController extends Controller
 
         try {
             $utilsController = new UtilsController();
-
             DB::beginTransaction();
 
-             // Upload des fichiers
+            // Upload des fichiers
             $driversLicensePath = $utilsController->uploadFile($request, 'drivers_license');
             $idCardImagePath = $utilsController->uploadFile($request, 'id_card_image');
             $vehiculePath = $utilsController->uploadFile($request, 'vehicule');
+            
             $validatedData['drivers_license'] = $driversLicensePath;
             $validatedData['id_card_image'] = $idCardImagePath;
             $validatedData['vehicule'] = $vehiculePath;
-            $validatedData['drivers_license_url'] =  $driversLicensePath? asset('storage/' . $driversLicensePath): null;
-            $validatedData['vehicule_url'] = $vehiculePath? asset('storage/' . $vehiculePath): null;
-            $validatedData['id_card_image_url'] = $idCardImagePath? asset('storage/' . $idCardImagePath): null; 
-            //A REMPLACER $validatedData['user_id'] PAR $validatedData['client_id']
-            //$validatedData['client_id'] = Client::where("user_id", $request->user()->id)->value('id');
+            $validatedData['drivers_license_url'] = $driversLicensePath ? asset('storage/' . $driversLicensePath) : null;
+            $validatedData['vehicule_url'] = $vehiculePath ? asset('storage/' . $vehiculePath) : null;
+            $validatedData['id_card_image_url'] = $idCardImagePath ? asset('storage/' . $idCardImagePath) : null;
             $validatedData['user_id'] = auth()->id();
+            $validatedData['status'] = 'approved'; // ✅ Automatiquement approuvée
 
+            // Créer la demande d'adhésion
+            $demande = DemandeAdhesion::create([
+                'user_id' =>  $validatedData['user_id'],
+                'message' => $validatedData['message'] ?? null,
+                'drivers_license' => $validatedData['drivers_license'] ?? null,
+                'drivers_license_url' => $validatedData['drivers_license_url'] ?? null,
+                'vehicule' => $validatedData['vehicule'] ?? null,
+                'vehicule_url' => $validatedData['vehicule_url'] ?? null,
+                'vehicule_type' => $validatedData['vehicule_type'] ?? null,
+                'id_card_type' => $validatedData['id_card_type'] ?? null,
+                'id_card_number' => $validatedData['id_card_number'],
+                'id_card_image' => $validatedData['id_card_image'] ?? null,
+                'id_card_image_url' => $validatedData['id_card_image_url'] ?? null,
+                'id_card_expiry_date' => $validatedData['id_card_expiry_date'] ?? null,
+                'date' => $validatedData['date'] ?? null,
+                'info' => $validatedData['info'] ?? null,
+                'status' => 'approved', // ✅ Status approuvé
+            ]);
 
-            $demande = DemandeAdhesion::create(
-                [
-                    'user_id' =>  $validatedData['user_id'],
-                    'message' => $validatedData['message'] ?? null,
-                    'drivers_license' => $validatedData['drivers_license'] ?? null,
-                    'drivers_license_url' => $validatedData['drivers_license_url'] ?? null,
-                    'vehicule' => $validatedData['vehicule'] ?? null,
-                    'vehicule_url' => $validatedData['vehicule_url'] ?? null,
-                    'vehicule_type' => $validatedData['vehicule_type'] ?? null,
-                    'id_card_type' => $validatedData['id_card_type'] ?? null,
-                    'id_card_number' => $validatedData['id_card_number'],
-                    'id_card_image' => $validatedData['id_card_image'] ?? null,
-                    'id_card_image_url' => $validatedData['id_card_image_url'] ?? null,
-                    'id_card_expiry_date' => $validatedData['id_card_expiry_date'] ?? null,
-                    'date' => $validatedData['date'] ?? null,
-                    'info' => $validatedData['info'] ?? null,
-                ]
-            );
+            // ✅ Mettre à jour le livreur existant avec l'ID de la demande
+            $livreur = Livreur::where('user_id', auth()->id())->first();
+            if ($livreur) {
+                $livreur->update([
+                    'demande_adhesions_id' => $demande->id,
+                ]);
+            }
 
-            
-
-            /*
-            $notificationController = new NotificationController();
-           
-            // Envoi de la notification à l'utilisateur
-            $notificationController->sendNotificationToUser(
-                userId: [User::where('role', 'admin')->first()->id],
-                type: NotificationType::DemandeAdhesion,
-                title: $demande->user->name . "a envoye une demande d'adhesion",
-                body: $demande->message
-            );
-            */
-            
             DB::commit();
 
-            /*
-            return response()->json([
-                'success' => true,
-                'message' => 'Demande d\'adhésion créée avec succès',
-                'data' => [
-                    'demande' => $demande,
-                ],
-
-            ], 201);
-            */
-            return response()->json( $demande->load('user'),
-                 201);
+            // Retourner la demande avec le livreur créé
+            return response()->json(
+                $demande->load('user'),
+                201
+            );
 
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             return response()->json([

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('poids', 8, 2)->default(0.0);   // Poids en kilogrammes
             $table->decimal('hauteur', 8, 2)->default(0.0); // Hauteur en centimètres
             $table->decimal('largeur', 8, 2)->default(0.0); // Longueur en centimètres
+            $table->decimal('colis_prix', 10, 2)->nullable(); // Prix du colis défini par le client
 
             $table->timestamps();
         });

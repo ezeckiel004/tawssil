@@ -17,12 +17,14 @@ class Colis extends Model
         'poids',
         'hauteur',
         'largeur',
+        'colis_prix',
     ];
 
 	  protected $casts = [
 	    'poids'   => 'float',
 	    'hauteur' => 'float',
 	    'largeur' => 'float',
+	    'colis_prix' => 'float',
 	];
 
 

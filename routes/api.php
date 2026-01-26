@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificationTokenController;
 use App\Http\Controllers\NotificationHistoriqueController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\LivraisonController as AdminLivraisonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,9 +31,20 @@ use Illuminate\Support\Facades\Route;
 
 // Routes d'authentification publiques
 Route::prefix('auth')->group(function () {
+    // Authentification
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // Mot de passe oublié (routes publiques)
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/verify-reset-token', [AuthController::class, 'verifyResetToken']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+    // Routes protégées (nécessitent authentification)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
+    });
 });
 
 Route::get('/login', function () {
@@ -40,15 +52,53 @@ Route::get('/login', function () {
 })->name('login');
 
 
+Route::get('/livraisons/track/{colis_label}', [LivraisonController::class, 'trackByColisLabel']);
+
 // Routes d'authentification protégées
 Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::apiResource('users', UserController::class);
+    // Statistiques spécifiques par utilisateur
+    Route::get('users/{id}/stats/client', [UserController::class, 'getClientStats']);
+    Route::get('users/{id}/stats/livreur', [UserController::class, 'getLivreurStats']);
+    
+Route::prefix('admin')->group(function () {
+    Route::post('livraisons', [AdminLivraisonController::class, 'store']);
+    Route::get('livraisons', [AdminLivraisonController::class, 'index']);
+    Route::get('livraisons/{id}', [AdminLivraisonController::class, 'show']);
+    Route::put('livraisons/{id}', [AdminLivraisonController::class, 'update']);
+    Route::delete('livraisons/{id}', [AdminLivraisonController::class, 'destroy']);
+    Route::get('livraisons/statistics', [AdminLivraisonController::class, 'statistics']);
+    Route::get('livraisons/search', [AdminLivraisonController::class, 'search']);
+    Route::patch('livraisons/{id}/assign-livreur', [AdminLivraisonController::class, 'assignLivreur']);
+    Route::patch('livraisons/{id}/status', [AdminLivraisonController::class, 'updateStatus']);
+    Route::get('livraisons/stats/general', [AdminLivraisonController::class, 'statistiquesGenerales']);
 
+Route::get('livraisons/{id}/bordereau-pdf', [AdminLivraisonController::class, 'generateBordereauPDF']);
+Route::get('livraisons/{id}/print-html', [AdminLivraisonController::class, 'generatePrintHTML']);
+
+
+
+Route::get('livraisons/getByClient/{id}', [AdminLivraisonController::class, 'getByClient']);
+Route::get('livraisons/getByLivreur/{id}', [AdminLivraisonController::class, 'getByLivreur']);
+
+
+Route::get('livraisons/en-cours', [AdminLivraisonController::class, 'livraisonsEnCours']);
+});
+
+Route::post('/logout-all', [AuthController::class, 'logoutAll']);  // NOUVELLE
+Route::get('/verify-token', [AuthController::class, 'verifyToken']);  // NOUVELLE position
+
+// Position GPS avec contrôleur différent
+Route::patch('/update-position', [UserController::class, 'updatePosition']);  // Changé de AuthController à UserController
+
+
+        Route::get('/all-users', [UserController::class, 'getAllUsers']);
     // Routes d'authentification
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/logout-all', [AuthController::class, 'logoutAll']);
-        Route::apiResource('users', UserController::class);
-        Route::get('/all-users', [UserController::class, 'getAllUsers']);
+        
 
 
         Route::put('/profile', [AuthController::class, 'updateProfile']);
@@ -61,6 +111,17 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     // Routes pour les demandes de livraison, livraisons, livreurs, clients, demandes d'adhésion, avis, réponses aux avis, commentaires et bordereaux
     Route::apiResource('demandes-livraison', DemandeLivraisonController::class);
+    
+Route::apiResource('livraisons', LivraisonController::class)->except(['store', 'update']);
+
+// Changement de nom de méthode
+Route::get('livraisons/en-cours', [LivraisonController::class, 'livraisonsEnCours']);  // Avant: 'toutesLivraisonsEnCours'
+    // 🆕 ROUTES DYNAMIQUES DE STATUTS (Système de statuts dynamiques)
+    Route::patch('livraisons/{id}/status-by-livreur', [LivreurCourseController::class, 'updateStatusByLivreurType']);
+    Route::get('livraisons/{id}/valid-transitions', [LivreurCourseController::class, 'getValidTransitions']);
+    Route::get('livraisons/by-status-and-type/{status}', [LivreurCourseController::class, 'getByStatusAndLivreurType']);
+    Route::get('livraisons/statistics-by-status', [LivreurCourseController::class, 'getStatistiquesByStatus']);
+
 
     Route::apiResource('livraisons', LivraisonController::class);
     Route::patch('livraisons/{id}/status', [LivraisonController::class, 'updateStatus']);
@@ -91,7 +152,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('commentaires', CommentaireController::class);
 
     Route::apiResource('bordereaux', BordereauController::class);
-    Route::get('users', [AuthController::class, 'getAllUsers']);
+    Route::get('all-users', [UserController::class, 'getAllUsers']);
+    Route::get('users/stats', [UserController::class, 'stats']);
+    Route::get('users/search', [UserController::class, 'search']);
+    Route::patch('users/{id}/toggle-activation', [UserController::class, 'toggleActivation']);
+    Route::get('/users/show/{id}', [UserController::class, 'show']);
 
     Route::patch('user/position', [AuthController::class, 'updatePosition']);
     Route::patch('/update/photo', [AuthController::class, 'updatePhoto']);
@@ -100,7 +165,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/users/{user}/notifications', [NotificationHistoriqueController::class, 'index']);
     Route::post('/users/{user}/notifications/{notification}/read', [NotificationHistoriqueController::class, 'markAsRead']);
+    
+    
 });
+
+Route::get('livraisons/{id}/bordereau-pdf', [LivraisonController::class, 'generateBordereauPDF']);
+Route::get('livraisons/{id}/print-html', [LivraisonController::class, 'generatePrintHTML']);
 
 
 
@@ -116,3 +186,7 @@ Route::middleware('auth:sanctum')->prefix('livreur')->group(function () {
     Route::get('stats/dashboard', [LivreurStatsController::class, 'dashboard']);  // Dashboard complet
     Route::get('stats/detailed', [LivreurStatsController::class, 'detailedStats']);  // Stats détaillées
 });
+
+
+Route::middleware('auth:sanctum')->post('/auth/delete-account', [AuthController::class, 'deleteAccount']);
+

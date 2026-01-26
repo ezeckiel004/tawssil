@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Models\PasswordResetToken;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\ResetPasswordMail;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -425,22 +430,180 @@ public function register(Request $request): JsonResponse
         }
 
         try {
-            // Ici vous pouvez implémenter l'envoi d'email avec un token de réinitialisation
-            // Pour l'instant, on retourne juste un message de succès
+            // Générer un token unique de 60 caractères
+            $token = Str::random(60);
 
+            // Supprimer les anciens tokens pour cet email
+            PasswordResetToken::where('email', $request->email)->delete();
+
+            // Créer un nouveau token
+            PasswordResetToken::create([
+                'email' => $request->email,
+                'token' => $token,
+                'created_at' => now(),
+            ]);
+
+            // Envoyer l'email avec le lien de réinitialisation
+            try {
+                Mail::to($request->email)->send(new ResetPasswordMail($request->email, $token));
+                \Log::info('Password reset email sent to: ' . $request->email);
+            } catch (\Exception $mailError) {
+                \Log::error('Erreur envoi email:', ['error' => $mailError->getMessage()]);
+                // On continue même si l'email échoue, mais on log l'erreur
+            }
+
+            // Réponse pour l'utilisateur
             return response()->json([
                 'success' => true,
-                'message' => 'Un email de réinitialisation a été envoyé à votre adresse',
+                'message' => 'Email de réinitialisation envoyé. Veuillez vérifier votre boîte de réception.',
+                'expires_in' => 1800, // 30 minutes en secondes
             ], 200);
 
         } catch (\Exception $e) {
+            \Log::error('Erreur forgotPassword:', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'envoi de l\'email',
+                'message' => 'Erreur lors de la génération du token',
                 'error'   => $e->getMessage(),
             ], 500);
         }
     }
+
+    /**
+     * 2. Vérifier si le token est valide
+     * Route: POST /api/auth/verify-reset-token
+     */
+    public function verifyResetToken(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'token' => 'required|string|min:60|max:60',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email ou token invalide',
+            ], 422);
+        }
+
+        try {
+            // Chercher le token
+            $resetToken = PasswordResetToken::where('email', $request->email)
+                ->where('token', $request->token)
+                ->first();
+
+            if (!$resetToken) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token ou email invalide',
+                ], 404);
+            }
+
+            // Vérifier si le token n'est pas expiré
+            if (!$resetToken->isValid()) {
+                $resetToken->delete();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ce lien de réinitialisation a expiré (durée: 30 minutes)',
+                ], 410); // 410 Gone
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Token valide',
+                'email' => $request->email,
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur verifyResetToken:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la vérification du token',
+            ], 500);
+        }
+    }
+
+    /**
+     * 3. Réinitialiser le mot de passe
+     * Route: POST /api/auth/reset-password
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email'                 => 'required|email|exists:users,email',
+            'token'                 => 'required|string|min:60|max:60',
+            'password'              => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            // Vérifier le token
+            $resetToken = PasswordResetToken::where('email', $request->email)
+                ->where('token', $request->token)
+                ->first();
+
+            if (!$resetToken) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token ou email invalide',
+                ], 404);
+            }
+
+            // Vérifier l'expiration
+            if (!$resetToken->isValid()) {
+                $resetToken->delete();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ce lien de réinitialisation a expiré',
+                ], 410);
+            }
+
+            // Chercher l'utilisateur
+            $user = User::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé',
+                ], 404);
+            }
+
+            // Mettre à jour le mot de passe
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Révoquer tous les tokens Sanctum (déconnecter l'utilisateur de tous les appareils)
+            $user->tokens()->delete();
+
+            // Supprimer le token de réinitialisation
+            $resetToken->delete();
+
+            \Log::info('Password reset successfully for: ' . $request->email);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Votre mot de passe a été réinitialisé avec succès. Veuillez vous connecter.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur resetPassword:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la réinitialisation du mot de passe',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
 
     /**
      * Vérifier si un token est valide
@@ -497,6 +660,72 @@ public function register(Request $request): JsonResponse
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la mise à jour du rôle',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    
+    public function deleteAccount(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $user = $request->user();
+
+            // Vérifier le mot de passe
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mot de passe incorrect',
+                ], 401);
+            }
+
+            // Récupérer l'ID avant suppression
+            $userId = $user->id;
+
+            DB::beginTransaction();
+
+            // Supprimer le Client s'il existe
+            Client::where('user_id', $userId)->delete();
+
+            // Supprimer le Livreur s'il existe
+            Livreur::where('user_id', $userId)->delete();
+
+            // Supprimer les tokens
+            $user->tokens()->delete();
+
+            // Supprimer la photo s'il existe
+            if ($user->photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
+            }
+
+            // Supprimer l'utilisateur
+            $user->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Compte supprimé avec succès',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression du compte',
                 'error'   => $e->getMessage(),
             ], 500);
         }
