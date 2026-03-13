@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,11 @@ class DemandeLivraison extends Model
         'destinataire_id',
         'colis_id',
         'prix',
+        'wilaya_depot',
+        'commune_depot',
         'addresse_depot',
+        'wilaya',
+        'commune',
         'addresse_delivery',
         'info_additionnel',
         'lat_depot',
@@ -63,6 +68,6 @@ class DemandeLivraison extends Model
 
     public function livraison()
     {
-        return $this->hasOne(Livraison::class);
+        return $this->hasOne(Livraison::class, 'demande_livraisons_id');
     }
 }

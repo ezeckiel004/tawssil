@@ -130,6 +130,11 @@ private function checkAuthorization(Request $request, $userId = null)
 
         $userId = $user->id;
         Log::info("🗑️ Suppression de l'utilisateur: $userId");
+        
+                // Supprimer les demandes d'adhésion
+        DB::table('demande_adhesions')->where('user_id', $userId)->delete();
+        Log::info("✅ Demandes d'adhésion supprimées");
+
 
         // Supprimer le Client s'il existe
         Client::where('user_id', $userId)->delete();

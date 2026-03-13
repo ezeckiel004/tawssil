@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\DemandeLivraison;
 use App\Enums\NotificationType;
+use App\Models\Livreur;
 use App\Models\User;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,10 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Support\Str;
-use Carbon\Carbon; 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\NewLivreurAssignmentMail; 
 
 class LivraisonController extends Controller
 {
@@ -352,6 +356,10 @@ class LivraisonController extends Controller
                
         $datas = [];
         foreach ($livraisons as $livraison) {
+            $demandeLivraison = $livraison->demandeLivraison->load([
+                'colis',     
+            ]);
+            
             $datas[] = [
                 'id' => $livraison->id,
                 'client_id' => $livraison->client_id,
@@ -365,9 +373,25 @@ class LivraisonController extends Controller
                 'status' => $livraison->status,
                 'livreur_distributeur'=> $livraison->livreurDistributeur?->user,
                 'livreur_ramasseur' => $livraison->livreurRamasseur?->user,
-                'demande_livraison' => $livraison->demandeLivraison->load([
-                    'colis',     
-                      ]),
+                'demande_livraison' => [
+                    'id' => $demandeLivraison->id,
+                    'client_id' => $demandeLivraison->client_id,
+                    'destinataire_id' => $demandeLivraison->destinataire_id,
+                    'colis_id' => $demandeLivraison->colis_id,
+                    'addresse_depot' => $demandeLivraison->addresse_depot,
+                    'addresse_delivery' => $demandeLivraison->addresse_delivery,
+                    'info_additionnel' => $demandeLivraison->info_additionnel,
+                    'prix' => $demandeLivraison->prix,
+                    'lat_depot' => $demandeLivraison->lat_depot,
+                    'lng_depot' => $demandeLivraison->lng_depot,
+                    'lat_delivery' => $demandeLivraison->lat_delivery,
+                    'lng_delivery' => $demandeLivraison->lng_delivery,
+                    'wilaya' => $demandeLivraison->wilaya,
+                    'commune' => $demandeLivraison->commune,
+                    'created_at' => $demandeLivraison->created_at,
+                    'updated_at' => $demandeLivraison->updated_at,
+                    'colis' => $demandeLivraison->colis,
+                ],
                 'destinataire'=> $livraison->demandeLivraison->destinataire->load([
                     'user'
                       ]),
@@ -618,6 +642,22 @@ class LivraisonController extends Controller
                 body: "Vous avez été attribué à une livraison. Veuillez vérifier les détails de la livraison."
             );
             */
+            
+             // Envoyer un email au livreur
+            try {
+                $livreur = Livreur::with('user')->find($validatedData['livreur_id']);
+                
+                if ($livreur && $livreur->user && $livreur->user->email) {
+                    Mail::to($livreur->user->email)->send(new NewLivreurAssignmentMail($livraison, $livreur->user, $type));
+                    Log::info('Email d\'assignation envoyé au livreur: ' . $livreur->user->email . ' (Type: ' . ($type === 1 ? 'Ramasseur' : 'Distributeur') . ')');
+                } else {
+                    Log::warning('Livreur non trouvé ou email du livreur non défini - ID: ' . $validatedData['livreur_id']);
+                }
+            } catch (\Exception $e) {
+                // L'envoi d'email a échoué, mais on continue l'action
+                Log::error('Erreur lors de l\'envoi du mail au livreur: ' . $e->getMessage());
+            }
+            
             DB::commit();
 
             /*

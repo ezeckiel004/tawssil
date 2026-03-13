@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,12 +21,12 @@ class Colis extends Model
         'colis_prix',
     ];
 
-	  protected $casts = [
-	    'poids'   => 'float',
-	    'hauteur' => 'float',
-	    'largeur' => 'float',
-	    'colis_prix' => 'float',
-	];
+    protected $casts = [
+        'poids'   => 'float',
+        'hauteur' => 'float',
+        'largeur' => 'float',
+        'colis_prix' => 'float',
+    ];
 
 
 

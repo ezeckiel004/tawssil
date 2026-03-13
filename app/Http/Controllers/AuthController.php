@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Livreur;
+use App\Models\Gestionnaire; // ⚠️ Ajout pour le rôle gestionnaire
 use App\Models\NotificationToken;
 use App\Enums\NotificationType;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\ResetPasswordMail;
-
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -24,99 +24,18 @@ class AuthController extends Controller
     /**
      * Inscription d'un nouvel utilisateur
      */
-    
-public function register(Request $request): JsonResponse
-{
-    $validator = Validator::make($request->all(), [
-        'nom'       => 'required|string|max:255',
-        'prenom'    => 'required|string|max:255',
-        'email'     => 'required|string|email|max:255|unique:users',
-        'password'  => 'required|string|min:8',
-        'telephone' => 'required|string|max:20|unique:users',
-        'role'      => 'string|in:client,livreur,admin',
-        'latitude'  => 'nullable|numeric|between:-90,90',
-        'longitude' => 'nullable|numeric|between:-180,180',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur de validation',
-            'errors'  => $validator->errors(),
-        ], 422);
-    }
-
-    $utilsController = new UtilsController();
-    $photoPath = $utilsController->uploadPhoto($request, 'photo');
-
-    try {
-        DB::beginTransaction();
-
-        $user = User::create([
-            'nom'       => $request->nom,
-            'prenom'    => $request->prenom,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'telephone' => $request->telephone,
-            'role'      => $request->role ?? 'client',
-            'latitude'  => $request->latitude,
-            'longitude' => $request->longitude,
-            'photo'     => $photoPath,
-            'photo_url' => $photoPath ?? asset('storage/' . $photoPath),
-            'actif'     => true,
-        ]);
-
-        // Créer l'enregistrement correspondant selon le rôle
-        if ($user->role == 'client') {
-            Client::create([
-                'user_id' => $user->id,
-                'status'  => 'active',
-            ]);
-        } elseif ($user->role == 'livreur') {
-            // 🆕 AJOUT : Création automatique du livreur
-            Livreur::create([
-                'user_id' => $user->id,
-                'demande_adhesions_id' => null, // Peut être null comme spécifié
-                'type' => 'distributeur', // Valeur par défaut, peut être changée plus tard
-                'desactiver' => false,
-            ]);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        DB::commit();
-
-        // Charger les relations pour la réponse
-        $user->load('client', 'livreur');
-        
-        return response()->json([
-            'user'       => $user,
-            'token'      => $token,
-            'token_type' => 'Bearer'
-        ], 201);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la création de l\'utilisateur',
-            'error'   => $e->getMessage(),
-        ], 500);
-    }
-}
-
-    /**
-     * Connexion d'un utilisateur
-     */
-    public function login(Request $request): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email'     => 'nullable|email|required_without:telephone',
-            'telephone' => 'nullable|string|required_without:email',
-            'password' => 'string',
-
+            'nom'       => 'required|string|max:255',
+            'prenom'    => 'required|string|max:255',
+            'email'     => 'required|string|email|max:255|unique:users',
+            'password'  => 'required|string|min:8',
+            'telephone' => 'required|string|max:20|unique:users',
+            'role'      => 'string|in:client,livreur,admin,gestionnaire',
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -126,7 +45,91 @@ public function register(Request $request): JsonResponse
                 'errors'  => $validator->errors(),
             ], 422);
         }
-        	   
+
+        $utilsController = new UtilsController();
+        $photoPath = $utilsController->uploadPhoto($request, 'photo');
+
+        try {
+            DB::beginTransaction();
+
+            $user = User::create([
+                'nom'       => $request->nom,
+                'prenom'    => $request->prenom,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'telephone' => $request->telephone,
+                'role'      => $request->role ?? 'client',
+                'latitude'  => $request->latitude,
+                'longitude' => $request->longitude,
+                'photo'     => $photoPath,
+                'photo_url' => $photoPath ? asset('storage/' . $photoPath) : null,
+                'actif'     => true,
+            ]);
+
+            // Créer l'enregistrement correspondant selon le rôle
+            if ($user->role == 'client') {
+                Client::create([
+                    'user_id' => $user->id,
+                    'status'  => 'active',
+                ]);
+            } elseif ($user->role == 'livreur') {
+                Livreur::create([
+                    'user_id' => $user->id,
+                    'demande_adhesions_id' => null,
+                    'type' => 'distributeur',
+                    'desactiver' => false,
+                ]);
+            } elseif ($user->role == 'gestionnaire') {
+                // Note: La wilaya devra être assignée séparément
+                Gestionnaire::create([
+                    'user_id' => $user->id,
+                    'wilaya_id' => $request->wilaya_id ?? '16', // Valeur par défaut
+                    'status' => 'active',
+                ]);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            DB::commit();
+
+            // Charger les relations pour la réponse
+            $user->load('client', 'livreur', 'gestionnaire');
+            
+            return response()->json([
+                'user'       => $user,
+                'token'      => $token,
+                'token_type' => 'Bearer'
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création de l\'utilisateur',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Connexion d'un utilisateur
+     */
+    public function login(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email'     => 'nullable|email|required_without:telephone',
+            'telephone' => 'nullable|string|required_without:email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
 
         try {
             $user = User::where(function ($query) use ($request) {
@@ -138,13 +141,6 @@ public function register(Request $request): JsonResponse
                     $query->orWhere('telephone', $request->telephone);
                 }
             })->first();
-            
-           
-           /* $user = User::where(column: 'email', $request->email)
-            ->orWhere('telephone', $request->telephone)
-            ->first();
-
-            */
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 return response()->json([
@@ -165,26 +161,60 @@ public function register(Request $request): JsonResponse
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-	   $user->load('client', 'livreur');
-            return response()->json(
-                /*[
-                'success' => true,
-                'message' => 'Connexion réussie',
-                'data'    =>
-                */
-                 [
-                    'user'       => $user,
-                    'token'      => $token,
-                    'token_type' => 'Bearer'
-                  
-                ],
-             200);
+            // Charger les relations selon le rôle
+            $user->load('client', 'livreur', 'gestionnaire');
+            
+            return response()->json([
+                'user'       => $user,
+                'token'      => $token,
+                'token_type' => 'Bearer'
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la connexion',
                 'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupérer l'utilisateur connecté
+     */
+    public function me(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Non authentifié'
+                ], 401);
+            }
+
+            // Charger les relations selon le rôle
+            if ($user->role === 'gestionnaire') {
+                $user->load('gestionnaire');
+            } elseif ($user->role === 'client') {
+                $user->load('client');
+            } elseif ($user->role === 'livreur') {
+                $user->load('livreur');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'user' => $user
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error('Erreur me(): ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération de l\'utilisateur',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -236,72 +266,72 @@ public function register(Request $request): JsonResponse
     /**
      * Mettre à jour le profil utilisateur
      */
- public function updateProfile(Request $request): JsonResponse
-{
-    $user = $request->user();
-    
-    // Loguer les données brutes
-    \Log::info('Requête brute : ', [
-        'input' => $request->all(),
-        'files' => $request->files->all(),
-        'headers' => $request->headers->all(),
-    ]);
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        \Log::info('Requête brute : ', [
+            'input' => $request->all(),
+            'files' => $request->files->all(),
+            'headers' => $request->headers->all(),
+        ]);
 
-    $input = $request->all();
-    
-    \Log::info('Données reçues : ', $input);
+        $input = $request->all();
+        
+        \Log::info('Données reçues : ', $input);
 
-    $validator = Validator::make($input, [
-        'nom' => 'sometimes|required|string|max:255',
-        'prenom' => 'sometimes|required|string|max:255',
-        'email' => [
-            'sometimes',
-            'required',
-            'string',
-            'email',
-            'max:255',
-            Rule::unique('users', 'email')->ignore($user->id),
-        ],
-        'telephone' => [
-            'sometimes',
-            'required',
-            'string',
-            'max:20',
-            Rule::unique('users', 'telephone')->ignore($user->id),
-        ],
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+        $validator = Validator::make($input, [
+            'nom' => 'sometimes|required|string|max:255',
+            'prenom' => 'sometimes|required|string|max:255',
+            'email' => [
+                'sometimes',
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'telephone' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('users', 'telephone')->ignore($user->id),
+            ],
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    if ($validator->fails()) {
-        \Log::error('Erreur de validation : ', $validator->errors()->toArray());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur de validation',
-            'errors' => $validator->errors(),
-        ], 422);
+        if ($validator->fails()) {
+            \Log::error('Erreur de validation : ', $validator->errors()->toArray());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $user->update(array_filter($input, fn($value) => !is_null($value) && $value !== ''));
+
+            \Log::info('Profil mis à jour : ', $user->toArray());
+            return response()->json($user, 200);
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la mise à jour : ', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du profil',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    try {
-        $user->update(array_filter($input, fn($value) => !is_null($value) && $value !== ''));
-
-        \Log::info('Profil mis à jour : ', $user->toArray());
-        return response()->json($user, 200);
-    } catch (\Exception $e) {
-        \Log::error('Erreur lors de la mise à jour : ', ['error' => $e->getMessage()]);
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la mise à jour du profil',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
-     /**
+    /**
      * Mettre à jour sa photo de profil utilisateur
      */
     public function updatePhotoProfile(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation de la photo
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -314,7 +344,6 @@ public function register(Request $request): JsonResponse
 
         try {
             $user = $request->user();
-            
 
             // Supprimer l'ancienne photo si elle existe
             if ($user->photo) {
@@ -328,35 +357,24 @@ public function register(Request $request): JsonResponse
             // Mettre à jour le chemin de la photo dans la base de données
             $user->update([
                 'photo' => $photoPath,
+                'photo_url' => $photoPath ? asset('storage/' . $photoPath) : null,
             ]);
-
-            /*
-            $user = NotificationToken::find($user->id); // Replace with the user you want to notify
-            $notificationData = [
-                'title' => 'Photo de Profil mise à jour!',
-                'body' => 'Votre photo de profil a été mise à jour avec succès.',
-                'data' => ['type' => NotificationType::UPDATE_PHOTO, 'user_id'=>$user->id], // Additional data if needed
-            ];
-           
-
-            $user->notify(new FcmNotification($notificationData));
-
-            */
 
             return response()->json([
                 'success' => true,
-                'message' => 'Photo de Profil mis à jour avec succès',
+                'message' => 'Photo de profil mise à jour avec succès',
                 'data'    => $user,
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la mise à jour de la Photo de profil',
+                'message' => 'Erreur lors de la mise à jour de la photo de profil',
                 'error'   => $e->getMessage(),
             ], 500);
         }
     }
+
     /**
      * Changer le mot de passe
      */
@@ -456,7 +474,7 @@ public function register(Request $request): JsonResponse
             return response()->json([
                 'success' => true,
                 'message' => 'Email de réinitialisation envoyé. Veuillez vérifier votre boîte de réception.',
-                'expires_in' => 1800, // 30 minutes en secondes
+                'expires_in' => 1800,
             ], 200);
 
         } catch (\Exception $e) {
@@ -470,8 +488,7 @@ public function register(Request $request): JsonResponse
     }
 
     /**
-     * 2. Vérifier si le token est valide
-     * Route: POST /api/auth/verify-reset-token
+     * Vérifier si le token est valide
      */
     public function verifyResetToken(Request $request): JsonResponse
     {
@@ -506,7 +523,7 @@ public function register(Request $request): JsonResponse
                 return response()->json([
                     'success' => false,
                     'message' => 'Ce lien de réinitialisation a expiré (durée: 30 minutes)',
-                ], 410); // 410 Gone
+                ], 410);
             }
 
             return response()->json([
@@ -525,8 +542,7 @@ public function register(Request $request): JsonResponse
     }
 
     /**
-     * 3. Réinitialiser le mot de passe
-     * Route: POST /api/auth/reset-password
+     * Réinitialiser le mot de passe
      */
     public function resetPassword(Request $request): JsonResponse
     {
@@ -603,7 +619,6 @@ public function register(Request $request): JsonResponse
             ], 500);
         }
     }
-    
 
     /**
      * Vérifier si un token est valide
@@ -641,7 +656,7 @@ public function register(Request $request): JsonResponse
     public function updateRole(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
-            'role' => 'required|string|in:admin,user,client', // Remplacez par les rôles valides de votre application
+            'role' => 'required|string|in:admin,client,livreur,gestionnaire',
         ]);
 
         try {
@@ -664,8 +679,10 @@ public function register(Request $request): JsonResponse
             ], 500);
         }
     }
-    
-    
+
+    /**
+     * Supprimer le compte
+     */
     public function deleteAccount(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -702,10 +719,13 @@ public function register(Request $request): JsonResponse
             // Supprimer le Livreur s'il existe
             Livreur::where('user_id', $userId)->delete();
 
+            // Supprimer le Gestionnaire s'il existe
+            Gestionnaire::where('user_id', $userId)->delete();
+
             // Supprimer les tokens
             $user->tokens()->delete();
 
-            // Supprimer la photo s'il existe
+            // Supprimer la photo si elle existe
             if ($user->photo) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
             }
@@ -730,5 +750,4 @@ public function register(Request $request): JsonResponse
             ], 500);
         }
     }
-    
 }

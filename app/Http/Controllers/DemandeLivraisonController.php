@@ -13,6 +13,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\NewDeliveryRequestMail;
+use App\Mail\DeliveryRequestReceivedMail;
 
 class DemandeLivraisonController extends Controller
 {
@@ -69,8 +73,8 @@ class DemandeLivraisonController extends Controller
             'info_additionnel' => 'nullable|string',
             'lat_depot' => 'required|numeric',
             'lng_depot' => 'required|numeric',  // Latitude et longitude du point de départ
-            'lat_delivery' => 'required|numeric', // Latitude du point de livraison
-            'lng_delivery' => 'required|numeric', // Longitude du point de livraison
+            'lat_delivery' => 'nullable|numeric', // Latitude du point de livraison
+            'lng_delivery' => 'nullable|numeric', // Longitude du point de livraison
             'destinataire_nom' => 'required|string|max:255', // Nom du destinataire
             'destinataire_email' => 'nullable|email|max:255', // Email du destinataire
             'destinataire_telephone' => 'required|string|max:20', // Téléphone du destinataire
@@ -78,6 +82,10 @@ class DemandeLivraisonController extends Controller
             'colis_prix' => 'required|numeric|min:0.1', // Prix du colis
             'prix' => 'required|numeric|min:0.1', // Tarif de livraison
             'colis_type' => 'string',
+            'wilaya_depot' => 'required|string|max:255', // Wilaya de dépôt obligatoire
+            'commune_depot' => 'required|string|max:255',
+            'wilaya' => 'required|string|max:255', // Wilaya obligatoire
+            'commune' => 'required|string|max:255', // Commune obligatoire
             'colis_photo' => 'nullable|file|max:10240', // Validation de la photo (10MB max)
 
         ]);
@@ -157,8 +165,9 @@ class DemandeLivraisonController extends Controller
 		'nom'       => implode(' ', $parts),
 		'prenom'    => array_pop($parts),
 		'email'     => !empty($validatedData['destinataire_email']) ? $validatedData['destinataire_email'] : null,
+		'telephone' => $validatedData['destinataire_telephone'],
 		'password'  => bcrypt('default_password'), // À remplacer plus tard
-		'role'      => 'client',
+		'role'      => 'client_destinataire',
 		'actif'     => true,
 	    ]);
 	}
@@ -200,7 +209,11 @@ class DemandeLivraisonController extends Controller
         // Créer la demande de livraison
         $demande = DemandeLivraison::create([
             'client_id' => $validatedData['client_id'],
+            'wilaya_depot' => $validatedData['wilaya_depot'],
+            'commune_depot' => $validatedData['commune_depot'],
             'addresse_depot' => $validatedData['addresse_depot'],
+            'wilaya' => $validatedData['wilaya'],
+            'commune' => $validatedData['commune'],
             'addresse_delivery' => $validatedData['addresse_delivery'],
             'info_additionnel' => $validatedData['info_additionnel'] ?? null,
             'destinataire_id' => $destinataire->id, // Associer l'utilisateur destinataire
@@ -209,8 +222,7 @@ class DemandeLivraisonController extends Controller
             'lat_depot' => $validatedData['lat_depot'],
             'lng_depot' => $validatedData['lng_depot'],  
             'lat_delivery' => $validatedData['lat_delivery'], 
-            'lng_delivery' => $validatedData['lng_delivery']
-
+            'lng_delivery' => $validatedData['lng_delivery'],
         ]);
 
           // Créer une livraison associée à la demande
@@ -219,6 +231,36 @@ class DemandeLivraisonController extends Controller
             'demande_livraisons_id' => $demande->id,
             'code_pin' => $this->generateUniquePin(),            
         ]);
+
+        // Envoyer un email à l'admin
+        try {
+                        $admin = User::where('role', 'admin')->where('email', 'ziattzi133@gmail.com')->first();
+
+            
+            if ($admin && $admin->email) {
+                Mail::to($admin->email)->send(new NewDeliveryRequestMail($demande));
+                Log::info('Email d\'alerte envoyé à l\'admin: ' . $admin->email);
+            } else {
+                Log::warning('Aucun admin trouvé ou email admin non défini');
+            }
+        } catch (\Exception $e) {
+            // L'envoi d'email a échoué, mais on continue l'action
+            Log::error('Erreur lors de l\'envoi du mail à l\'admin: ' . $e->getMessage());
+        }
+        
+         // Envoyer un email au client/destinataire
+       try {
+            if ($demande->client && $demande->client->user && $demande->client->user->email) {
+                Mail::to($demande->client->user->email)->send(new DeliveryRequestReceivedMail($demande));
+
+                Log::info('Email de confirmation envoyé au client: ' . $demande->client->user->email);
+            } else {
+                Log::warning('Client non trouvé ou email du client non défini');
+            }
+        } catch (\Exception $e) {
+            // L'envoi d'email a échoué, mais on continue l'action
+            Log::error('Erreur lors de l\'envoi du mail au client: ' . $e->getMessage());
+        }
 
         //$notificationController = new NotificationController();
 

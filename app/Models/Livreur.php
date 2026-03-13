@@ -13,8 +13,13 @@ class Livreur extends Model
         'user_id',
         'demande_adhesions_id',
         'type', // 'distributeur' or 'ramasseur'
-        'desactiver'
+        'desactiver',
+        'wilaya_id', // ⚠️ Code wilaya du livreur (01 à 58)
+    ];
 
+    protected $casts = [
+        'desactiver' => 'boolean',
+        'wilaya_id' => 'string',
     ];
 
     public $incrementing = false;
@@ -55,5 +60,53 @@ class Livreur extends Model
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class);
+    }
+
+    /**
+     * Scope pour filtrer par wilaya
+     */
+    public function scopeByWilaya($query, $wilayaId)
+    {
+        return $query->where('wilaya_id', $wilayaId);
+    }
+
+    /**
+     * Scope pour les livreurs actifs
+     */
+    public function scopeActif($query)
+    {
+        return $query->where('desactiver', false);
+    }
+
+    /**
+     * Scope pour les livreurs inactifs
+     */
+    public function scopeInactif($query)
+    {
+        return $query->where('desactiver', true);
+    }
+
+    /**
+     * Scope pour filtrer par type
+     */
+    public function scopeOfType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    /**
+     * Vérifier si le livreur est disponible
+     */
+    public function isDisponible(): bool
+    {
+        return !$this->desactiver;
+    }
+
+    /**
+     * Obtenir le nom complet du livreur via l'utilisateur associé
+     */
+    public function getNomCompletAttribute(): string
+    {
+        return $this->user ? $this->user->prenom . ' ' . $this->user->nom : 'Nom inconnu';
     }
 }

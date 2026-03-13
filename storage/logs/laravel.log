@@ -1,298 +1,300 @@
-[2026-01-23 09:06:01] local.INFO: Récupération de la livraison avec ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:06:01] local.INFO: Livraison trouvée: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:06:01] local.INFO: Récupération de la livraison avec ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:06:01] local.INFO: Livraison trouvée: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:06:04] local.INFO: Début génération PDF - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:06:04] local.ERROR: Erreur génération PDF - ID 02fc4609-982d-4ce0-bc94-f2997527b567: View [pdf.bordereau] not found.  
-[2026-01-23 09:06:06] local.ERROR: Erreur génération PDF: View [pdf.bordereau] not found.  
-[2026-01-23 09:06:06] local.ERROR: Stack trace: #0 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths()
-#1 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/Factory.php(137): Illuminate\View\FileViewFinder->find()
-#2 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/PDF.php(142): Illuminate\View\Factory->make()
-#3 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/Facade/Pdf.php(66): Barryvdh\DomPDF\PDF->loadView()
-#4 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/app/Http/Controllers/LivraisonController.php(900): Barryvdh\DomPDF\Facade\Pdf::__callStatic()
-#5 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\Http\Controllers\LivraisonController->generateBordereauPDF()
-#6 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction()
-#7 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch()
-#8 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\Routing\Route->runController()
-#9 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\Routing\Route->run()
-#10 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}()
-#11 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#12 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle()
-#13 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#14 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest()
-#15 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter()
-#16 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle()
-#17 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#18 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\Pipeline\Pipeline->then()
-#19 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\Routing\Router->runRouteWithinStack()
-#20 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\Routing\Router->runRoute()
-#21 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\Routing\Router->dispatchToRoute()
-#22 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
-#23 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
-#24 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#25 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#26 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
-#27 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#28 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#29 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
-#30 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#31 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle()
-#32 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#33 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
-#34 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#35 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle()
-#36 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#37 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle()
-#38 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#39 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
-#40 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
-#41 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/public/index.php(51): Illuminate\Foundation\Http\Kernel->handle()
-#42 {main}  
-[2026-01-23 09:06:08] local.ERROR: Erreur génération PDF: View [pdf.bordereau] not found.  
-[2026-01-23 09:06:08] local.ERROR: Stack trace: #0 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths()
-#1 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/Factory.php(137): Illuminate\View\FileViewFinder->find()
-#2 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/PDF.php(142): Illuminate\View\Factory->make()
-#3 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/Facade/Pdf.php(66): Barryvdh\DomPDF\PDF->loadView()
-#4 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/app/Http/Controllers/LivraisonController.php(900): Barryvdh\DomPDF\Facade\Pdf::__callStatic()
-#5 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\Http\Controllers\LivraisonController->generateBordereauPDF()
-#6 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction()
-#7 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch()
-#8 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\Routing\Route->runController()
-#9 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\Routing\Route->run()
-#10 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}()
-#11 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#12 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle()
-#13 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#14 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest()
-#15 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter()
-#16 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle()
-#17 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#18 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\Pipeline\Pipeline->then()
-#19 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\Routing\Router->runRouteWithinStack()
-#20 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\Routing\Router->runRoute()
-#21 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\Routing\Router->dispatchToRoute()
-#22 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
-#23 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
-#24 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#25 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#26 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
-#27 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#28 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#29 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
-#30 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#31 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle()
-#32 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#33 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
-#34 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#35 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle()
-#36 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#37 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle()
-#38 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#39 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
-#40 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
-#41 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/public/index.php(51): Illuminate\Foundation\Http\Kernel->handle()
-#42 {main}  
-[2026-01-23 09:07:22] local.INFO: Début génération PDF - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:07:22] local.ERROR: Erreur génération PDF - ID 02fc4609-982d-4ce0-bc94-f2997527b567: View [pdf.bordereau] not found.  
-[2026-01-23 09:07:24] local.ERROR: Erreur génération PDF: View [pdf.bordereau] not found.  
-[2026-01-23 09:07:24] local.ERROR: Stack trace: #0 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths()
-#1 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/Factory.php(137): Illuminate\View\FileViewFinder->find()
-#2 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/PDF.php(142): Illuminate\View\Factory->make()
-#3 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/Facade/Pdf.php(66): Barryvdh\DomPDF\PDF->loadView()
-#4 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/app/Http/Controllers/LivraisonController.php(900): Barryvdh\DomPDF\Facade\Pdf::__callStatic()
-#5 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\Http\Controllers\LivraisonController->generateBordereauPDF()
-#6 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction()
-#7 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch()
-#8 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\Routing\Route->runController()
-#9 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\Routing\Route->run()
-#10 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}()
-#11 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#12 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle()
-#13 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#14 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest()
-#15 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter()
-#16 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle()
-#17 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#18 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\Pipeline\Pipeline->then()
-#19 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\Routing\Router->runRouteWithinStack()
-#20 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\Routing\Router->runRoute()
-#21 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\Routing\Router->dispatchToRoute()
-#22 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
-#23 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
-#24 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#25 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#26 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
-#27 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#28 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#29 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
-#30 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#31 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle()
-#32 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#33 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
-#34 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#35 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle()
-#36 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#37 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle()
-#38 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#39 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
-#40 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
-#41 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/public/index.php(51): Illuminate\Foundation\Http\Kernel->handle()
-#42 {main}  
-[2026-01-23 09:07:27] local.ERROR: Erreur génération PDF: View [pdf.bordereau] not found.  
-[2026-01-23 09:07:27] local.ERROR: Stack trace: #0 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths()
-#1 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/View/Factory.php(137): Illuminate\View\FileViewFinder->find()
-#2 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/PDF.php(142): Illuminate\View\Factory->make()
-#3 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/barryvdh/laravel-dompdf/src/Facade/Pdf.php(66): Barryvdh\DomPDF\PDF->loadView()
-#4 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/app/Http/Controllers/LivraisonController.php(900): Barryvdh\DomPDF\Facade\Pdf::__callStatic()
-#5 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\Http\Controllers\LivraisonController->generateBordereauPDF()
-#6 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction()
-#7 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch()
-#8 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\Routing\Route->runController()
-#9 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\Routing\Route->run()
-#10 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}()
-#11 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#12 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle()
-#13 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#14 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest()
-#15 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter()
-#16 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle()
-#17 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#18 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\Pipeline\Pipeline->then()
-#19 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\Routing\Router->runRouteWithinStack()
-#20 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\Routing\Router->runRoute()
-#21 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\Routing\Router->dispatchToRoute()
-#22 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
-#23 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
-#24 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#25 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#26 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
-#27 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#28 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
-#29 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
-#30 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#31 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle()
-#32 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#33 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
-#34 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#35 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle()
-#36 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#37 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle()
-#38 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
-#39 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
-#40 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
-#41 /home/u107073711/domains/tawssilgo.com/public_html/Tawssill_API/public/index.php(51): Illuminate\Foundation\Http\Kernel->handle()
-#42 {main}  
-[2026-01-23 09:10:08] local.INFO: Début génération PDF - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:10:22] local.INFO: Début génération HTML pour impression - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:10:22] local.INFO: Livraison trouvée pour HTML - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:10:22] local.INFO: Données préparées pour HTML - Livraison: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:10:22] local.INFO: HTML généré avec succès - Taille: 5294 caractères  
-[2026-01-23 09:11:22] local.INFO: Récupération de la livraison avec ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 09:11:22] local.INFO: Livraison trouvée: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 09:11:23] local.INFO: Récupération de la livraison avec ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 09:11:23] local.INFO: Livraison trouvée: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 09:11:38] local.INFO: Récupération de la livraison avec ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:11:38] local.INFO: Livraison trouvée: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:11:39] local.INFO: Récupération de la livraison avec ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:11:39] local.INFO: Livraison trouvée: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:18] local.INFO: Récupération de la livraison avec ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:18] local.INFO: Livraison trouvée: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:20] local.INFO: Début génération PDF - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:30] local.INFO: Début génération HTML pour impression - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:30] local.INFO: Livraison trouvée pour HTML - ID: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:30] local.INFO: Données préparées pour HTML - Livraison: 02fc4609-982d-4ce0-bc94-f2997527b567  
-[2026-01-23 09:27:30] local.INFO: HTML généré avec succès - Taille: 5294 caractères  
-[2026-01-23 09:50:14] local.INFO: Complete action - Livreur ID: c9f24888-da96-4da0-b0e2-416b7cfec3a1, Course ID: be47d856-d19e-4345-a545-db7cb97171ee  
-[2026-01-23 09:50:14] local.INFO: Role determination - Livreur ID: c9f24888-da96-4da0-b0e2-416b7cfec3a1, Ramasseur ID: , Distributeur ID: c9f24888-da96-4da0-b0e2-416b7cfec3a1, Determined Role: distributeur  
-[2026-01-23 09:50:14] local.INFO: Course transition: prise_en_charge_livraison → livre (Livreur Role: distributeur)  
-[2026-01-23 16:52:55] local.INFO: Récupération de la livraison avec ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:52:55] local.INFO: Livraison trouvée: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:53:05] local.INFO: Début génération PDF - ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:47] local.INFO: Récupération de la livraison avec ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:47] local.INFO: Livraison trouvée: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:56] local.INFO: Début génération HTML pour impression - ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:56] local.INFO: Livraison trouvée pour HTML - ID: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:56] local.INFO: Données préparées pour HTML - Livraison: 3888c8c2-ac2b-4c16-ab02-7dec9f553af0  
-[2026-01-23 16:58:56] local.INFO: HTML généré avec succès - Taille: 5409 caractères  
-[2026-01-23 17:19:53] local.INFO: Récupération de la livraison avec ID: d5099fbd-cfa1-4c15-a9b8-d4bc3b860e08  
-[2026-01-23 17:19:53] local.INFO: Livraison trouvée: d5099fbd-cfa1-4c15-a9b8-d4bc3b860e08  
-[2026-01-23 19:08:39] local.WARNING: No file found for field {"field_name":"photo"} 
-[2026-01-23 19:16:39] local.WARNING: No file found for field {"field_name":"photo"} 
-[2026-01-23 20:37:13] local.WARNING: No file found for field {"field_name":"photo"} 
-[2026-01-24 10:31:53] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:31:53] local.INFO: Request method: POST  
-[2026-01-24 10:31:53] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-2766987420  
-[2026-01-24 10:31:53] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_photo"]  
-[2026-01-24 10:31:53] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:31:53] local.INFO: Photo file details BEFORE validation: {"original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","size":3880606,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:31:53] local.ERROR: === VALIDATION FAILED ===  
-[2026-01-24 10:31:53] local.ERROR: Validation errors: {"colis_prix":["The colis prix field is required."]} 
-[2026-01-24 10:31:53] local.ERROR: Request data (without photo): {"client_id":"127ce10c-6f71-4582-a5ff-64786ae4a25e","addresse_depot":"Ben Hamza, Hammedi ⵃⴻⵎⵎⴰⴷⵉ حمادي, Daïra Khemis El Khechna, Boumerdès, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":"13ᵉ Arrondissement, Cotonou, Littoral, Bénin","info_additionnel":null,"lat_depot":"36.680787813321054","lng_depot":"3.2693163664663776","lat_delivery":"6.3767326","lng_delivery":"2.3579183","destinataire_nom":"ninik","destinataire_email":null,"destinataire_telephone":"213 253698741","prix":"600.0","colis_type":"T","colis_poids":"12.0"} 
-[2026-01-24 10:31:53] local.ERROR: Photo file that FAILED validation: {"size_bytes":3880606,"size_kb":3789.65,"size_mb":3.7,"mime_type":"image/jpeg","original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","is_valid":true,"error_code":0,"error_message":"No error"} 
-[2026-01-24 10:33:07] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:33:07] local.INFO: Request method: POST  
-[2026-01-24 10:33:07] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-3767107648  
-[2026-01-24 10:33:07] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:33:07] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:33:07] local.INFO: Photo file details BEFORE validation: {"original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","size":3880606,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:33:07] local.ERROR: === VALIDATION FAILED ===  
-[2026-01-24 10:33:07] local.ERROR: Validation errors: {"colis_prix":["The colis prix field is required."]} 
-[2026-01-24 10:33:07] local.ERROR: Request data (without photo): {"client_id":"127ce10c-6f71-4582-a5ff-64786ae4a25e","addresse_depot":"Ben Hamza, Hammedi ⵃⴻⵎⵎⴰⴷⵉ حمادي, Daïra Khemis El Khechna, Boumerdès, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":"13ᵉ Arrondissement, Cotonou, Littoral, Bénin","info_additionnel":null,"lat_depot":"36.680787813321054","lng_depot":"3.2693163664663776","lat_delivery":"6.3767326","lng_delivery":"2.3579183","destinataire_nom":"ninik","destinataire_email":null,"destinataire_telephone":"213 253698741","prix":"600.0","colis_type":"T","colis_poids":"12.0","colis_prix":null} 
-[2026-01-24 10:33:07] local.ERROR: Photo file that FAILED validation: {"size_bytes":3880606,"size_kb":3789.65,"size_mb":3.7,"mime_type":"image/jpeg","original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","is_valid":true,"error_code":0,"error_message":"No error"} 
-[2026-01-24 10:33:15] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:33:15] local.INFO: Request method: POST  
-[2026-01-24 10:33:15] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-1341972639  
-[2026-01-24 10:33:15] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:33:15] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:33:15] local.INFO: Photo file details BEFORE validation: {"original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","size":3880606,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:33:15] local.ERROR: === VALIDATION FAILED ===  
-[2026-01-24 10:33:15] local.ERROR: Validation errors: {"colis_prix":["The colis prix field is required."]} 
-[2026-01-24 10:33:15] local.ERROR: Request data (without photo): {"client_id":"127ce10c-6f71-4582-a5ff-64786ae4a25e","addresse_depot":"Ben Hamza, Hammedi ⵃⴻⵎⵎⴰⴷⵉ حمادي, Daïra Khemis El Khechna, Boumerdès, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":"13ᵉ Arrondissement, Cotonou, Littoral, Bénin","info_additionnel":null,"lat_depot":"36.680787813321054","lng_depot":"3.2693163664663776","lat_delivery":"6.3767326","lng_delivery":"2.3579183","destinataire_nom":"ninik","destinataire_email":null,"destinataire_telephone":"213 253698741","prix":"600.0","colis_type":"T","colis_poids":"12.0","colis_prix":null} 
-[2026-01-24 10:33:15] local.ERROR: Photo file that FAILED validation: {"size_bytes":3880606,"size_kb":3789.65,"size_mb":3.7,"mime_type":"image/jpeg","original_name":"f53b52db-7f93-4af2-9ffc-f6a083be0f6e7092016272453143429.jpg","is_valid":true,"error_code":0,"error_message":"No error"} 
-[2026-01-24 10:35:46] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:35:46] local.INFO: Request method: POST  
-[2026-01-24 10:35:46] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-1412804956  
-[2026-01-24 10:35:46] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:35:46] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:35:46] local.INFO: Photo file details BEFORE validation: {"original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","size":3834731,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:35:46] local.ERROR: === VALIDATION FAILED ===  
-[2026-01-24 10:35:46] local.ERROR: Validation errors: {"colis_prix":["The colis prix field is required."]} 
-[2026-01-24 10:35:46] local.ERROR: Request data (without photo): {"client_id":"127ce10c-6f71-4582-a5ff-64786ae4a25e","addresse_depot":"Sidi Djelloul, Djendel, Daïra Djendel, Aïn Defla, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":"Abrid Uhemam, Amdun Wadda, Aẓekka Lǧahel, Afra, Amizour, Daïra Amizour, Béjaïa, 06300, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","info_additionnel":null,"lat_depot":"36.27717714845551","lng_depot":"2.496970467393092","lat_delivery":"36.63491960847141","lng_delivery":"4.866018329885634","destinataire_nom":"eh tu","destinataire_email":null,"destinataire_telephone":"213 86658971","prix":"1250.0","colis_type":"Rugby","colis_poids":"25.0","colis_prix":null} 
-[2026-01-24 10:35:46] local.ERROR: Photo file that FAILED validation: {"size_bytes":3834731,"size_kb":3744.85,"size_mb":3.66,"mime_type":"image/jpeg","original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","is_valid":true,"error_code":0,"error_message":"No error"} 
-[2026-01-24 10:37:38] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:37:38] local.INFO: Request method: POST  
-[2026-01-24 10:37:38] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-0282606358  
-[2026-01-24 10:37:38] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:37:38] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:37:38] local.INFO: Photo file details BEFORE validation: {"original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","size":3834731,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:37:38] local.INFO: === VALIDATION PASSED ===  
-[2026-01-24 10:39:12] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:39:12] local.INFO: Request method: POST  
-[2026-01-24 10:39:12] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-2640233554  
-[2026-01-24 10:39:12] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:39:12] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:39:12] local.INFO: Photo file details BEFORE validation: {"original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","size":3834731,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:39:12] local.INFO: === VALIDATION PASSED ===  
-[2026-01-24 10:44:38] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
-[2026-01-24 10:44:38] local.INFO: Request method: POST  
-[2026-01-24 10:44:38] local.INFO: Content-Type: multipart/form-data; boundary=--dio-boundary-2694606766  
-[2026-01-24 10:44:38] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","prix","colis_type","colis_poids","colis_prix","colis_photo"]  
-[2026-01-24 10:44:38] local.INFO: Has file colis_photo: YES  
-[2026-01-24 10:44:38] local.INFO: Photo file details BEFORE validation: {"original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","size":3834731,"mime_type":"image/jpeg","extension":"jpg","is_valid":true,"error_code":0,"max_file_size":"10M","post_max_size":"20M"} 
-[2026-01-24 10:44:38] local.INFO: === VALIDATION PASSED ===  
-[2026-01-24 10:44:38] local.INFO: Photo field exists in request  
-[2026-01-24 10:44:38] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"facbd768-0ba4-4836-a0d9-2e5ae9c3ead53234205952051624721.jpg","size":3834731,"mime_type":"image/jpeg","is_valid":true,"error":0} 
-[2026-01-24 10:44:38] local.INFO: Photo uploaded successfully {"path":"photos/cauLVBGZ2G5OZU5duje1ZQdm3QRY2MN8A5ZdrdLS.jpg"} 
-[2026-01-24 12:42:03] local.INFO: Password reset email sent to: kantchiezeckiel@gmail.com  
-[2026-01-26 07:22:53] local.INFO: Complete action - Livreur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Course ID: 4dec1e0c-80e6-44f6-8859-0e7863a51be2  
-[2026-01-26 07:22:53] local.INFO: Role determination - Livreur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Ramasseur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Distributeur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Determined Role: ramasseur  
-[2026-01-26 07:22:53] local.INFO: Course transition: prise_en_charge_ramassage → ramasse (Livreur Role: ramasseur)  
-[2026-01-26 07:31:12] local.INFO: Complete action - Livreur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Course ID: 4dec1e0c-80e6-44f6-8859-0e7863a51be2  
-[2026-01-26 07:31:12] local.INFO: Role determination - Livreur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Ramasseur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Distributeur ID: 79f8d3fd-79d5-409f-ba9f-931d6a5384ca, Determined Role: ramasseur  
-[2026-01-26 07:31:12] local.INFO: Course transition: ramasse → en_transit (Livreur Role: ramasseur)  
-[2026-01-26 07:45:02] local.WARNING: No file found for field {"field_name":"photo"} 
-[2026-01-26 08:05:33] local.INFO: 🗑️ Suppression de l'utilisateur: 76c35388-cd6f-40c4-9914-417012eba11c  
-[2026-01-26 08:05:33] local.INFO: ✅ Client supprimé  
-[2026-01-26 08:05:33] local.INFO: ✅ Livreur supprimé  
-[2026-01-26 08:05:33] local.INFO: ✅ Tokens supprimés  
-[2026-01-26 08:05:33] local.INFO: ✅ Utilisateur supprimé définitivement  
+[2026-03-12 09:36:05] local.WARNING: No file found for field {"field_name":"photo"} 
+[2026-03-12 09:42:46] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:42:46] local.INFO: Request method: POST  
+[2026-03-12 09:42:46] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:42:46] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:42:46] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:42:46] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:42:46] local.ERROR: === VALIDATION FAILED ===  
+[2026-03-12 09:42:46] local.ERROR: Validation errors: {"client_id":["The selected client id is invalid."]} 
+[2026-03-12 09:42:46] local.ERROR: Request data (without photo): {"client_id":"e5e39461-d00d-42e0-8042-66de7acd8e84","addresse_depot":"123 Rue de la Paix, Alger","addresse_delivery":"45 Avenue de l'Indépendance, Oran","info_additionnel":"Sonner à l'interphone","lat_depot":"36.7538","lng_depot":"3.0588","lat_delivery":"35.6970","lng_delivery":"-0.6337","destinataire_nom":"Mohamed Benali","destinataire_email":"mohamed@email.com","destinataire_telephone":"0555123456","colis_poids":"2.5","colis_prix":"5000","prix":"800","colis_type":"electronique","wilaya_depot":"Alger","commune_depot":"Hydra","wilaya":"Oran","commune":"Es Senia"} 
+[2026-03-12 09:42:46] local.ERROR: Photo file that FAILED validation: {"size_bytes":326066,"size_kb":318.42,"size_mb":0.31,"mime_type":"image/png","original_name":"Capture d’écran (1).png","is_valid":true,"error_code":0,"error_message":"No error"} 
+[2026-03-12 09:43:41] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:43:41] local.INFO: Request method: POST  
+[2026-03-12 09:43:41] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:43:41] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:43:41] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:43:41] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:43:41] local.ERROR: === VALIDATION FAILED ===  
+[2026-03-12 09:43:41] local.ERROR: Validation errors: {"client_id":["The selected client id is invalid."]} 
+[2026-03-12 09:43:41] local.ERROR: Request data (without photo): {"client_id":"e5e39461-d00d-42e0-8042-66de7acd8e84","addresse_depot":"123 Rue de la Paix, Alger","addresse_delivery":"45 Avenue de l'Indépendance, Oran","info_additionnel":"Sonner à l'interphone","lat_depot":"36.7538","lng_depot":"3.0588","lat_delivery":"35.6970","lng_delivery":"-0.6337","destinataire_nom":"Mohamed Benali","destinataire_email":"mohamed@email.com","destinataire_telephone":"0555123456","colis_poids":"2.5","colis_prix":"5000","prix":"800","colis_type":"electronique","wilaya_depot":"Alger","commune_depot":"Hydra","wilaya":"Oran","commune":"Es Senia"} 
+[2026-03-12 09:43:41] local.ERROR: Photo file that FAILED validation: {"size_bytes":326066,"size_kb":318.42,"size_mb":0.31,"mime_type":"image/png","original_name":"Capture d’écran (1).png","is_valid":true,"error_code":0,"error_message":"No error"} 
+[2026-03-12 09:44:54] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:44:54] local.INFO: Request method: POST  
+[2026-03-12 09:44:54] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:44:54] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:44:54] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:44:54] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:44:54] local.ERROR: === VALIDATION FAILED ===  
+[2026-03-12 09:44:54] local.ERROR: Validation errors: {"client_id":["The selected client id is invalid."]} 
+[2026-03-12 09:44:54] local.ERROR: Request data (without photo): {"client_id":"6308c773-5f79-4708-8b3c-3134d9421928","addresse_depot":"123 Rue de la Paix, Alger","addresse_delivery":"45 Avenue de l'Indépendance, Oran","info_additionnel":"Sonner à l'interphone","lat_depot":"36.7538","lng_depot":"3.0588","lat_delivery":"35.6970","lng_delivery":"-0.6337","destinataire_nom":"Mohamed Benali","destinataire_email":"mohamed@email.com","destinataire_telephone":"0555123456","colis_poids":"2.5","colis_prix":"5000","prix":"800","colis_type":"electronique","wilaya_depot":"Alger","commune_depot":"Hydra","wilaya":"Oran","commune":"Es Senia"} 
+[2026-03-12 09:44:54] local.ERROR: Photo file that FAILED validation: {"size_bytes":326066,"size_kb":318.42,"size_mb":0.31,"mime_type":"image/png","original_name":"Capture d’écran (1).png","is_valid":true,"error_code":0,"error_message":"No error"} 
+[2026-03-12 09:45:45] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:45:45] local.INFO: Request method: POST  
+[2026-03-12 09:45:45] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:45:45] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:45:45] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:45:45] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:45:45] local.ERROR: === VALIDATION FAILED ===  
+[2026-03-12 09:45:45] local.ERROR: Validation errors: {"client_id":["The selected client id is invalid."]} 
+[2026-03-12 09:45:45] local.ERROR: Request data (without photo): {"client_id":"\"6308c773-5f79-4708-8b3c-3134d9421928\"","addresse_depot":"123 Rue de la Paix, Alger","addresse_delivery":"45 Avenue de l'Indépendance, Oran","info_additionnel":"Sonner à l'interphone","lat_depot":"36.7538","lng_depot":"3.0588","lat_delivery":"35.6970","lng_delivery":"-0.6337","destinataire_nom":"Mohamed Benali","destinataire_email":"mohamed@email.com","destinataire_telephone":"0555123456","colis_poids":"2.5","colis_prix":"5000","prix":"800","colis_type":"electronique","wilaya_depot":"Alger","commune_depot":"Hydra","wilaya":"Oran","commune":"Es Senia"} 
+[2026-03-12 09:45:45] local.ERROR: Photo file that FAILED validation: {"size_bytes":326066,"size_kb":318.42,"size_mb":0.31,"mime_type":"image/png","original_name":"Capture d’écran (1).png","is_valid":true,"error_code":0,"error_message":"No error"} 
+[2026-03-12 09:46:01] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:46:01] local.INFO: Request method: POST  
+[2026-03-12 09:46:01] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:46:01] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:46:01] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:46:01] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:46:01] local.ERROR: === VALIDATION FAILED ===  
+[2026-03-12 09:46:01] local.ERROR: Validation errors: {"client_id":["The selected client id is invalid."]} 
+[2026-03-12 09:46:01] local.ERROR: Request data (without photo): {"client_id":"6308c773-5f79-4708-8b3c-3134d9421928","addresse_depot":"123 Rue de la Paix, Alger","addresse_delivery":"45 Avenue de l'Indépendance, Oran","info_additionnel":"Sonner à l'interphone","lat_depot":"36.7538","lng_depot":"3.0588","lat_delivery":"35.6970","lng_delivery":"-0.6337","destinataire_nom":"Mohamed Benali","destinataire_email":"mohamed@email.com","destinataire_telephone":"0555123456","colis_poids":"2.5","colis_prix":"5000","prix":"800","colis_type":"electronique","wilaya_depot":"Alger","commune_depot":"Hydra","wilaya":"Oran","commune":"Es Senia"} 
+[2026-03-12 09:46:01] local.ERROR: Photo file that FAILED validation: {"size_bytes":326066,"size_kb":318.42,"size_mb":0.31,"mime_type":"image/png","original_name":"Capture d’écran (1).png","is_valid":true,"error_code":0,"error_message":"No error"} 
+[2026-03-12 09:47:53] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 09:47:53] local.INFO: Request method: POST  
+[2026-03-12 09:47:53] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 09:47:53] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 09:47:53] local.INFO: Has file colis_photo: YES  
+[2026-03-12 09:47:53] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 09:47:53] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 09:47:53] local.INFO: Photo field exists in request  
+[2026-03-12 09:47:53] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 09:47:55] local.INFO: Photo uploaded successfully {"path":"photos/ANmRVMqQSvtYjx3Nc1s5R0XrfXtHfX3Vs1MuFzZH.png"} 
+[2026-03-12 09:47:55] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 09:47:58] local.INFO: Début attachments() pour la demande #ad66f096-3816-40a5-98fe-a94a31ec24a1  
+[2026-03-12 09:47:58] local.INFO: Livraison #c935e6d9-e2b5-41fc-9001-170e1a87aef4 trouvée, chargement des relations...  
+[2026-03-12 09:47:58] local.INFO: Préparation des données pour le PDF...  
+[2026-03-12 09:47:58] local.INFO: Données préparées avec succès  
+[2026-03-12 09:47:58] local.INFO: Génération du PDF...  
+[2026-03-12 09:48:01] local.INFO: PDF généré, attachement...  
+[2026-03-12 09:48:09] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 09:48:22] local.WARNING: Erreur génération QR Code local: You need to install the imagick extension to use this back end  
+[2026-03-12 10:01:19] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 10:01:19] local.INFO: Request method: POST  
+[2026-03-12 10:01:19] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 10:01:19] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 10:01:19] local.INFO: Has file colis_photo: YES  
+[2026-03-12 10:01:19] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 10:01:19] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 10:01:19] local.INFO: Photo field exists in request  
+[2026-03-12 10:01:19] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 10:01:19] local.INFO: Photo uploaded successfully {"path":"photos/ZQ4WNJrNaaqMYewv0IVK0EjgEmmc3tHZMb5G5iBK.png"} 
+[2026-03-12 10:01:19] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 10:01:19] local.INFO: 📧 [MAIL] Constructeur - Demande #c0204623-7853-46d8-85cf-95fdba311b19  
+[2026-03-12 10:01:19] local.INFO: 📎 [MAIL] Début attachments() pour la demande #c0204623-7853-46d8-85cf-95fdba311b19  
+[2026-03-12 10:01:19] local.INFO: 📦 [MAIL] Livraison #3a4d7e1f-7f22-4024-ae6f-5f6ff3224bc5 trouvée  
+[2026-03-12 10:01:19] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 10:01:19] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 10:01:19] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 10:01:19] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 10:01:19] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 10:01:21] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15688 octets  
+[2026-03-12 10:01:21] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 10:01:36] local.WARNING: Erreur génération QR Code local: You need to install the imagick extension to use this back end  
+[2026-03-12 15:33:35] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 15:33:35] local.INFO: Request method: POST  
+[2026-03-12 15:33:35] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 15:33:35] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 15:33:35] local.INFO: Has file colis_photo: YES  
+[2026-03-12 15:33:35] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 15:33:36] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 15:33:36] local.INFO: Photo field exists in request  
+[2026-03-12 15:33:36] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 15:33:37] local.INFO: Photo uploaded successfully {"path":"photos/4vTMvRumCRD6AsXX2PqkJktkXitZX9QpPAuPlF8b.png"} 
+[2026-03-12 15:33:38] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 15:33:39] local.INFO: 📧 [MAIL] Constructeur - Demande #4c82250d-85f6-4c71-b68c-2fde033fb4e1  
+[2026-03-12 15:33:40] local.INFO: 📎 [MAIL] Début attachments() pour la demande #4c82250d-85f6-4c71-b68c-2fde033fb4e1  
+[2026-03-12 15:33:41] local.INFO: 📦 [MAIL] Livraison #1a14da8b-792f-4460-82dd-efd2c8c4ea44 trouvée  
+[2026-03-12 15:33:41] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 15:33:41] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 15:33:41] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 15:33:41] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 15:33:41] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 15:33:46] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15657 octets  
+[2026-03-12 15:33:47] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 15:34:06] local.WARNING: Erreur génération QR Code local: You need to install the imagick extension to use this back end  
+[2026-03-12 15:35:11] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 15:35:11] local.INFO: Request method: POST  
+[2026-03-12 15:35:11] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 15:35:11] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 15:35:11] local.INFO: Has file colis_photo: YES  
+[2026-03-12 15:35:11] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 15:35:11] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 15:35:11] local.INFO: Photo field exists in request  
+[2026-03-12 15:35:11] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 15:35:11] local.INFO: Photo uploaded successfully {"path":"photos/VVASQfi4zlF8oUOpGayPLyqMjRWKwSFQZHdmA3RO.png"} 
+[2026-03-12 15:35:11] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 15:35:12] local.INFO: 📧 [MAIL] Constructeur - Demande #27442b6e-afc8-453d-a91b-9de4360ccfe2  
+[2026-03-12 15:35:12] local.INFO: 📎 [MAIL] Début attachments() pour la demande #27442b6e-afc8-453d-a91b-9de4360ccfe2  
+[2026-03-12 15:35:12] local.INFO: 📦 [MAIL] Livraison #8a76666b-faf1-4bfe-a397-9035ee49074c trouvée  
+[2026-03-12 15:35:12] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 15:35:12] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 15:35:12] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 15:35:12] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 15:35:12] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 15:35:14] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15668 octets  
+[2026-03-12 15:35:15] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 15:35:37] local.WARNING: Erreur génération QR Code local: You need to install the imagick extension to use this back end  
+[2026-03-12 15:36:11] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 15:36:11] local.INFO: Request method: POST  
+[2026-03-12 15:36:11] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 15:36:11] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 15:36:11] local.INFO: Has file colis_photo: YES  
+[2026-03-12 15:36:11] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 15:36:11] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 15:36:11] local.INFO: Photo field exists in request  
+[2026-03-12 15:36:11] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 15:36:11] local.INFO: Photo uploaded successfully {"path":"photos/cTb74mOAJ14lcprvj8rjv0KJqtD1DCwFxOryY78x.png"} 
+[2026-03-12 15:36:11] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 15:36:11] local.INFO: 📧 [MAIL] Constructeur - Demande #155b0816-fbbe-4135-8733-a60227dfe3f0  
+[2026-03-12 15:36:11] local.INFO: 📎 [MAIL] Début attachments() pour la demande #155b0816-fbbe-4135-8733-a60227dfe3f0  
+[2026-03-12 15:36:11] local.INFO: 📦 [MAIL] Livraison #a071a988-1418-4cd1-a4de-c79c844db41c trouvée  
+[2026-03-12 15:36:11] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 15:36:11] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 15:36:11] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 15:36:11] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 15:36:11] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 15:36:13] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15584 octets  
+[2026-03-12 15:36:13] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 15:36:26] local.WARNING: Erreur génération QR Code local: You need to install the imagick extension to use this back end  
+[2026-03-12 15:41:47] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 15:41:47] local.INFO: Request method: POST  
+[2026-03-12 15:41:47] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 15:41:47] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 15:41:47] local.INFO: Has file colis_photo: YES  
+[2026-03-12 15:41:47] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 15:41:47] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 15:41:47] local.INFO: Photo field exists in request  
+[2026-03-12 15:41:47] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 15:41:47] local.INFO: Photo uploaded successfully {"path":"photos/jbdkRJRYwKGFT12MCNH97QLQwTlxLoIdG0RutNMx.png"} 
+[2026-03-12 15:41:47] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 15:41:47] local.INFO: 📧 [MAIL] Constructeur - Demande #4aad83e7-8b23-433a-b849-4293ece865ef  
+[2026-03-12 15:41:48] local.INFO: 📎 [MAIL] Début attachments() pour la demande #4aad83e7-8b23-433a-b849-4293ece865ef  
+[2026-03-12 15:41:48] local.INFO: 📦 [MAIL] Livraison #2a4b11d8-d89a-46ec-bb04-c41127785d07 trouvée  
+[2026-03-12 15:41:48] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 15:41:48] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 15:41:48] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 15:41:48] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 15:41:48] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 15:48:05] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 15:48:05] local.INFO: Request method: POST  
+[2026-03-12 15:48:05] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 15:48:05] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 15:48:05] local.INFO: Has file colis_photo: YES  
+[2026-03-12 15:48:05] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 15:48:05] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 15:48:05] local.INFO: Photo field exists in request  
+[2026-03-12 15:48:05] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 15:48:05] local.INFO: Photo uploaded successfully {"path":"photos/CYYJBLprfY6cn14Fu3WvX0N7u5p5BLY1ruKsHFmq.png"} 
+[2026-03-12 15:48:05] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 15:48:06] local.INFO: 📧 [MAIL] Constructeur - Demande #56120d88-e5a9-4afc-9322-e70d898aa743  
+[2026-03-12 15:48:06] local.INFO: 📎 [MAIL] Début attachments() pour la demande #56120d88-e5a9-4afc-9322-e70d898aa743  
+[2026-03-12 15:48:06] local.INFO: 📦 [MAIL] Livraison #c9fea0e9-d815-43fb-a42e-2606cff91a67 trouvée  
+[2026-03-12 15:48:06] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 15:48:06] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 15:48:06] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 15:48:06] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 15:48:06] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 16:01:26] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 16:01:26] local.INFO: Request method: POST  
+[2026-03-12 16:01:26] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 16:01:26] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 16:01:26] local.INFO: Has file colis_photo: YES  
+[2026-03-12 16:01:26] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 16:01:26] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 16:01:26] local.INFO: Photo field exists in request  
+[2026-03-12 16:01:26] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 16:01:27] local.INFO: Photo uploaded successfully {"path":"photos/I4aX7VVDp0W2Wje0QniDG7gYuO2bOvNSCMLEaBCP.png"} 
+[2026-03-12 16:01:27] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 16:01:27] local.INFO: 📧 [MAIL] Constructeur - Demande #e9e50c28-27fc-4a5a-a759-3efda1d07001  
+[2026-03-12 16:01:27] local.INFO: 📎 [MAIL] Début attachments() pour la demande #e9e50c28-27fc-4a5a-a759-3efda1d07001  
+[2026-03-12 16:01:27] local.INFO: 📦 [MAIL] Livraison #220a0d1e-21a5-4905-a53b-f22cc1b72e6d trouvée  
+[2026-03-12 16:01:27] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 16:01:27] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 16:01:27] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 16:01:27] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 16:01:27] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 16:16:33] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 16:16:33] local.INFO: Request method: POST  
+[2026-03-12 16:16:33] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 16:16:33] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 16:16:33] local.INFO: Has file colis_photo: YES  
+[2026-03-12 16:16:33] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 16:16:34] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 16:16:34] local.INFO: Photo field exists in request  
+[2026-03-12 16:16:34] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 16:16:34] local.INFO: Photo uploaded successfully {"path":"photos/vFju3UgcCA1y8dWEFK5LOdV0m0Onq6CESMmwdZgZ.png"} 
+[2026-03-12 16:16:34] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 16:16:34] local.INFO: 📧 [MAIL] Constructeur - Demande #3dd8efa1-eceb-4b19-ae4c-3cb1ddc966ab  
+[2026-03-12 16:16:34] local.INFO: 📎 [MAIL] Début attachments() pour la demande #3dd8efa1-eceb-4b19-ae4c-3cb1ddc966ab  
+[2026-03-12 16:16:34] local.INFO: 📦 [MAIL] Livraison #888a63d0-8391-49c8-bbc2-9ad1dec61330 trouvée  
+[2026-03-12 16:16:34] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 16:16:34] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 16:16:34] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 16:16:34] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 16:16:34] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-12 16:16:36] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15689 octets  
+[2026-03-12 16:16:36] local.INFO: Email de confirmation envoyé au client: paul@gmail.com  
+[2026-03-12 16:18:27] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-12 16:18:27] local.INFO: Request method: POST  
+[2026-03-12 16:18:28] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-12 16:18:28] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-12 16:18:28] local.INFO: Has file colis_photo: YES  
+[2026-03-12 16:18:28] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-12 16:18:28] local.INFO: === VALIDATION PASSED ===  
+[2026-03-12 16:18:28] local.INFO: Photo field exists in request  
+[2026-03-12 16:18:28] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-12 16:18:28] local.INFO: Photo uploaded successfully {"path":"photos/dwYmyNxSPdAhr5hGHBuLKMLM5owM1vgkd2FfwuZe.png"} 
+[2026-03-12 16:18:28] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-12 16:18:28] local.INFO: 📧 [MAIL] Constructeur - Demande #44acad4e-39f0-44f5-8d7e-112f0c8609fc  
+[2026-03-12 16:18:28] local.INFO: 📎 [MAIL] Début attachments() pour la demande #44acad4e-39f0-44f5-8d7e-112f0c8609fc  
+[2026-03-12 16:18:28] local.INFO: 📦 [MAIL] Livraison #e8238945-06d6-4acb-bcaf-87e5c076226a trouvée  
+[2026-03-12 16:18:28] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-12 16:18:28] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-12 16:18:28] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-12 16:18:28] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-12 16:18:28] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  

@@ -98,5 +98,10 @@ class User extends Authenticatable
         return $this->hasMany(DemandeAdhesion::class);
     }
 
+    public function gestionnaire()
+{
+    return $this->hasOne(Gestionnaire::class);
+}
+
 
 }

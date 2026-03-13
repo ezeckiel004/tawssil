@@ -25,6 +25,8 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LivraisonsExport;
 
 class LivraisonController extends Controller
 {
@@ -420,15 +422,13 @@ class LivraisonController extends Controller
      */
     public function assignLivreur(Request $request, $id): JsonResponse
     {
-        Log::info("Début attribution livreur pour livraison ID: " . $id);
-
         $validated = Validator::make($request->all(), [
-            'livreur_id' => 'required|string|exists:livreurs,id',
-            'type' => 'required|integer|in:1,2',
+            'livreur_id' => 'required|string|exists:livreurs,id', // Vérifie que le livreur existe
+            'type' => 'required|integer|in:1,2', // 1 pour ramasseur, 2 pour distributeur
         ]);
 
+
         if ($validated->fails()) {
-            Log::warning("Validation échouée pour l'attribution de livreur: " . json_encode($validated->errors()));
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de validation',
@@ -438,19 +438,16 @@ class LivraisonController extends Controller
 
         $validatedData = $validated->validated();
 
-        $livraison = $this->findLivraison($id);
+        $livraison = Livraison::find($id);
         $type = $validatedData['type'];
 
         if (!$livraison) {
-            Log::warning("Livraison introuvable pour attribution: " . $id);
             return response()->json([
                 'success' => false,
                 'message' => 'Livraison introuvable',
             ], 404);
         }
-
         if (Auth::user()->role !== 'admin') {
-            Log::warning("Utilisateur non autorisé à attribuer un livreur: " . Auth::user()->id);
             return response()->json([
                 'success' => false,
                 'message' => 'Vous n\'êtes pas autorisé à attribuer un livreur à cette livraison',
@@ -460,54 +457,71 @@ class LivraisonController extends Controller
         try {
             DB::beginTransaction();
 
+            // Mettre à jour le livreur de la livraison
             if ($type == 2) {
-                if ($livraison->status == 'en_transit') {
-                    Log::warning("Impossible d'attribuer un distributeur, colis déjà en transit: " . $id);
+                // Type 2 : Livreurs distributeurs (ne peut être assigné que si le statut est 'en_transit')
+                if ($livraison->status !== 'en_transit') {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Le colis est deja en transit, vous ne pouvez plus  attribuer un autre distributeur',
+                        'message' => 'Le distributeur ne peut être assigné que lorsque la livraison est en transit',
                     ], 400);
-                } else {
-                    Log::info("Attribution du distributeur " . $validatedData['livreur_id'] . " à la livraison " . $id);
-                    $livraison->update([
-                        'livreur_distributeur_id' => $validatedData['livreur_id'],
-                        'status' => 'prise_en_charge_livraison'
-                    ]);
                 }
+
+                $livraison->update([
+                    'livreur_distributeur_id' => $validatedData['livreur_id'],
+                ]);
             } elseif ($type == 1) {
-                if ($livraison->status == 'ramasse') {
-                    Log::warning("Impossible d'attribuer un ramasseur, colis déjà ramassé: " . $id);
+                // Type 1 : Livreurs ramasseurs (ne peut être assigné que si le statut n'est pas 'ramasse')
+                if ($livraison->status === 'ramasse') {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Le colis a deja ete ramasse , vous ne pouvez plus  attribuer un autre ramasseur',
+                        'message' => 'Le colis a déjà été ramassé, vous ne pouvez plus attribuer un autre ramasseur',
                     ], 400);
-                } else {
-                    Log::info("Attribution du ramasseur " . $validatedData['livreur_id'] . " à la livraison " . $id);
-                    $livraison->update([
-                        'livreur_ramasseur_id' => $validatedData['livreur_id'],
-                        'status' => 'prise_en_charge_ramassage'
-                    ]);
                 }
+
+                $livraison->update([
+                    'livreur_ramasseur_id' => $validatedData['livreur_id'],
+                    'status' => 'prise_en_charge_ramassage'
+                ]);
             } else {
-                Log::warning("Type de livreur invalide: " . $type);
                 return response()->json([
                     'success' => false,
                     'message' => 'Type de livreur invalide',
                 ], 400);
             }
 
+            /*
+            $notificationController = new NotificationController();
+            // Envoi de la notification à l'utilisateur
+            $notificationController->sendNotificationToUser(
+                userId: $livraison->demandeLivraison->client_id,
+                type: NotificationType::LIVRAISON_CONFIRMER,
+                title: "Livreur attribué à la livraison",
+                body: "Un livreur a été attribué à votre livraison. Veuillez vérifier les détails de la livraison."
+            );
+            // Envoi de la notification au livreur
+            $notificationController->sendNotificationToUser(
+                userId: $validatedData['livreur_id'],
+                type: NotificationType::LIVRAISON_ATTRIBUER,
+                title: "Vous avez été attribué à une livraison",
+                body: "Vous avez été attribué à une livraison. Veuillez vérifier les détails de la livraison."
+            );
+            */
             DB::commit();
 
-            Log::info("Livreur attribué avec succès à la livraison " . $id);
-
+            /*
+            return response()->json([
+                'success' => true,
+                'message' => 'Livreur attribué avec succès à la livraison',
+                'data' => $livraison,
+            ], 200);
+            */
             return response()->json(
                 $livraison,
                 200
             );
         } catch (\Exception $e) {
             DB::rollBack();
-
-            Log::error("Erreur lors de l'attribution du livreur à la livraison {$id}: " . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -727,16 +741,17 @@ class LivraisonController extends Controller
             $livraison = $this->findLivraison($id);
 
             if (!$livraison) {
-                Log::warning("Livraison introuvable pour génération HTML - ID: " . $id);
                 return response()->json([
                     'success' => false,
                     'message' => 'Livraison introuvable',
                 ], 404);
             }
 
-            Log::info("Livraison trouvée pour HTML - ID: " . $livraison->id);
-
             $data = $this->preparePrintData($livraison);
+
+            // Ajouter la taille pour le HTML
+            $data['pageWidth'] = '100mm';
+            $data['pageHeight'] = '150mm';
 
             Log::info("Données préparées pour HTML - Livraison: " . $livraison->id);
 
@@ -886,13 +901,15 @@ class LivraisonController extends Controller
     /**
      * Générer et télécharger le PDF du bordereau
      */
+    /**
+     * Générer et télécharger le PDF du bordereau (étiquette 10x15 cm)
+     */
     public function generateBordereauPDF($id)
     {
-        Log::info("Début génération PDF - ID: " . $id);
+        Log::info("Début génération PDF bordereau - ID: " . $id);
 
         try {
             $livraison = $this->findLivraison($id);
-
             if (!$livraison) {
                 return response()->json([
                     'success' => false,
@@ -902,23 +919,45 @@ class LivraisonController extends Controller
 
             $data = $this->preparePrintData($livraison);
 
+            // Chargement de la vue
             $pdf = Pdf::loadView('pdf.bordereau', $data);
 
-            // Configuration SIMPLE et FONCTIONNELLE
-            $pdf->setPaper([0, 0, 380, 700], 'portrait');
-            $pdf->setOption('enable_html5_parser', true);
-            $pdf->setOption('enable_remote', true);
-            $pdf->setOption('defaultFont', 'Arial');
+            // Configuration précise pour format 100mm × 150mm
+            $pdf->setPaper([0, 0, 283.464, 425.197], 'portrait'); // 100mm = 283.464pt, 150mm = 425.197pt @72dpi
 
-            $fileName = 'bordereau_livraison_' . $livraison->id . '.pdf';
+            // Options importantes pour le support UTF-8 et les caractères accentués/arabe
+            $pdf->setOptions([
+                'defaultFont'             => 'DejaVuSans',           // Police qui supporte accents + arabe
+                'isHtml5ParserEnabled'    => true,
+                'isRemoteEnabled'         => true,
+                'dpi'                     => 96,
+                'margin-top'              => 0,
+                'margin-right'            => 0,
+                'margin-bottom'           => 0,
+                'margin-left'             => 0,
+                'isFontSubsettingEnabled' => true,
+                'defaultPaperSize'        => [0, 0, 283.464, 425.197],
+                'tempDir'                 => storage_path('app/temp'), // dossier temporaire
+            ]);
+
+            // Forcer explicitement l'encodage UTF-8
+            $pdf->getDomPDF()->set_option('default_charset', 'UTF-8');
+            $pdf->getDomPDF()->set_option('font_height_ratio', '1.0');
+
+            // Nom du fichier
+            $fileName = 'bordereau_livraison_' . $livraison->id . '_' . now()->format('Ymd-His') . '.pdf';
+
+            Log::info("PDF bordereau généré avec succès pour livraison #" . $livraison->id);
 
             return $pdf->download($fileName);
         } catch (\Exception $e) {
-            Log::error('Erreur génération PDF - ID ' . $id . ': ' . $e->getMessage());
+            Log::error('Erreur génération PDF bordereau - ID ' . $id . ' : ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la génération du PDF',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -962,10 +1001,6 @@ class LivraisonController extends Controller
     private function preparePrintData($livraison): array
     {
         try {
-
-
-
-
             $livraison->load([
                 'demandeLivraison.client.user',
                 'demandeLivraison.destinataire.user',
@@ -977,7 +1012,24 @@ class LivraisonController extends Controller
             $demande = $livraison->demandeLivraison;
             $colis = $demande->colis ?? null;
             $client = $demande->client->user ?? null;
-            $destinataire = $demande->destinataire->user ?? null;
+
+            // Récupérer le destinataire
+            $destinataire = null;
+
+            if ($demande->destinataire && $demande->destinataire->user) {
+                $destinataire = $demande->destinataire->user;
+            } else if (isset($demande->destinataire) && is_object($demande->destinataire)) {
+                $destinataire = $demande->destinataire;
+            } else {
+                $destinataire = new \stdClass();
+                $destinataire->prenom = $demande->destinataire_prenom ?? '';
+                $destinataire->nom = $demande->destinataire_nom ?? '';
+                $destinataire->telephone = $demande->telephone_destinataire
+                    ?? $demande->destinataire_telephone
+                    ?? $demande->destinataire_phone
+                    ?? '';
+            }
+
             $livreurRamasseur = $livraison->livreurRamasseur->user ?? null;
             $livreurDistributeur = $livraison->livreurDistributeur->user ?? null;
 
@@ -997,16 +1049,133 @@ class LivraisonController extends Controller
             if ($demande) {
                 $demande->addresse_depot = $this->cleanText($demande->addresse_depot ?? '');
                 $demande->addresse_delivery = $this->cleanText($demande->addresse_delivery ?? '');
+                $demande->wilaya = $this->cleanText($demande->wilaya ?? '');
+                $demande->commune = $this->cleanText($demande->commune ?? '');
             }
 
-
-
-            // GÉNÉRATION DES IMAGES SIMPLES
+            // GÉNÉRATION DES IMAGES
             $qrCode = $this->generateSimpleQRCode($livraison);
             $barcodeValue = $colis->colis_label ?? 'COLIS-' . $livraison->id;
             $barcode = $this->generateSimpleBarcode($barcodeValue);
 
-            $printDate = now()->locale('fr_FR')->isoFormat('DD/MM/YYYY');
+            // EXTRAIRE LA WILAYA D'ARRIVÉE
+            $wilayaNumber = '';
+            $wilayaName = '';
+
+            // Table de correspondance (nom wilaya -> numéro)
+            $wilayaMap = [
+                'Adrar' => '01',
+                'Chlef' => '02',
+                'Laghouat' => '03',
+                'Oum El Bouaghi' => '04',
+                'Batna' => '05',
+                'Béjaïa' => '06',
+                'Biskra' => '07',
+                'Béchar' => '08',
+                'Blida' => '09',
+                'Bouira' => '10',
+                'Tamanrasset' => '11',
+                'Tébessa' => '12',
+                'Tlemcen' => '13',
+                'Tiaret' => '14',
+                'Tizi Ouzou' => '15',
+                'Alger' => '16',
+                'Djelfa' => '17',
+                'Jijel' => '18',
+                'Sétif' => '19',
+                'Saïda' => '20',
+                'Skikda' => '21',
+                'Sidi Bel Abbès' => '22',
+                'Annaba' => '23',
+                'Guelma' => '24',
+                'Constantine' => '25',
+                'Médéa' => '26',
+                'Mostaganem' => '27',
+                'M\'Sila' => '28',
+                'Mascara' => '29',
+                'Ouargla' => '30',
+                'Oran' => '31',
+                'El Bayadh' => '32',
+                'Illizi' => '33',
+                'Bordj Bou Arréridj' => '34',
+                'Boumerdès' => '35',
+                'El Tarf' => '36',
+                'Tindouf' => '37',
+                'Tissemsilt' => '38',
+                'El Oued' => '39',
+                'Khenchela' => '40',
+                'Souk Ahras' => '41',
+                'Tipaza' => '42',
+                'Mila' => '43',
+                'Aïn Defla' => '44',
+                'Naâma' => '45',
+                'Aïn Témouchent' => '46',
+                'Ghardaïa' => '47',
+                'Relizane' => '48',
+                'Timimoun' => '49',
+                'Bordj Badji Mokhtar' => '50',
+                'Ouled Djellal' => '51',
+                'Béni Abbès' => '52',
+                'In Salah' => '53',
+                'In Guezzam' => '54',
+                'Touggourt' => '55',
+                'Djanet' => '56',
+                'El M\'Ghair' => '57',
+                'El Meniaa' => '58',
+            ];
+
+            // Table inverse (numéro -> nom)
+            $numeroMap = [];
+            foreach ($wilayaMap as $nom => $num) {
+                $numeroMap[$num] = $nom;
+            }
+
+            // Récupérer la valeur du champ wilaya
+            $wilayaValue = trim($demande->wilaya ?? '');
+
+            if (!empty($wilayaValue)) {
+                Log::info("LIVRAISON #{$livraison->id} - wilayaValue: " . $wilayaValue);
+
+                // CAS 1: C'est un numéro (ex: "42")
+                if (is_numeric($wilayaValue)) {
+                    $numeroFormate = str_pad($wilayaValue, 2, '0', STR_PAD_LEFT);
+                    $wilayaNumber = $numeroFormate;
+                    $wilayaName = $numeroMap[$numeroFormate] ?? '';
+                    Log::info("CAS 1 - Numéro: {$wilayaNumber}, Nom: {$wilayaName}");
+                }
+                // CAS 2: C'est un nom (ex: "Boumerdès", "Alger")
+                else {
+                    // Chercher le nom exact (insensible à la casse)
+                    $found = false;
+                    foreach ($wilayaMap as $nom => $num) {
+                        // Comparaison insensible à la casse et aux accents
+                        if (strcasecmp(trim($nom), trim($wilayaValue)) === 0) {
+                            $wilayaName = $nom;
+                            $wilayaNumber = $num;
+                            $found = true;
+                            Log::info("CAS 2 - Correspondance exacte: {$nom} -> {$num}");
+                            break;
+                        }
+                    }
+
+                    // Si pas trouvé, chercher partiellement
+                    if (!$found) {
+                        foreach ($wilayaMap as $nom => $num) {
+                            if (stripos($wilayaValue, $nom) !== false || stripos($nom, $wilayaValue) !== false) {
+                                $wilayaName = $nom;
+                                $wilayaNumber = $num;
+                                Log::info("CAS 2 - Correspondance partielle: {$nom} -> {$num}");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Date de création
+            $printDate = $livraison->created_at
+                ? Carbon::parse($livraison->created_at)->locale('fr_FR')->isoFormat('DD/MM/YYYY')
+                : now()->locale('fr_FR')->isoFormat('DD/MM/YYYY');
 
             $statusLabels = [
                 'en_attente' => 'En attente',
@@ -1019,6 +1188,8 @@ class LivraisonController extends Controller
             ];
 
             $statusLabel = $statusLabels[$livraison->status] ?? str_replace('_', ' ', $livraison->status);
+
+            Log::info("RÉSULTAT FINAL #{$livraison->id} - wilayaNumber: {$wilayaNumber}, wilayaName: {$wilayaName}");
 
             return [
                 'livraison' => $livraison,
@@ -1033,10 +1204,173 @@ class LivraisonController extends Controller
                 'colisLabel' => $barcodeValue,
                 'printDate' => $printDate,
                 'statusLabel' => $statusLabel,
+                'wilayaNumber' => $wilayaNumber,
+                'wilayaName' => $wilayaName,
             ];
         } catch (\Exception $e) {
             Log::error("Erreur préparation données: " . $e->getMessage());
             throw $e;
+        }
+    }
+
+
+    private function extractWilayaFromLivraison($livraison)
+    {
+        $demande = $livraison->demandeLivraison;
+        $adresseLivraison = $demande->addresse_delivery ?? '';
+        $wilayaNumber = '';
+        $wilayaName = '';
+
+        // Table de correspondance complète des 58 wilayas (nom -> numéro)
+        $wilayaMap = [
+            // Wilayas 1-48
+            'ADRAR' => '01',
+            'CHLEF' => '02',
+            'LAGHOUAT' => '03',
+            'OUM EL BOUAGHI' => '04',
+            'BATNA' => '05',
+            'BEJAIA' => '06',
+            'BISKRA' => '07',
+            'BECHAR' => '08',
+            'BLIDA' => '09',
+            'BOUIRA' => '10',
+            'TAMANRASSET' => '11',
+            'TEBESSA' => '12',
+            'TLEMCEN' => '13',
+            'TIARET' => '14',
+            'TIZI OUZOU' => '15',
+            'ALGER' => '16',
+            'DJELFA' => '17',
+            'JIJEL' => '18',
+            'SETIF' => '19',
+            'SAIDA' => '20',
+            'SKIKDA' => '21',
+            'SIDI BEL ABBES' => '22',
+            'ANNABA' => '23',
+            'GUELMA' => '24',
+            'CONSTANTINE' => '25',
+            'MEDEA' => '26',
+            'MOSTAGANEM' => '27',
+            'M\'SILA' => '28',
+            'MSILA' => '28', // Variante sans apostrophe
+            'MASCARA' => '29',
+            'OUARGLA' => '30',
+            'ORAN' => '31',
+            'EL BAYADH' => '32',
+            'ILLIZI' => '33',
+            'BORDJ BOU ARRERIDJ' => '34',
+            'BOUMERDES' => '35',
+            'EL TARF' => '36',
+            'TINDOUF' => '37',
+            'TISSEMSILT' => '38',
+            'EL OUED' => '39',
+            'KHENCHELA' => '40',
+            'SOUK AHRAS' => '41',
+            'TIPAZA' => '42',
+            'MILA' => '43',
+            'AIN DEFLA' => '44',
+            'NAAMA' => '45',
+            'AIN TEMOUCHENT' => '46',
+            'GHARDAIA' => '47',
+            'RELIZANE' => '48',
+
+            // Nouvelles wilayas 49-58
+            'TIMIMOUN' => '49',
+            'BORDJ BADJI MOKHTAR' => '50',
+            'OULED DJELLAL' => '51',
+            'BENI ABBES' => '52',
+            'IN SALAH' => '53',
+            'IN GUEZZAM' => '54',
+            'TOUGGOURT' => '55',
+            'DJANET' => '56',
+            'EL M\'GHAIR' => '57',
+            'EL MENIAA' => '58',
+            'EL MGHAIR' => '57', // Variante sans apostrophe
+        ];
+
+        // Cas spéciaux pour les noms composés
+        $specialCases = [
+            'OUM EL BOUAGHI' => '04',
+            'SIDI BEL ABBES' => '22',
+            'BORDJ BOU ARRERIDJ' => '34',
+            'BORDJ BADJI MOKHTAR' => '50',
+            'OULED DJELLAL' => '51',
+            'BENI ABBES' => '52',
+            'IN SALAH' => '53',
+            'IN GUEZZAM' => '54',
+            'EL M\'GHAIR' => '57',
+            'EL MGHAIR' => '57',
+            'EL MENIAA' => '58',
+        ];
+
+        // Fonction pour chercher une wilaya dans un texte
+        $findWilayaInText = function ($text) use ($wilayaMap, $specialCases) {
+            if (empty($text)) return null;
+
+            $textUpper = strtoupper($text);
+
+            // Chercher les cas spéciaux d'abord
+            foreach ($specialCases as $nom => $num) {
+                if (strpos($textUpper, $nom) !== false) {
+                    return ['num' => $num, 'nom' => $nom];
+                }
+            }
+
+            // Recherche standard
+            foreach ($wilayaMap as $nom => $num) {
+                if (strpos($textUpper, $nom) !== false) {
+                    return ['num' => $num, 'nom' => $nom];
+                }
+            }
+
+            return null;
+        };
+
+        // 1. Chercher d'abord dans le champ wilaya de la demande
+        $wilayaText = trim($demande->wilaya ?? '');
+        if (!empty($wilayaText)) {
+            $result = $findWilayaInText($wilayaText);
+            if ($result) {
+                $wilayaNumber = $result['num'];
+                $wilayaName = $result['nom'];
+            }
+        }
+
+        // 2. Si pas trouvé, chercher dans l'adresse de livraison
+        if (empty($wilayaNumber) && !empty($adresseLivraison)) {
+            $result = $findWilayaInText($adresseLivraison);
+            if ($result) {
+                $wilayaNumber = $result['num'];
+                $wilayaName = $result['nom'];
+            }
+        }
+
+        // 3. Fallback : ne rien mettre si non trouvé
+        // (pas de fallback sur Alger)
+
+        return [
+            'number' => $wilayaNumber,
+            'name' => $wilayaName,
+        ];
+    }
+
+    public function debugDate($id)
+    {
+        try {
+            $livraison = $this->findLivraison($id);
+
+            if (!$livraison) {
+                return response()->json(['error' => 'Livraison non trouvée'], 404);
+            }
+
+            return response()->json([
+                'livraison_id' => $livraison->id,
+                'created_at_bdd' => $livraison->created_at,
+                'created_at_formate' => Carbon::parse($livraison->created_at)->format('d/m/Y H:i:s'),
+                'printDate_corrigee' => Carbon::parse($livraison->created_at)->locale('fr_FR')->isoFormat('DD/MM/YYYY'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -1442,6 +1776,251 @@ class LivraisonController extends Controller
                 'success' => false,
                 'message' => 'Erreur lors du calcul des statistiques',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Exporter les livraisons en Excel, CSV ou PDF
+     */
+    public function exportExcel(Request $request)
+    {
+        // Vérifier si admin
+        if ($request->user()->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé. Admin requis.',
+            ], 403);
+        }
+
+        try {
+            // Récupérer les paramètres de filtrage
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $startDate = $request->query('startDate', '');
+            $endDate = $request->query('endDate', '');
+            $format = $request->query('format', 'xlsx');
+
+            \Log::info('Export livraisons demandé avec paramètres:', [
+                'format' => $format,
+                'search' => $search,
+                'status' => $status,
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ]);
+
+            // Si format PDF, utiliser la méthode existante
+            if ($format === 'pdf') {
+                return $this->exportPDF($request);
+            }
+
+            // Vérifier le nombre de résultats
+            $countQuery = Livraison::query()
+                ->when($search, function ($q) use ($search) {
+                    $q->where(function ($query) use ($search) {
+                        $query->where('code_pin', 'like', '%' . $this->search . '%')
+                            ->orWhereHas('client.user', function ($q) {
+                                $q->where('nom', 'like', '%' . $this->search . '%')
+                                    ->orWhere('prenom', 'like', '%' . $this->search . '%');
+                            })
+                            ->orWhereHas('demandeLivraison.colis', function ($q) {
+                                $q->where('colis_label', 'like', '%' . $this->search . '%');
+                            });
+                    });
+                })
+                ->when($status, function ($q) use ($status) {
+                    $q->where('status', $status);
+                })
+                ->when($startDate, function ($q) use ($startDate) {
+                    $q->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($q) use ($endDate) {
+                    $q->whereDate('created_at', '<=', $endDate);
+                });
+
+            $count = $countQuery->count();
+
+            // Limiter à 10,000 lignes maximum
+            if ($count > 10000) {
+                \Log::warning('Trop de livraisons pour l\'export Excel: ' . $count);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Trop de données à exporter (' . $count . ' livraisons). ' .
+                        'Veuillez appliquer des filtres plus restrictifs ou ' .
+                        'contacter l\'administrateur système.',
+                ], 400);
+            }
+
+            // Générer un nom de fichier unique
+            $filename = 'livraisons-export-' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $format;
+
+            // Créer l'instance d'export avec les filtres
+            $export = new LivraisonsExport($search, $status, $startDate, $endDate);
+
+            // Exporter selon le format demandé
+            switch ($format) {
+                case 'csv':
+                    return Excel::download($export, $filename, \Maatwebsite\Excel\Excel::CSV, [
+                        'Content-Type' => 'text/csv',
+                    ]);
+                default:
+                    return Excel::download($export, $filename, \Maatwebsite\Excel\Excel::XLSX, [
+                        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Erreur exportExcel livraisons: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            // Message d'erreur adapté
+            if (strpos($e->getMessage(), 'memory') !== false) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur de mémoire lors de l\'export. ' .
+                        'Veuillez appliquer des filtres plus restrictifs ' .
+                        'ou contacter l\'administrateur système.',
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'export: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Exporter les livraisons en PDF
+     */
+    public function exportPDF(Request $request)
+    {
+        // Vérifier si admin
+        if ($request->user()->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès non autorisé. Admin requis.',
+            ], 403);
+        }
+
+        try {
+            // Récupérer les paramètres de filtrage
+            $search = $request->query('search', '');
+            $status = $request->query('status', '');
+            $startDate = $request->query('startDate', '');
+            $endDate = $request->query('endDate', '');
+
+            \Log::info('Export PDF livraisons avec paramètres:', [
+                'search' => $search,
+                'status' => $status,
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ]);
+
+            // Récupérer les livraisons avec filtres
+            $query = Livraison::query()
+                ->with([
+                    'client.user',
+                    'demandeLivraison.colis',
+                    'livreurRamasseur.user',
+                    'livreurDistributeur.user',
+                    'demandeLivraison.destinataire.user'
+                ])
+                ->when($search, function ($q) use ($search) {
+                    $q->where(function ($query) use ($search) {
+                        $query->where('code_pin', 'like', "%{$search}%")
+                            ->orWhere('id', 'like', "%{$search}%")
+                            ->orWhereHas('client.user', function ($q) use ($search) {
+                                $q->where('nom', 'like', "%{$search}%")
+                                    ->orWhere('prenom', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('demandeLivraison.colis', function ($q) use ($search) {
+                                $q->where('colis_label', 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('demandeLivraison.destinataire.user', function ($q) use ($search) {
+                                $q->where('nom', 'like', "%{$search}%")
+                                    ->orWhere('prenom', 'like', "%{$search}%");
+                            });
+                    });
+                })
+                ->when($status, function ($q) use ($status) {
+                    $q->where('status', $status);
+                })
+                ->when($startDate, function ($q) use ($startDate) {
+                    $q->whereDate('created_at', '>=', $startDate);
+                })
+                ->when($endDate, function ($q) use ($endDate) {
+                    $q->whereDate('created_at', '<=', $endDate);
+                })
+                ->orderBy('created_at', 'desc');
+
+            $livraisons = $query->get();
+
+            \Log::info('Nombre de livraisons trouvées pour PDF:', ['count' => $livraisons->count()]);
+
+            // Calculer les statistiques
+            $stats = [
+                'total' => $livraisons->count(),
+                'en_attente' => $livraisons->where('status', 'en_attente')->count(),
+                'en_cours' => $livraisons->whereNotIn('status', ['en_attente', 'livre', 'annule'])->count(),
+                'livre' => $livraisons->where('status', 'livre')->count(),
+                'annule' => $livraisons->where('status', 'annule')->count(),
+            ];
+
+            // Traduire les statuts
+            $statusLabels = [
+                'en_attente' => 'En attente',
+                'prise_en_charge_ramassage' => 'Prise en charge ramassage',
+                'ramasse' => 'Ramasse',
+                'en_transit' => 'En transit',
+                'prise_en_charge_livraison' => 'Prise en charge livraison',
+                'livre' => 'Livré',
+                'annule' => 'Annulé',
+            ];
+
+            $statusFilterLabel = $status ? ($statusLabels[$status] ?? $status) : 'Tous';
+
+            // Préparer les données pour la vue
+            $data = [
+                'livraisons' => $livraisons,
+                'stats' => $stats,
+                'filters' => [
+                    'search' => $search,
+                    'status' => $statusFilterLabel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                ],
+                'statusLabels' => $statusLabels,
+            ];
+
+            // Générer le nom de fichier
+            $filename = 'livraisons-export-' . Carbon::now()->format('Y-m-d-H-i-s') . '.pdf';
+
+            // Générer le PDF
+            $pdf = PDF::loadView('pdf.livraisons', $data);
+
+            // Options PDF
+            $pdf->setPaper('A4', 'landscape');
+            $pdf->setOptions([
+                'defaultFont' => 'Arial',
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'dpi' => 150,
+            ]);
+
+            \Log::info('PDF livraisons généré avec succès, téléchargement...');
+
+            // Retourner le PDF pour téléchargement
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la génération du PDF des livraisons: ' . $e->getMessage());
+            \Log::error('Trace:', $e->getTrace());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la génération du PDF: ' . $e->getMessage(),
+                'error' => env('APP_DEBUG') ? $e->getTraceAsString() : null,
             ], 500);
         }
     }

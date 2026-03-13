@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Livraison;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class LivreurCourseController extends Controller
 {
@@ -142,7 +144,31 @@ class LivreurCourseController extends Controller
             // (pas selon $livreur->type, mais selon qui est assigné)
             $userRoleInThisDelivery = '';
             
-            if ($course->livreur_ramasseur_id === $livreurId) {
+            // ✅ Si c'est la MÊME PERSONNE pour les deux rôles, déterminer le rôle par le statut
+            $isSamePerson = (
+                $course->livreur_ramasseur_id === $livreurId && 
+                $course->livreur_distributeur_id === $livreurId
+            );
+            
+            // ✅ Cas spécial: Ramasseur qui continue en tant que distributeur
+            // Si le distributeur n'a pas été assigné, mais c'est la même personne qui était ramasseur
+            // et le statut est déjà en_transit (ramassage terminé), elle peut continuer
+            $isRamasseurContinuingAsDistributeur = (
+                $course->livreur_ramasseur_id === $livreurId &&
+                ($course->livreur_distributeur_id === null || $course->livreur_distributeur_id === '') &&
+                in_array($currentStatus, ['en_transit', 'prise_en_charge_livraison', 'livre'])
+            );
+            
+            if ($isSamePerson) {
+                // Déterminer le rôle basé sur le statut actuel
+                $pickupStatuses = ['en_attente', 'prise_en_charge_ramassage', 'ramasse'];
+                $userRoleInThisDelivery = in_array($currentStatus, $pickupStatuses) ? 'ramasseur' : 'distributeur';
+                \Log::info('🎯 SAME PERSON - Role determined by status: ' . $currentStatus . ' → ' . $userRoleInThisDelivery);
+            } elseif ($isRamasseurContinuingAsDistributeur) {
+                // Le ramasseur continue comme distributeur
+                $userRoleInThisDelivery = 'distributeur';
+                \Log::info('🎯 RAMASSEUR CONTINUING AS DISTRIBUTEUR - Status: ' . $currentStatus);
+            } elseif ($course->livreur_ramasseur_id === $livreurId) {
                 $userRoleInThisDelivery = 'ramasseur';
             } elseif ($course->livreur_distributeur_id === $livreurId) {
                 $userRoleInThisDelivery = 'distributeur';
@@ -151,6 +177,9 @@ class LivreurCourseController extends Controller
             \Log::info('Role determination - Livreur ID: ' . $livreurId . 
                        ', Ramasseur ID: ' . $course->livreur_ramasseur_id . 
                        ', Distributeur ID: ' . $course->livreur_distributeur_id . 
+                       ', Is Same Person: ' . ($isSamePerson ? 'YES' : 'NO') .
+                       ', Is Ramasseur Continuing: ' . ($isRamasseurContinuingAsDistributeur ? 'YES' : 'NO') .
+                       ', Current Status: ' . $currentStatus .
                        ', Determined Role: ' . $userRoleInThisDelivery);
 
             // 🔄 Déterminer le prochain statut selon le rôle du livreur DANS CETTE LIVRAISON
@@ -181,8 +210,23 @@ class LivreurCourseController extends Controller
                 ], 422);
             }
 
-            // Mettre à jour le statut
-            $course->update(['status' => $nextStatus]);
+            // 📅 Préparer les données de mise à jour avec les dates
+            $updateData = ['status' => $nextStatus];
+
+            // ✅ Mettre à jour la date de ramassage quand le ramassage est terminé
+            if ($userRoleInThisDelivery === 'ramasseur' && $nextStatus === 'ramasse') {
+                $updateData['date_ramassage'] = Carbon::now()->toDateString();
+                \Log::info("📅 Date de ramassage mise à jour: " . Carbon::now()->toDateString());
+            }
+
+            // ✅ Mettre à jour la date de livraison quand la livraison est terminée
+            if ($userRoleInThisDelivery === 'distributeur' && $nextStatus === 'livre') {
+                $updateData['date_livraison'] = Carbon::now()->toDateString();
+                \Log::info("📅 Date de livraison mise à jour: " . Carbon::now()->toDateString());
+            }
+
+            // Mettre à jour le statut et les dates
+            $course->update($updateData);
             
             \Log::info("Course transition: {$currentStatus} → {$nextStatus} (Livreur Role: {$userRoleInThisDelivery})");
 
@@ -297,6 +341,14 @@ class LivreurCourseController extends Controller
             $demande = $course->demandeLivraison;
             $colisData = $demande->colis->toArray();
             
+            // DEBUG: Log la demande de livraison
+            \Log::info('===== COLIS DEBUG =====');
+            \Log::info('Demande ID: ' . $demande->id);
+            \Log::info('Demande Data:', [
+                'wilaya' => $demande->wilaya,
+                'commune' => $demande->commune,
+            ]);
+            
             // Ajouter les informations de l'expéditeur (client)
             if ($demande->client && $demande->client->user) {
                 $colisData['expediteur_nom'] = $demande->client->user->nom . ' ' . $demande->client->user->prenom;
@@ -317,6 +369,12 @@ class LivreurCourseController extends Controller
             }
             $colisData['destinataire_adresse'] = $demande->addresse_delivery ?? 'Non renseigné';
             
+            // 🔑 AJOUTER WILAYA ET COMMUNE - CRUCIAL!
+            $colisData['wilaya'] = $demande->wilaya ?? 'Non renseigné';
+            $colisData['commune'] = $demande->commune ?? 'Non renseigné';
+            $colisData['wilaya_depot'] = $demande->wilaya_depot ?? 'Non renseigné';
+            $colisData['commune_depot'] = $demande->commune_depot ?? 'Non renseigné';
+            
             // Ajouter les coordonnées GPS pour le tracking
             $colisData['lat_depot'] = $demande->lat_depot;
             $colisData['lng_depot'] = $demande->lng_depot;
@@ -336,8 +394,29 @@ class LivreurCourseController extends Controller
             $colisData['prix_colis'] = (float) ($demande->colis->colis_prix ?? 0);
             $colisData['prix_livraison'] = (float) ($demande->prix ?? 0);
             
+             $colisData['date_ramassage'] = $course->date_ramassage;
+            $colisData['date_livraison'] = $course->date_livraison;
+            
+            // DEBUG: Log les données du colis retournées
+            \Log::info('Colis Data Being Returned:', [
+                'colis_id' => $colisData['id'],
+                'wilaya' => $colisData['wilaya'],
+                'commune' => $colisData['commune'],
+                'prix_livraison' => $colisData['prix_livraison'] ?? 'NULL',
+            ]);
+            
             return $colisData;
         })->filter(); // enlève les null
+
+        \Log::info('===== FINAL RESPONSE =====');
+        \Log::info('Total Colis: ' . $colis->count());
+        if ($colis->count() > 0) {
+            \Log::info('First Colis Sample:', $colis->first());
+            $firstColis = $colis->first();
+            if (is_array($firstColis)) {
+                \Log::info('First colis has prix_livraison: ' . ($firstColis['prix_livraison'] ?? 'MISSING'));
+            }
+        }
 
         return response()->json([
             'success' => true,
