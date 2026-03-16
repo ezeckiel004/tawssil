@@ -212,6 +212,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}/colis', [NavetteController::class, 'retirerColis']);
         });
 
+        // ======== COLIS (ADMIN) ========
+Route::prefix('colis')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\ColisController::class, 'index']);
+    Route::get('/disponibles', [App\Http\Controllers\Admin\ColisController::class, 'disponibles']);
+    Route::get('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'show']);
+    Route::post('/', [App\Http\Controllers\Admin\ColisController::class, 'store']);
+    Route::put('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'update']);
+    Route::delete('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'destroy']);
+});
+
         // ======== COMPTABILITÉ - BILANS ========
         Route::prefix('comptabilite')->group(function () {
 
@@ -285,6 +295,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('add-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'addLivreurs']);
             Route::delete('remove-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'removeLivreurs']);
         });
+
+         Route::prefix('comptabilite')->group(function () {
+        Route::get('/', [App\Http\Controllers\Manager\ComptabiliteController::class, 'index']);
+        Route::get('/export', [App\Http\Controllers\Manager\ComptabiliteController::class, 'export']);
+        Route::get('/statistiques-mensuelles', [App\Http\Controllers\Manager\ComptabiliteController::class, 'statistiquesMensuelles']);
+    });
     });
 });
 

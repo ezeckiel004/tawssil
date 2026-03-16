@@ -19,7 +19,7 @@ class Navette extends Model
         'wilaya_depart_id',
         'wilaya_transit_id',
         'wilaya_arrivee_id',
-        'chauffeur_id',
+        'livreur_id', // Changé de chauffeur_id à livreur_id
         'vehicule_immatriculation',
         'capacite_max',
         'status',
@@ -83,9 +83,9 @@ class Navette extends Model
         return $this->belongsTo(Wilaya::class, 'wilaya_arrivee_id', 'code');
     }
 
-    public function chauffeur()
+    public function livreur() // Renommé de chauffeur() à livreur()
     {
-        return $this->belongsTo(Livreur::class, 'chauffeur_id');
+        return $this->belongsTo(Livreur::class, 'livreur_id');
     }
 
     public function colis()
@@ -190,9 +190,9 @@ class Navette extends Model
         return $query->whereBetween('date_depart', [$debut, $fin]);
     }
 
-    public function scopeWithChauffeurDisponible($query)
+    public function scopeWithLivreurDisponible($query) // Renommé de withChauffeurDisponible
     {
-        return $query->whereHas('chauffeur', function ($q) {
+        return $query->whereHas('livreur', function ($q) {
             $q->where('desactiver', false);
         });
     }

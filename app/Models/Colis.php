@@ -51,4 +51,14 @@ class Colis extends Model
     {
         return $this->hasMany(DemandeLivraison::class);
     }
+
+     /**
+     * Relation avec les navettes (many-to-many)
+     */
+    public function navettes()
+    {
+        return $this->belongsToMany(Navette::class, 'navette_colis')
+                    ->withPivot('position_chargement', 'date_chargement', 'date_dechargement', 'qr_code_scan', 'incident_notes')
+                    ->withTimestamps();
+    }
 }

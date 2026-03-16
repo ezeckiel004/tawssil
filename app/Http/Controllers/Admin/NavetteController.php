@@ -36,7 +36,7 @@ class NavetteController extends Controller
             $query = Navette::with([
                 'wilayaDepart',
                 'wilayaArrivee',
-                'chauffeur.user',
+                'livreur.user',
                 'createur'
             ])->withCount('colis');
 
@@ -64,8 +64,8 @@ class NavetteController extends Controller
                 ]);
             }
 
-            if ($request->has('chauffeur_id') && $request->chauffeur_id) {
-                $query->where('chauffeur_id', $request->chauffeur_id);
+            if ($request->has('livreur_id') && $request->livreur_id) {
+                $query->where('livreur_id', $request->livreur_id);
             }
 
             // Recherche
@@ -73,7 +73,7 @@ class NavetteController extends Controller
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('reference', 'like', "%{$search}%")
-                        ->orWhereHas('chauffeur.user', function ($q) use ($search) {
+                        ->orWhereHas('livreur.user', function ($q) use ($search) {
                             $q->where('nom', 'like', "%{$search}%")
                                 ->orWhere('prenom', 'like', "%{$search}%");
                         });
@@ -114,12 +114,12 @@ class NavetteController extends Controller
                 ], 400);
             }
 
-            // Charger la navette avec ses relations de base
+            // Charger la navette avec ses relations
             $navette = Navette::with([
                 'wilayaDepart',
                 'wilayaTransit',
                 'wilayaArrivee',
-                'chauffeur.user',
+                'livreur.user',
                 'createur',
                 'colis'
             ])->find($id);
@@ -151,6 +151,7 @@ class NavetteController extends Controller
             ], 500);
         }
     }
+
     /**
      * Créer une nouvelle navette
      */
@@ -162,7 +163,7 @@ class NavetteController extends Controller
             'wilaya_transit_id' => 'nullable|string|size:2',
             'heure_depart' => 'required|date_format:H:i',
             'date_depart' => 'required|date',
-            'chauffeur_id' => 'nullable|exists:livreurs,id',
+            'livreur_id' => 'nullable|exists:livreurs,id',
             'vehicule_immatriculation' => 'nullable|string|max:20',
             'capacite_max' => 'required|integer|min:1|max:500',
             'prix_base' => 'required|numeric|min:0',
@@ -200,7 +201,7 @@ class NavetteController extends Controller
                 'wilaya_transit_id' => $request->wilaya_transit_id,
                 'heure_depart' => $request->heure_depart,
                 'heure_arrivee' => $dateArrivee->format('H:i'),
-                'chauffeur_id' => $request->chauffeur_id,
+                'livreur_id' => $request->livreur_id,
                 'vehicule_immatriculation' => $request->vehicule_immatriculation,
                 'capacite_max' => $request->capacite_max,
                 'prix_base' => $request->prix_base,
@@ -226,11 +227,15 @@ class NavetteController extends Controller
 
                     // Mettre à jour la livraison associée
                     $colis = Colis::find($colisId);
-                    if ($colis && $colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'navette_id' => $navette->id,
-                            'status' => 'prise_en_charge_ramassage'
-                        ]);
+                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'navette_id' => $navette->id,
+                                    'status' => 'prise_en_charge_ramassage'
+                                ]);
+                            }
+                        }
                     }
                 }
             }
@@ -240,15 +245,16 @@ class NavetteController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Navette créée avec succès',
-                'data' => $navette->load(['wilayaDepart', 'wilayaArrivee', 'colis'])
+                'data' => $navette->load(['wilayaDepart', 'wilayaArrivee', 'colis', 'livreur.user'])
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur NavetteController@store: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la création'
+                'message' => 'Erreur lors de la création: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -288,7 +294,7 @@ class NavetteController extends Controller
                 'wilaya_transit_id' => 'nullable|string|size:2',
                 'heure_depart' => 'sometimes|date_format:H:i',
                 'date_depart' => 'sometimes|date',
-                'chauffeur_id' => 'nullable|exists:livreurs,id',
+                'livreur_id' => 'nullable|exists:livreurs,id',
                 'vehicule_immatriculation' => 'nullable|string|max:20',
                 'capacite_max' => 'sometimes|integer|min:1|max:500',
                 'prix_base' => 'sometimes|numeric|min:0',
@@ -312,7 +318,7 @@ class NavetteController extends Controller
                 'wilaya_transit_id',
                 'heure_depart',
                 'date_depart',
-                'chauffeur_id',
+                'livreur_id',
                 'vehicule_immatriculation',
                 'capacite_max',
                 'prix_base',
@@ -346,7 +352,7 @@ class NavetteController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Navette mise à jour',
-                'data' => $navette->fresh(['wilayaDepart', 'wilayaArrivee'])
+                'data' => $navette->fresh(['wilayaDepart', 'wilayaArrivee', 'livreur.user'])
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -360,6 +366,7 @@ class NavetteController extends Controller
 
     /**
      * Supprimer une navette
+     * Modifié pour permettre la suppression des navettes planifiées ET annulées
      */
     public function destroy($id): JsonResponse
     {
@@ -380,24 +387,33 @@ class NavetteController extends Controller
                 ], 404);
             }
 
-            if ($navette->status !== 'planifiee') {
+            // MODIFICATION ICI : Permettre la suppression des navettes planifiées ET annulées
+            if (!in_array($navette->status, ['planifiee', 'annulee'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Seules les navettes planifiées peuvent être supprimées'
+                    'message' => 'Seules les navettes planifiées ou annulées peuvent être supprimées'
                 ], 400);
             }
 
             DB::transaction(function () use ($navette) {
+                // Détacher tous les colis et mettre à jour les livraisons associées
                 foreach ($navette->colis as $colis) {
-                    if ($colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'navette_id' => null,
-                            'status' => 'en_attente'
-                        ]);
+                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'navette_id' => null,
+                                    'status' => 'en_attente'
+                                ]);
+                            }
+                        }
                     }
                 }
 
+                // Détacher tous les colis de la navette
                 $navette->colis()->detach();
+
+                // Supprimer la navette
                 $navette->delete();
             });
 
@@ -443,10 +459,10 @@ class NavetteController extends Controller
                 ], 400);
             }
 
-            if (!$navette->chauffeur_id) {
+            if (!$navette->livreur_id) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Un chauffeur doit être assigné avant de démarrer'
+                    'message' => 'Un livreur doit être assigné avant de démarrer'
                 ], 400);
             }
 
@@ -510,10 +526,14 @@ class NavetteController extends Controller
                         'date_dechargement' => now()
                     ]);
 
-                    if ($colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'status' => 'en_transit'
-                        ]);
+                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'status' => 'en_transit'
+                                ]);
+                            }
+                        }
                     }
                 }
             });
@@ -563,11 +583,15 @@ class NavetteController extends Controller
 
             DB::transaction(function () use ($navette) {
                 foreach ($navette->colis as $colis) {
-                    if ($colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'navette_id' => null,
-                            'status' => 'en_attente'
-                        ]);
+                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'navette_id' => null,
+                                    'status' => 'en_attente'
+                                ]);
+                            }
+                        }
                     }
                 }
 
@@ -655,11 +679,15 @@ class NavetteController extends Controller
                         'date_chargement' => now()
                     ]]);
 
-                    if ($colis && $colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'navette_id' => $navette->id,
-                            'status' => 'prise_en_charge_ramassage'
-                        ]);
+                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'navette_id' => $navette->id,
+                                    'status' => 'prise_en_charge_ramassage'
+                                ]);
+                            }
+                        }
                     }
                 }
             });
@@ -724,11 +752,15 @@ class NavetteController extends Controller
                     $navette->colis()->detach($colisId);
 
                     $colis = Colis::find($colisId);
-                    if ($colis && $colis->demandeLivraison && $colis->demandeLivraison->livraison) {
-                        $colis->demandeLivraison->livraison->update([
-                            'navette_id' => null,
-                            'status' => 'en_attente'
-                        ]);
+                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
+                        foreach ($colis->demandeLivraisons as $demande) {
+                            if ($demande->livraison) {
+                                $demande->livraison->update([
+                                    'navette_id' => null,
+                                    'status' => 'en_attente'
+                                ]);
+                            }
+                        }
                     }
                 }
             });
@@ -765,12 +797,14 @@ class NavetteController extends Controller
         }
 
         try {
-            // Récupérer TOUS les colis qui existent dans la base
+            // Récupérer les colis disponibles
             $colisDisponibles = Colis::with('demandeLivraisons')
+                ->whereDoesntHave('navettes', function($q) {
+                    $q->whereIn('status', ['planifiee', 'en_cours']);
+                })
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Si aucun colis n'existe
             if ($colisDisponibles->isEmpty()) {
                 return response()->json([
                     'success' => true,
@@ -780,128 +814,37 @@ class NavetteController extends Controller
             }
 
             // Grouper les colis par destination (simulé pour l'exemple)
-            // Dans un cas réel, vous utiliseriez la wilaya de destination réelle
-            $colisParDestination = [
-                '31' => $colisDisponibles->slice(0, 5)->values(), // Oran
-                '25' => $colisDisponibles->slice(5, 3)->values(), // Constantine
-                '16' => $colisDisponibles->slice(8, 4)->values(), // Alger
-                '09' => $colisDisponibles->slice(12, 3)->values(), // Blida
-            ];
+            $colisParDestination = collect($colisDisponibles)
+                ->groupBy(function($colis) {
+                    // Ici vous devriez avoir une vraie relation pour la destination
+                    // Par exemple: $colis->wilaya_destination_id ?? '00'
+                    return $colis->wilaya_destination_id ?? substr($colis->id, 0, 2);
+                })
+                ->filter(function($group) {
+                    return $group->count() >= 3; // Garder les groupes avec au moins 3 colis
+                });
 
             $suggestions = [];
 
-            // Suggestion pour Oran (31)
-            if (isset($colisParDestination['31']) && $colisParDestination['31']->isNotEmpty()) {
-                $colisOran = $colisParDestination['31'];
+            foreach ($colisParDestination as $wilayaCode => $colisGroup) {
                 $suggestions[] = [
                     'type' => 'destination_unique',
-                    'wilaya' => '31',
-                    'nb_colis' => $colisOran->count(),
-                    'poids_total' => $colisOran->sum('poids'),
-                    'valeur_totale' => $colisOran->sum('colis_prix'),
-                    'date_plus_ancienne' => $colisOran->min('created_at')?->toDateString() ?? Carbon::now()->subDays(2)->toDateString(),
-                    'urgence' => $colisOran->count() > 10 ? 'haute' : 'moyenne',
-                    'confiance' => min(90, 70 + $colisOran->count()),
-                    'colis_exemples' => $colisOran->map(function ($colis) {
+                    'wilaya' => $wilayaCode,
+                    'wilaya_nom' => $this->getWilayaName($wilayaCode),
+                    'nb_colis' => $colisGroup->count(),
+                    'poids_total' => $colisGroup->sum('poids'),
+                    'valeur_totale' => $colisGroup->sum('colis_prix'),
+                    'date_plus_ancienne' => $colisGroup->min('created_at')?->toDateString(),
+                    'urgence' => $colisGroup->count() > 10 ? 'haute' : 'moyenne',
+                    'confiance' => min(90, 70 + $colisGroup->count()),
+                    'colis_exemples' => $colisGroup->take(5)->map(function ($colis) {
                         return [
-                            'id' => $colis->id, // UUID réel
+                            'id' => $colis->id,
                             'label' => $colis->colis_label ?? 'COLIS-' . substr($colis->id, 0, 8),
-                            'destination' => 'Oran',
                             'prix' => $colis->colis_prix ?? 0,
                             'poids' => $colis->poids ?? 0
                         ];
                     })->toArray()
-                ];
-            }
-
-            // Suggestion pour Constantine (25)
-            if (isset($colisParDestination['25']) && $colisParDestination['25']->isNotEmpty()) {
-                $colisConstantine = $colisParDestination['25'];
-                $suggestions[] = [
-                    'type' => 'destination_unique',
-                    'wilaya' => '25',
-                    'nb_colis' => $colisConstantine->count(),
-                    'poids_total' => $colisConstantine->sum('poids'),
-                    'valeur_totale' => $colisConstantine->sum('colis_prix'),
-                    'date_plus_ancienne' => $colisConstantine->min('created_at')?->toDateString() ?? Carbon::now()->subDays(3)->toDateString(),
-                    'urgence' => $colisConstantine->count() > 8 ? 'haute' : 'moyenne',
-                    'confiance' => min(85, 65 + $colisConstantine->count()),
-                    'colis_exemples' => $colisConstantine->map(function ($colis) {
-                        return [
-                            'id' => $colis->id, // UUID réel
-                            'label' => $colis->colis_label ?? 'COLIS-' . substr($colis->id, 0, 8),
-                            'destination' => 'Constantine',
-                            'prix' => $colis->colis_prix ?? 0,
-                            'poids' => $colis->poids ?? 0
-                        ];
-                    })->toArray()
-                ];
-            }
-
-            // Suggestion pour Alger (16)
-            if (isset($colisParDestination['16']) && $colisParDestination['16']->isNotEmpty()) {
-                $colisAlger = $colisParDestination['16'];
-                $suggestions[] = [
-                    'type' => 'destination_unique',
-                    'wilaya' => '16',
-                    'nb_colis' => $colisAlger->count(),
-                    'poids_total' => $colisAlger->sum('poids'),
-                    'valeur_totale' => $colisAlger->sum('colis_prix'),
-                    'date_plus_ancienne' => $colisAlger->min('created_at')?->toDateString() ?? Carbon::now()->subDays(1)->toDateString(),
-                    'urgence' => $colisAlger->count() > 12 ? 'haute' : 'moyenne',
-                    'confiance' => min(88, 68 + $colisAlger->count()),
-                    'colis_exemples' => $colisAlger->map(function ($colis) {
-                        return [
-                            'id' => $colis->id, // UUID réel
-                            'label' => $colis->colis_label ?? 'COLIS-' . substr($colis->id, 0, 8),
-                            'destination' => 'Alger',
-                            'prix' => $colis->colis_prix ?? 0,
-                            'poids' => $colis->poids ?? 0
-                        ];
-                    })->toArray()
-                ];
-            }
-
-            // Suggestion pour Blida (09)
-            if (isset($colisParDestination['09']) && $colisParDestination['09']->isNotEmpty()) {
-                $colisBlida = $colisParDestination['09'];
-                $suggestions[] = [
-                    'type' => 'destination_unique',
-                    'wilaya' => '09',
-                    'nb_colis' => $colisBlida->count(),
-                    'poids_total' => $colisBlida->sum('poids'),
-                    'valeur_totale' => $colisBlida->sum('colis_prix'),
-                    'date_plus_ancienne' => $colisBlida->min('created_at')?->toDateString() ?? Carbon::now()->subDays(4)->toDateString(),
-                    'urgence' => $colisBlida->count() > 6 ? 'haute' : 'basse',
-                    'confiance' => min(80, 60 + $colisBlida->count()),
-                    'colis_exemples' => $colisBlida->map(function ($colis) {
-                        return [
-                            'id' => $colis->id, // UUID réel
-                            'label' => $colis->colis_label ?? 'COLIS-' . substr($colis->id, 0, 8),
-                            'destination' => 'Blida',
-                            'prix' => $colis->colis_prix ?? 0,
-                            'poids' => $colis->poids ?? 0
-                        ];
-                    })->toArray()
-                ];
-            }
-
-            // Suggestion de tournée multi-destinations si assez de colis
-            $totalColis = $colisDisponibles->count();
-            if ($totalColis > 15 && count($suggestions) >= 2) {
-                $destinations = array_keys(array_filter($colisParDestination, fn($c) => $c->isNotEmpty()));
-                $suggestions[] = [
-                    'type' => 'tournee_multi_destinations',
-                    'itineraire' => array_merge([$request->wilaya_depart], $destinations),
-                    'distance' => 450,
-                    'duree' => 6.5,
-                    'nb_colis_total' => $totalColis,
-                    'destinations' => $destinations,
-                    'repartition' => collect($colisParDestination)
-                        ->filter(fn($c) => $c->isNotEmpty())
-                        ->map(fn($c) => $c->count())
-                        ->toArray(),
-                    'confiance' => 75
                 ];
             }
 
@@ -1012,7 +955,13 @@ class NavetteController extends Controller
                     'annulees' => Navette::whereBetween('date_depart', [$debut, $fin])
                         ->where('status', 'annulee')
                         ->count()
-                ]
+                ],
+                'par_livreur' => Navette::whereBetween('date_depart', [$debut, $fin])
+                    ->whereNotNull('livreur_id')
+                    ->select('livreur_id', DB::raw('count(*) as total'))
+                    ->groupBy('livreur_id')
+                    ->with('livreur.user')
+                    ->get()
             ];
 
             return response()->json([
@@ -1037,7 +986,7 @@ class NavetteController extends Controller
             $query = Navette::with([
                 'wilayaDepart',
                 'wilayaArrivee',
-                'chauffeur.user'
+                'livreur.user'
             ])->withCount('colis');
 
             if ($request->has('status') && $request->status) {
@@ -1071,5 +1020,36 @@ class NavetteController extends Controller
                 'message' => 'Erreur lors de la génération du PDF'
             ], 500);
         }
+    }
+
+    /**
+     * Obtenir le nom d'une wilaya à partir de son code
+     */
+    private function getWilayaName($code): string
+    {
+        $wilayas = [
+            '01' => 'Adrar', '02' => 'Chlef', '03' => 'Laghouat',
+            '04' => 'Oum El Bouaghi', '05' => 'Batna', '06' => 'Béjaïa',
+            '07' => 'Biskra', '08' => 'Béchar', '09' => 'Blida',
+            '10' => 'Bouira', '11' => 'Tamanrasset', '12' => 'Tébessa',
+            '13' => 'Tlemcen', '14' => 'Tiaret', '15' => 'Tizi Ouzou',
+            '16' => 'Alger', '17' => 'Djelfa', '18' => 'Jijel',
+            '19' => 'Sétif', '20' => 'Saïda', '21' => 'Skikda',
+            '22' => 'Sidi Bel Abbès', '23' => 'Annaba', '24' => 'Guelma',
+            '25' => 'Constantine', '26' => 'Médéa', '27' => 'Mostaganem',
+            '28' => 'M\'Sila', '29' => 'Mascara', '30' => 'Ouargla',
+            '31' => 'Oran', '32' => 'El Bayadh', '33' => 'Illizi',
+            '34' => 'Bordj Bou Arréridj', '35' => 'Boumerdès', '36' => 'El Tarf',
+            '37' => 'Tindouf', '38' => 'Tissemsilt', '39' => 'El Oued',
+            '40' => 'Khenchela', '41' => 'Souk Ahras', '42' => 'Tipaza',
+            '43' => 'Mila', '44' => 'Aïn Defla', '45' => 'Naâma',
+            '46' => 'Aïn Témouchent', '47' => 'Ghardaïa', '48' => 'Relizane',
+            '49' => 'Timimoun', '50' => 'Bordj Badji Mokhtar', '51' => 'Ouled Djellal',
+            '52' => 'Béni Abbès', '53' => 'In Salah', '54' => 'In Guezzam',
+            '55' => 'Touggourt', '56' => 'Djanet', '57' => 'El M\'Ghair',
+            '58' => 'El Meniaa'
+        ];
+
+        return $wilayas[$code] ?? 'Wilaya inconnue';
     }
 }
