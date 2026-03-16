@@ -21,19 +21,19 @@ class CodePromoController extends Controller
         $this->middleware(function ($request, $next) {
             $user = Auth::user();
             $gestionnaire = $user->gestionnaire;
-            
+
             if (!$gestionnaire) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Profil gestionnaire introuvable'
                 ], 403);
             }
-            
+
             $request->merge([
                 'gestionnaire_id' => $gestionnaire->id,
                 'gestionnaire_wilaya' => $gestionnaire->wilaya_id
             ]);
-            
+
             return $next($request);
         });
     }
@@ -44,8 +44,8 @@ class CodePromoController extends Controller
     public function index(Request $request): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
-        $codesPromo = CodePromo::with('livreurs')
+
+        $codesPromo = CodePromo::with('livreurs.user') // Charger la relation user des livreurs
             ->where('gestionnaire_id', $gestionnaireId)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -62,7 +62,7 @@ class CodePromoController extends Controller
     public function store(Request $request): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
+
         $validator = Validator::make($request->all(), [
             'code' => 'nullable|string|max:50|unique:codes_promo,code',
             'description' => 'nullable|string',
@@ -106,7 +106,7 @@ class CodePromoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Code promo créé avec succès',
-            'data' => $codePromo->load('livreurs')
+            'data' => $codePromo->load('livreurs.user') // Charger la relation user
         ], 201);
     }
 
@@ -116,8 +116,8 @@ class CodePromoController extends Controller
     public function show(Request $request, $id): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
-        $codePromo = CodePromo::with('livreurs')
+
+        $codePromo = CodePromo::with(['livreurs.user']) // ← CORRECTION ICI : charger la relation user des livreurs
             ->where('gestionnaire_id', $gestionnaireId)
             ->find($id);
 
@@ -140,7 +140,7 @@ class CodePromoController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
+
         $codePromo = CodePromo::where('gestionnaire_id', $gestionnaireId)
             ->find($id);
 
@@ -183,7 +183,7 @@ class CodePromoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Code promo mis à jour',
-            'data' => $codePromo->fresh('livreurs')
+            'data' => $codePromo->fresh('livreurs.user') // Charger la relation user
         ], 200);
     }
 
@@ -193,7 +193,7 @@ class CodePromoController extends Controller
     public function destroy(Request $request, $id): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
+
         $codePromo = CodePromo::where('gestionnaire_id', $gestionnaireId)
             ->find($id);
 
@@ -218,7 +218,7 @@ class CodePromoController extends Controller
     public function addLivreurs(Request $request, $id): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
+
         $codePromo = CodePromo::where('gestionnaire_id', $gestionnaireId)
             ->find($id);
 
@@ -247,7 +247,7 @@ class CodePromoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Livreurs ajoutés au code promo',
-            'data' => $codePromo->load('livreurs')
+            'data' => $codePromo->load('livreurs.user') // Charger la relation user
         ], 200);
     }
 
@@ -257,7 +257,7 @@ class CodePromoController extends Controller
     public function removeLivreurs(Request $request, $id): JsonResponse
     {
         $gestionnaireId = $request->get('gestionnaire_id');
-        
+
         $codePromo = CodePromo::where('gestionnaire_id', $gestionnaireId)
             ->find($id);
 
@@ -286,7 +286,7 @@ class CodePromoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Livreurs retirés du code promo',
-            'data' => $codePromo->load('livreurs')
+            'data' => $codePromo->load('livreurs.user') // Charger la relation user
         ], 200);
     }
 
