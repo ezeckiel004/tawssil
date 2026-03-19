@@ -22,6 +22,11 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\NavetteController;
 use App\Http\Controllers\Admin\ComptabiliteController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CommissionController;
+use App\Http\Controllers\Admin\ColisController;
+use App\Http\Controllers\Admin\GestionnaireController;
+use App\Http\Controllers\Admin\TraitementCommissionController;
+use App\Http\Controllers\Manager\GainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,6 +147,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/dashboard/charts', [DashboardController::class, 'charts']);
 
+        Route::prefix('historique')->group(function () {
+        Route::get('/gains', [App\Http\Controllers\Admin\ComptabiliteController::class, 'historiqueGains']);
+        Route::delete('/gains/{gainId}', [App\Http\Controllers\Admin\ComptabiliteController::class, 'supprimerGain']);
+    });
+
         // ======== LIVRAISONS ========
         Route::post('livraisons', [AdminLivraisonController::class, 'store']);
         Route::get('livraisons', [AdminLivraisonController::class, 'index']);
@@ -160,6 +170,36 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('livraisons/getByClient/{id}', [AdminLivraisonController::class, 'getByClient']);
         Route::get('livraisons/getByLivreur/{id}', [AdminLivraisonController::class, 'getByLivreur']);
 
+        // ======== COMMISSIONS ========
+        Route::prefix('commissions')->group(function () {
+            Route::get('/config', [CommissionController::class, 'getConfig']);
+            Route::put('/config', [CommissionController::class, 'updateConfig']);
+            Route::post('/simuler', [CommissionController::class, 'simulerConfig']);
+            Route::get('/historique', [CommissionController::class, 'historiqueConfig']);
+            Route::get('/statistiques', [CommissionController::class, 'statistiquesGlobales']);
+            Route::get('/gestionnaires/{gestionnaireId}/gains', [CommissionController::class, 'getGainsGestionnaire']);
+            Route::get('/export', [CommissionController::class, 'exportStatistiques']);
+        });
+
+        // ======== GESTIONNAIRES ========
+        Route::prefix('gestionnaires')->group(function () {
+            Route::get('/', [GestionnaireController::class, 'index']);
+            Route::get('/{id}', [GestionnaireController::class, 'show']);
+            Route::post('/', [GestionnaireController::class, 'store']);
+            Route::put('/{id}', [GestionnaireController::class, 'update']);
+            Route::delete('/{id}', [GestionnaireController::class, 'destroy']);
+            Route::patch('/{id}/toggle-activation', [GestionnaireController::class, 'toggleActivation']);
+        });
+
+        // ======== TRAITEMENT DES COMMISSIONS ========
+        Route::prefix('traitement-commissions')->group(function () {
+            Route::get('/', [TraitementCommissionController::class, 'index']);
+            Route::post('/payer/{gainId}', [TraitementCommissionController::class, 'marquerPaye']);
+            Route::post('/payer-multiple', [TraitementCommissionController::class, 'marquerPayeMultiple']);
+            Route::post('/annuler/{gainId}', [TraitementCommissionController::class, 'marquerAnnule']);
+            Route::get('/statistiques', [TraitementCommissionController::class, 'statistiques']);
+        });
+
         // ======== BORDEREAUX PDF ========
         Route::get('livraisons/{id}/bordereau-pdf', [AdminLivraisonController::class, 'generateBordereauPDF']);
         Route::get('livraisons/{id}/print-html', [AdminLivraisonController::class, 'generatePrintHTML']);
@@ -174,75 +214,69 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('livraisons/export/download/{token}', [AdminLivraisonController::class, 'downloadExport']);
 
         // ======== UTILISATEURS (ADMIN) ========
-        // Routes CRUD complètes pour les utilisateurs
-        Route::get('/users', [AdminUserController::class, 'getAllUsers']);           // GET /admin/users - Liste
-        Route::post('/users', [AdminUserController::class, 'store']);                // POST /admin/users - Création
-        Route::get('/users/{id}', [AdminUserController::class, 'show']);             // GET /admin/users/{id} - Détail
-        Route::put('/users/{id}', [AdminUserController::class, 'update']);           // PUT /admin/users/{id} - Mise à jour
-        Route::delete('/users/{id}', [AdminUserController::class, 'destroy']);       // DELETE /admin/users/{id} - Soft delete
-        Route::delete('/users/{id}/force-delete', [AdminUserController::class, 'deleteUser']); // DELETE /admin/users/{id}/force-delete - Suppression définitive
-        Route::patch('/users/{id}/toggle-activation', [AdminUserController::class, 'toggleActivation']); // PATCH /admin/users/{id}/toggle-activation - Activer/désactiver
-        Route::get('/users/stats', [AdminUserController::class, 'stats']);           // GET /admin/users/stats - Statistiques
-        Route::get('/users/search', [AdminUserController::class, 'search']);         // GET /admin/users/search - Recherche
-        Route::get('/users/{id}/stats/client', [AdminUserController::class, 'getClientStats']); // GET /admin/users/{id}/stats/client - Stats client
-        Route::get('/users/{id}/stats/livreur', [AdminUserController::class, 'getLivreurStats']); // GET /admin/users/{id}/stats/livreur - Stats livreur
+        Route::get('/users', [AdminUserController::class, 'getAllUsers']);
+        Route::post('/users', [AdminUserController::class, 'store']);
+        Route::get('/users/{id}', [AdminUserController::class, 'show']);
+        Route::put('/users/{id}', [AdminUserController::class, 'update']);
+        Route::delete('/users/{id}', [AdminUserController::class, 'destroy']);
+        Route::delete('/users/{id}/force-delete', [AdminUserController::class, 'deleteUser']);
+        Route::patch('/users/{id}/toggle-activation', [AdminUserController::class, 'toggleActivation']);
+        Route::get('/users/stats', [AdminUserController::class, 'stats']);
+        Route::get('/users/search', [AdminUserController::class, 'search']);
+        Route::get('/users/{id}/stats/client', [AdminUserController::class, 'getClientStats']);
+        Route::get('/users/{id}/stats/livreur', [AdminUserController::class, 'getLivreurStats']);
 
         // ======== NAVETTES ========
         Route::prefix('navettes')->group(function () {
-            // Routes principales
             Route::get('/', [NavetteController::class, 'index']);
             Route::post('/', [NavetteController::class, 'store']);
             Route::get('/suggestions', [NavetteController::class, 'suggestions']);
             Route::post('/creer-optimisee', [NavetteController::class, 'creerOptimisee']);
             Route::get('/statistiques', [NavetteController::class, 'statistiques']);
             Route::get('/export-pdf', [NavetteController::class, 'exportPDF']);
-
-            // Routes pour une navette spécifique
             Route::get('/{id}', [NavetteController::class, 'show']);
             Route::put('/{id}', [NavetteController::class, 'update']);
             Route::delete('/{id}', [NavetteController::class, 'destroy']);
-
-            // Actions sur une navette
             Route::post('/{id}/demarrer', [NavetteController::class, 'demarrer']);
             Route::post('/{id}/terminer', [NavetteController::class, 'terminer']);
             Route::post('/{id}/annuler', [NavetteController::class, 'annuler']);
-
-            // Gestion des colis dans une navette
             Route::post('/{id}/colis', [NavetteController::class, 'ajouterColis']);
             Route::delete('/{id}/colis', [NavetteController::class, 'retirerColis']);
         });
 
         // ======== COLIS (ADMIN) ========
-Route::prefix('colis')->group(function () {
-    Route::get('/', [App\Http\Controllers\Admin\ColisController::class, 'index']);
-    Route::get('/disponibles', [App\Http\Controllers\Admin\ColisController::class, 'disponibles']);
-    Route::get('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'show']);
-    Route::post('/', [App\Http\Controllers\Admin\ColisController::class, 'store']);
-    Route::put('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'update']);
-    Route::delete('/{id}', [App\Http\Controllers\Admin\ColisController::class, 'destroy']);
-});
+        Route::prefix('colis')->group(function () {
+            Route::get('/', [ColisController::class, 'index']);
+            Route::get('/disponibles', [ColisController::class, 'disponibles']);
+            Route::get('/{id}', [ColisController::class, 'show']);
+            Route::post('/', [ColisController::class, 'store']);
+            Route::put('/{id}', [ColisController::class, 'update']);
+            Route::delete('/{id}', [ColisController::class, 'destroy']);
+        });
 
         // ======== COMPTABILITÉ - BILANS ========
         Route::prefix('comptabilite')->group(function () {
-
-            // BILAN GLOBAL (admin uniquement)
             Route::get('/bilan-global', [ComptabiliteController::class, 'bilanGlobal']);
             Route::get('/bilan-global/export', [ComptabiliteController::class, 'exportBilanGlobal']);
-
-            // BILAN PAR GESTIONNAIRE
             Route::get('/bilan-gestionnaire', [ComptabiliteController::class, 'bilanGestionnaire']);
             Route::get('/bilan-gestionnaire/export', [ComptabiliteController::class, 'exportBilanGestionnaire']);
-
-            // Admin peut voir le bilan d'une wilaya spécifique
             Route::get('/bilan-wilaya/{wilayaId}', [ComptabiliteController::class, 'bilanGestionnaire']);
             Route::get('/bilan-wilaya/{wilayaId}/export', [ComptabiliteController::class, 'exportBilanGestionnaire']);
 
-            // Anciennes routes (optionnel, à garder pour compatibilité ou supprimer)
-            Route::get('/dashboard', [ComptabiliteController::class, 'dashboard'])->withoutMiddleware(['role:admin']);
-            Route::get('/rapport', [ComptabiliteController::class, 'rapport'])->withoutMiddleware(['role:admin']);
-            Route::get('/evolution-mensuelle', [ComptabiliteController::class, 'evolutionMensuelle'])->withoutMiddleware(['role:admin']);
-            Route::post('/calculer-gains', [ComptabiliteController::class, 'calculerGains'])->withoutMiddleware(['role:admin']);
-            Route::get('/export', [ComptabiliteController::class, 'export'])->withoutMiddleware(['role:admin']);
+            // Rapports
+            Route::get('/rapport', [ComptabiliteController::class, 'rapport']);
+            Route::get('/rapport/export', [ComptabiliteController::class, 'exportRapport']);
+
+            // Rapports gestionnaires
+            Route::get('/rapport-gestionnaires', [ComptabiliteController::class, 'rapportGestionnaires']);
+            Route::get('/rapport-gestionnaires/export', [ComptabiliteController::class, 'exportRapportGestionnaires']);
+
+            // Gains et statistiques
+            Route::get('/gains', [ComptabiliteController::class, 'getGainsDetails']);
+            Route::get('/gestionnaire/{gestionnaireId}/gains', [ComptabiliteController::class, 'getGainsGestionnaire']);
+            Route::get('/statistiques-mensuelles', [ComptabiliteController::class, 'statistiquesMensuelles']);
+            Route::get('/evolution-mensuelle', [ComptabiliteController::class, 'evolutionMensuelle']);
+            Route::get('/impayes', [ComptabiliteController::class, 'impayes']);
         });
     });
 
@@ -258,8 +292,8 @@ Route::prefix('colis')->group(function () {
         Route::get('stats/detailed', [LivreurStatsController::class, 'detailedStats']);
     });
 
-    // ==================== ROUTES GESTIONNAIRE (PRESTATAIRE) ====================
-    Route::prefix('manager')->middleware(['gestionnaire'])->group(function () {
+    // ==================== ROUTES GESTIONNAIRE (MANAGER) ====================
+    Route::prefix('manager')->middleware(['auth:sanctum', 'gestionnaire'])->group(function () {
 
         // Dashboard
         Route::get('dashboard', [App\Http\Controllers\Manager\DashboardController::class, 'index']);
@@ -271,7 +305,15 @@ Route::prefix('colis')->group(function () {
             Route::post('change-password', [App\Http\Controllers\Manager\ProfileController::class, 'changePassword']);
         });
 
-        // Gestion des livraisons (pas de delete)
+        // Gains du gestionnaire
+        Route::prefix('gains')->group(function () {
+            Route::get('/', [GainController::class, 'index']);
+            Route::get('/en-attente', [GainController::class, 'gainsEnAttente']);
+            Route::post('/demander/{gainId}', [GainController::class, 'demanderPaiement']);
+            Route::post('/demander-multiple', [GainController::class, 'demanderPaiementMultiple']);
+        });
+
+        // Livraisons
         Route::prefix('livraisons')->group(function () {
             Route::get('/', [App\Http\Controllers\Manager\LivraisonController::class, 'index']);
             Route::get('search', [App\Http\Controllers\Manager\LivraisonController::class, 'search']);
@@ -280,27 +322,27 @@ Route::prefix('colis')->group(function () {
             Route::patch('{id}/status', [App\Http\Controllers\Manager\LivraisonController::class, 'updateStatus']);
         });
 
-        // Gestion des livreurs (pas de delete)
+        // Livreurs
         Route::prefix('livreurs')->group(function () {
             Route::get('/', [App\Http\Controllers\Manager\LivreurController::class, 'index']);
             Route::get('{id}', [App\Http\Controllers\Manager\LivreurController::class, 'show']);
             Route::patch('{id}/toggle-activation', [App\Http\Controllers\Manager\LivreurController::class, 'toggleActivation']);
         });
 
-        // Gestion des codes promo (CRUD complet)
+        // Codes promo
         Route::apiResource('codes-promo', App\Http\Controllers\Manager\CodePromoController::class);
 
-        // Routes supplémentaires pour les codes promo
         Route::prefix('codes-promo/{id}')->group(function () {
             Route::post('add-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'addLivreurs']);
             Route::delete('remove-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'removeLivreurs']);
         });
 
-         Route::prefix('comptabilite')->group(function () {
-        Route::get('/', [App\Http\Controllers\Manager\ComptabiliteController::class, 'index']);
-        Route::get('/export', [App\Http\Controllers\Manager\ComptabiliteController::class, 'export']);
-        Route::get('/statistiques-mensuelles', [App\Http\Controllers\Manager\ComptabiliteController::class, 'statistiquesMensuelles']);
-    });
+        // Comptabilité
+        Route::prefix('comptabilite')->group(function () {
+            Route::get('/', [App\Http\Controllers\Manager\ComptabiliteController::class, 'index']);
+            Route::get('/export', [App\Http\Controllers\Manager\ComptabiliteController::class, 'export']);
+            Route::get('/statistiques-mensuelles', [App\Http\Controllers\Manager\ComptabiliteController::class, 'statistiquesMensuelles']);
+        });
     });
 });
 

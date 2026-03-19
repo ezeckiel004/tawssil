@@ -47,7 +47,7 @@ class DemandeLivraisonController extends Controller
         \Log::info('Content-Type: ' . $request->header('Content-Type'));
         \Log::info('All input keys: ' . json_encode(array_keys($request->all())));
         \Log::info('Has file colis_photo: ' . ($request->hasFile('colis_photo') ? 'YES' : 'NO'));
-        
+
         if ($request->hasFile('colis_photo')) {
             $file = $request->file('colis_photo');
             \Log::info('Photo file details BEFORE validation:', [
@@ -64,7 +64,7 @@ class DemandeLivraisonController extends Controller
             \Log::warning('NO FILE FOUND - Checking all files in request');
             \Log::info('All files: ' . json_encode($request->allFiles()));
         }
-    
+
         // Valider les données de la requête
         $validated = Validator::make($request->all(), [
             'client_id' => 'required|string|exists:clients,id',
@@ -89,12 +89,12 @@ class DemandeLivraisonController extends Controller
             'colis_photo' => 'nullable|file|max:10240', // Validation de la photo (10MB max)
 
         ]);
-   
+
         if ($validated->fails()) {
             \Log::error('=== VALIDATION FAILED ===');
             \Log::error('Validation errors:', $validated->errors()->toArray());
             \Log::error('Request data (without photo):', $request->except(['colis_photo']));
-            
+
             if ($request->hasFile('colis_photo')) {
                 $file = $request->file('colis_photo');
                 \Log::error('Photo file that FAILED validation:', [
@@ -108,14 +108,14 @@ class DemandeLivraisonController extends Controller
                     'error_message' => $this->getUploadErrorMessage($file->getError()),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de validation',
                 'errors'  => $validated->errors(),
             ], 422);
         }
-        
+
         \Log::info('=== VALIDATION PASSED ===');
 
 
@@ -126,32 +126,32 @@ class DemandeLivraisonController extends Controller
 
         $parts = preg_split('/\s+/', trim($validatedData['destinataire_nom']));
         // Créer un utilisateur pour le destinataire
-        
+
         /*
         $user = User::create([
             'nom' =>  implode(' ', $parts),
             'prenom' => array_pop($parts),
             'email' => $validatedData['destinataire_email'],
             'telephone' => $validatedData['destinataire_telephone'],
-            'password' => bcrypt('default_password'), 
-            
+            'password' => bcrypt('default_password'),
+
         ]);
-        
+
         $destinataire = Client::create([
             'user_id'   => $user->id,
             'status'    => 'active',
         ]);
         */
-        
+
         // Recherche d'un utilisateur existant par email ou téléphone
 	$user = null;
-	
+
 	// Si email est fourni, chercher par email
 	if (!empty($validatedData['destinataire_email'])) {
 		$user = User::where('email', $validatedData['destinataire_email'])
 				->first();
 	}
-	
+
 	// Si pas trouvé par email, chercher par téléphone
 	if (!$user) {
 		$user = User::where('telephone', $validatedData['destinataire_telephone'])
@@ -181,7 +181,7 @@ class DemandeLivraisonController extends Controller
 
         // Générer un colis_label unique
         $colisLabel = 'COLIS-' . strtoupper(uniqid());
-        
+
         // Upload de la photo (nullable)
         $photoPath = null;
         if ($request->hasFile('colis_photo')) {
@@ -220,8 +220,8 @@ class DemandeLivraisonController extends Controller
             'colis_id' => $colis->id, // Associer le colis
             'prix' => $validatedData['prix'],
             'lat_depot' => $validatedData['lat_depot'],
-            'lng_depot' => $validatedData['lng_depot'],  
-            'lat_delivery' => $validatedData['lat_delivery'], 
+            'lng_depot' => $validatedData['lng_depot'],
+            'lat_delivery' => $validatedData['lat_delivery'],
             'lng_delivery' => $validatedData['lng_delivery'],
         ]);
 
@@ -229,14 +229,14 @@ class DemandeLivraisonController extends Controller
           $livraison = Livraison::create([
             'client_id' => $validatedData['client_id'],
             'demande_livraisons_id' => $demande->id,
-            'code_pin' => $this->generateUniquePin(),            
+            'code_pin' => $this->generateUniquePin(),
         ]);
 
         // Envoyer un email à l'admin
         try {
                         $admin = User::where('role', 'admin')->where('email', 'ziattzi133@gmail.com')->first();
 
-            
+
             if ($admin && $admin->email) {
                 Mail::to($admin->email)->send(new NewDeliveryRequestMail($demande));
                 Log::info('Email d\'alerte envoyé à l\'admin: ' . $admin->email);
@@ -247,7 +247,7 @@ class DemandeLivraisonController extends Controller
             // L'envoi d'email a échoué, mais on continue l'action
             Log::error('Erreur lors de l\'envoi du mail à l\'admin: ' . $e->getMessage());
         }
-        
+
          // Envoyer un email au client/destinataire
        try {
             if ($demande->client && $demande->client->user && $demande->client->user->email) {
@@ -264,7 +264,7 @@ class DemandeLivraisonController extends Controller
 
         //$notificationController = new NotificationController();
 
-        // Envoi de la notification à l'utilisateur 
+        // Envoi de la notification à l'utilisateur
         /*$notificationController->sendNotificationToUser(
             userId: [User::where('role', 'admin')->first()->id, $demande->client_id],
             type: NotificationType::NEW_DELIVERY_REQUEST,
@@ -274,13 +274,13 @@ class DemandeLivraisonController extends Controller
         */
 
         DB::commit();
-        
+
 
         /*
         return response()->json([
             'success' => true,
             'message' => 'Demande de livraison créée avec succès',
-          // 'data' => [ 
+          // 'data' => [
                 //'demande' => $demande,
                 //'destinataire' => $destinataire,
                 //'colis' => $colis,
@@ -288,7 +288,7 @@ class DemandeLivraisonController extends Controller
            // ],
             'data' =>$demande->load([
                 'client',
-                'colis',      
+                'colis',
                   ]),
 
         ], 201);
@@ -298,7 +298,8 @@ class DemandeLivraisonController extends Controller
             $demande->load([
                 'client',
                 'destinataire',
-                'colis',     
+                'colis',
+                 'livraison'
                   ]),
 
         201);
@@ -379,7 +380,7 @@ class DemandeLivraisonController extends Controller
         return $pin;
     }
 
-   
+
 
     /**
      * Supprimer une demande de livraison.
@@ -406,7 +407,7 @@ class DemandeLivraisonController extends Controller
             'message' => 'Demande de livraison supprimée avec succès',
         ], 200);
     }
-    
+
     /**
      * Convertir le code d'erreur d'upload en message lisible
      */
@@ -422,7 +423,7 @@ class DemandeLivraisonController extends Controller
             UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
             UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
         ];
-        
+
         return $errors[$errorCode] ?? 'Unknown upload error';
     }
 }

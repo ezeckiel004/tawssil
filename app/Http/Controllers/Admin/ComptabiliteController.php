@@ -8,6 +8,9 @@ use App\Models\Colis;
 use App\Models\Livraison;
 use App\Models\Navette;
 use App\Models\DemandeLivraison;
+use App\Models\GestionnaireGain;
+use App\Models\Gestionnaire;
+use App\Models\CommissionConfig;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +20,10 @@ use App\Exports\BilanGestionnaireExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RapportGestionnairesExport;
+use App\Exports\RapportGestionnairesCsvExport;
+
+
 
 class ComptabiliteController extends Controller
 {
@@ -33,7 +40,6 @@ class ComptabiliteController extends Controller
         try {
             $periode = $request->get('periode', 'annee');
 
-            // Récupérer les dates selon la période
             $dates = $this->getPeriodDates($periode, $request);
             $dateDebut = $dates[0];
             $dateFin = $dates[1];
@@ -58,11 +64,9 @@ class ComptabiliteController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur bilanGlobal: ' . $e->getMessage());
-            Log::error('Trace: ' . $e->getTraceAsString());
-
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors du calcul du bilan global: ' . $e->getMessage()
+                'message' => 'Erreur lors du calcul du bilan global'
             ], 500);
         }
     }
@@ -75,7 +79,6 @@ class ComptabiliteController extends Controller
         try {
             $user = $request->user();
 
-            // Déterminer la wilaya à afficher
             if ($user->role === 'admin' && $wilayaId) {
                 $wilaya = $wilayaId;
             } else {
@@ -90,8 +93,6 @@ class ComptabiliteController extends Controller
             }
 
             $periode = $request->get('periode', 'annee');
-
-            // Récupérer les dates selon la période
             $dates = $this->getPeriodDates($periode, $request);
             $dateDebut = $dates[0];
             $dateFin = $dates[1];
@@ -126,11 +127,630 @@ class ComptabiliteController extends Controller
         }
     }
 
-    // ==================== MÉTHODES STATISTIQUES ====================
+    /**
+     * Rapport détaillé des gains
+     */
+    public function rapport(Request $request): JsonResponse
+    {
+        try {
+            $periode = $request->get('periode', 'mois');
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
+
+            $livraisons = Livraison::with([
+                'demandeLivraison',
+                'client.user',
+                'livreurRamasseur.user',
+                'livreurDistributeur.user'
+            ])
+            ->where('status', 'livre')
+            ->whereBetween('created_at', [$dateDebut, $dateFin])
+            ->get();
+
+            $statsGlobales = [
+                'total_livraisons' => $livraisons->count(),
+                'chiffre_affaires' => $livraisons->sum(function ($livraison) {
+                    return $livraison->demandeLivraison->prix ?? 0;
+                }),
+                'moyenne_par_livraison' => $livraisons->count() > 0
+                    ? round($livraisons->sum(function ($livraison) {
+                        return $livraison->demandeLivraison->prix ?? 0;
+                    }) / $livraisons->count(), 2)
+                    : 0,
+            ];
+
+            $parWilaya = $livraisons->groupBy(function ($livraison) {
+                return $livraison->demandeLivraison->wilaya ?? 'inconnue';
+            })->map(function ($items, $wilaya) {
+                return [
+                    'wilaya' => $wilaya,
+                    'nom' => $this->getWilayaName($wilaya),
+                    'total_livraisons' => $items->count(),
+                    'montant_total' => $items->sum(function ($item) {
+                        return $item->demandeLivraison->prix ?? 0;
+                    }),
+                ];
+            })->values();
+
+            $parLivreur = $livraisons->groupBy(function ($livraison) {
+                return $livraison->livreur_distributeur_id ?? $livraison->livreur_ramasseur_id ?? 'non_assigné';
+            })->map(function ($items, $livreurId) {
+                $premiereLivraison = $items->first();
+                $livreur = null;
+
+                if ($premiereLivraison && $livreurId !== 'non_assigné') {
+                    if ($premiereLivraison->livreurDistributeur) {
+                        $livreur = $premiereLivraison->livreurDistributeur->user;
+                    } elseif ($premiereLivraison->livreurRamasseur) {
+                        $livreur = $premiereLivraison->livreurRamasseur->user;
+                    }
+                }
+
+                return [
+                    'livreur_id' => $livreurId !== 'non_assigné' ? $livreurId : null,
+                    'nom_livreur' => $livreur ? $livreur->nom . ' ' . $livreur->prenom : 'Non assigné',
+                    'total_livraisons' => $items->count(),
+                    'montant_total' => $items->sum(function ($item) {
+                        return $item->demandeLivraison->prix ?? 0;
+                    }),
+                ];
+            })->values();
+
+            $detailLivraisons = $livraisons->map(function ($livraison) {
+                $livreur = $livraison->livreurDistributeur ?? $livraison->livreurRamasseur;
+
+                return [
+                    'id' => $livraison->id,
+                    'date' => $livraison->created_at->format('d/m/Y'),
+                    'client' => $livraison->client?->user?->nom . ' ' . $livraison->client?->user?->prenom,
+                    'montant' => $livraison->demandeLivraison->prix ?? 0,
+                    'wilaya_depart' => $livraison->demandeLivraison->wilaya_depot,
+                    'wilaya_arrivee' => $livraison->demandeLivraison->wilaya,
+                    'livreur' => $livreur?->user?->nom . ' ' . $livreur?->user?->prenom,
+                    'code_pin' => $livraison->code_pin,
+                ];
+            });
+
+            $rapport = [
+                'periode' => [
+                    'debut' => $dateDebut->format('Y-m-d'),
+                    'fin' => $dateFin->format('Y-m-d'),
+                    'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+                ],
+                'stats_globales' => $statsGlobales,
+                'par_wilaya' => $parWilaya,
+                'par_livreur' => $parLivreur,
+                'details' => $detailLivraisons,
+                'date_generation' => Carbon::now()->format('d/m/Y H:i:s')
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $rapport
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Erreur rapport: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la génération du rapport'
+            ], 500);
+        }
+    }
 
     /**
-     * Statistiques des colis
+ * Rapport détaillé des gains par gestionnaire
+ */
+public function rapportGestionnaires(Request $request): JsonResponse
+{
+    try {
+        $periode = $request->get('periode', 'mois');
+        $dates = $this->getPeriodDates($periode, $request);
+        $dateDebut = $dates[0];
+        $dateFin = $dates[1];
+
+        // Filtres optionnels
+        $gestionnaireId = $request->get('gestionnaire_id');
+        $wilayaId = $request->get('wilaya_id');
+
+        // Récupérer TOUS les gains avec leurs relations
+        $query = GestionnaireGain::with([
+            'gestionnaire.user',
+            'livraison.demandeLivraison'
+        ])->whereBetween('created_at', [$dateDebut, $dateFin]);
+
+        // Appliquer les filtres si présents
+        if ($gestionnaireId) {
+            $query->where('gestionnaire_id', $gestionnaireId);
+        }
+
+        if ($wilayaId) {
+            $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
+                $q->where('wilaya_id', $wilayaId);
+            });
+        }
+
+        $gains = $query->get();
+
+        // Statistiques
+        $statsParWilaya = []; // Un ligne par (wilaya + gestionnaire)
+        $gainsParGestionnaire = [];
+        $totalCommissions = 0;
+        $totalPrixLivraisons = 0;
+
+        foreach ($gains as $gain) {
+            $gestionnaire = $gain->gestionnaire;
+
+            if (!$gestionnaire) {
+                continue;
+            }
+
+            $wilayaCode = $gestionnaire->wilaya_id;
+            $gestionnaireId = $gestionnaire->id;
+            $montantCommission = (float) $gain->montant_commission;
+
+            // Prix de la livraison
+            if ($gain->livraison && $gain->livraison->demandeLivraison) {
+                $totalPrixLivraisons += (float) ($gain->livraison->demandeLivraison->prix ?? 0);
+            }
+
+            // 1. STATS PAR WILAYA (une ligne par gestionnaire dans sa wilaya)
+            $cleWilaya = $wilayaCode . '_' . $gestionnaireId; // Clé unique !
+
+            if (!isset($statsParWilaya[$cleWilaya])) {
+                $statsParWilaya[$cleWilaya] = [
+                    'code' => $wilayaCode,
+                    'nom' => $this->getWilayaName($wilayaCode),
+                    'gestionnaire_nom' => $gestionnaire->user ?
+                        trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
+                        'Non assigné',
+                    'gestionnaire_id' => $gestionnaireId,
+                    'gestionnaire_email' => $gestionnaire->user->email ?? '',
+                    'nb_livraisons' => 0,
+                    'total_commissions' => 0,
+                    'pourcentage' => 0
+                ];
+            }
+
+            $statsParWilaya[$cleWilaya]['nb_livraisons']++;
+            $statsParWilaya[$cleWilaya]['total_commissions'] += $montantCommission;
+
+            // 2. GAINS PAR GESTIONNAIRE (pour le détail)
+            if (!isset($gainsParGestionnaire[$gestionnaireId])) {
+                $gainsParGestionnaire[$gestionnaireId] = [
+                    'gestionnaire_id' => $gestionnaireId,
+                    'gestionnaire_nom' => $gestionnaire->user ?
+                        trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
+                        'Inconnu',
+                    'gestionnaire_email' => $gestionnaire->user->email ?? '',
+                    'wilaya_code' => $wilayaCode,
+                    'wilaya_nom' => $this->getWilayaName($wilayaCode),
+                    'total_commissions' => 0,
+                    'nb_livraisons' => 0,
+                    'pourcentage_applique' => (float) $gain->pourcentage_applique,
+                    'statut' => $gain->status
+                ];
+            }
+
+            $gainsParGestionnaire[$gestionnaireId]['total_commissions'] += $montantCommission;
+            $gainsParGestionnaire[$gestionnaireId]['nb_livraisons']++;
+            $totalCommissions += $montantCommission;
+        }
+
+        // Calculer les pourcentages pour chaque ligne
+        foreach ($statsParWilaya as &$ligne) {
+            $ligne['pourcentage'] = $totalCommissions > 0
+                ? round(($ligne['total_commissions'] / $totalCommissions) * 100, 1)
+                : 0;
+        }
+
+        // Réindexer et trier
+        $statsParWilaya = array_values($statsParWilaya);
+        usort($statsParWilaya, function($a, $b) {
+            return $b['total_commissions'] <=> $a['total_commissions'];
+        });
+
+        // Top gestionnaires
+        $topGestionnaires = collect($gainsParGestionnaire)
+            ->sortByDesc('total_commissions')
+            ->take(5)
+            ->values()
+            ->map(function ($item) {
+                return [
+                    'id' => $item['gestionnaire_id'],
+                    'nom' => $item['gestionnaire_nom'],
+                    'email' => $item['gestionnaire_email'],
+                    'wilaya' => $item['wilaya_code'],
+                    'total_gains' => $item['total_commissions'],
+                    'nb_livraisons' => $item['nb_livraisons'],
+                ];
+            });
+
+        // Totaux
+        $totaux = [
+            'total_commissions' => $totalCommissions,
+            'nb_gestionnaires' => count($gainsParGestionnaire),
+            'nb_livraisons' => $gains->count(),
+            'moyenne_par_gestionnaire' => count($gainsParGestionnaire) > 0
+                ? round($totalCommissions / count($gainsParGestionnaire), 2)
+                : 0,
+            'part_societe_mere' => $totalPrixLivraisons - $totalCommissions
+        ];
+
+        // Détails par gestionnaire
+        $details = array_values($gainsParGestionnaire);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'periode' => [
+                    'debut' => $dateDebut->format('Y-m-d'),
+                    'fin' => $dateFin->format('Y-m-d'),
+                    'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+                ],
+                'totaux' => $totaux,
+                'par_wilaya' => $statsParWilaya,
+                'top_gestionnaires' => $topGestionnaires,
+                'details' => $details
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('❌ Erreur rapportGestionnaires: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la génération du rapport: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+   /**
+ * Liste des impayés (gains en attente et demandes envoyées)
+ */
+public function impayes(Request $request): JsonResponse
+{
+    try {
+        // Récupérer les gains en attente ET les demandes envoyées
+        $impayes = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
+            ->whereIn('status', ['en_attente', 'demande_envoyee'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $formattedImpayes = $impayes->map(function ($gain) {
+            return [
+                'id' => $gain->id,
+                'gestionnaire_id' => $gain->gestionnaire_id,
+                'livraison_id' => $gain->livraison_id,
+                'montant_commission' => $gain->montant_commission,
+                'pourcentage_applique' => $gain->pourcentage_applique,
+                'status' => $gain->status,
+                'created_at' => $gain->created_at,
+                'updated_at' => $gain->updated_at,
+                'wilaya_type' => $gain->wilaya_type,
+                'date_calcul' => $gain->date_calcul,
+                'date_demande' => $gain->date_demande,
+                'date_paiement' => $gain->date_paiement,
+                'note_admin' => $gain->note_admin,
+                'gestionnaire' => $gain->gestionnaire ? [
+                    'id' => $gain->gestionnaire->id,
+                    'user_id' => $gain->gestionnaire->user_id,
+                    'wilaya_id' => $gain->gestionnaire->wilaya_id,
+                    'status' => $gain->gestionnaire->status,
+                    'user' => $gain->gestionnaire->user ? [
+                        'id' => $gain->gestionnaire->user->id,
+                        'nom' => $gain->gestionnaire->user->nom,
+                        'prenom' => $gain->gestionnaire->user->prenom,
+                        'email' => $gain->gestionnaire->user->email,
+                    ] : null
+                ] : null,
+                'livraison' => $gain->livraison ? [
+                    'id' => $gain->livraison->id,
+                    'status' => $gain->livraison->status,
+                    'code_pin' => $gain->livraison->code_pin,
+                ] : null
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedImpayes
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Erreur impayes: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la récupération des impayés'
+        ], 500);
+    }
+}
+
+    /**
+     * Exporter le rapport
      */
+    public function exportRapport(Request $request)
+    {
+        try {
+            $format = $request->get('format', 'excel');
+            $periode = $request->get('periode', 'mois');
+
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
+
+            $livraisons = Livraison::with([
+                'demandeLivraison',
+                'client.user',
+                'livreurRamasseur.user',
+                'livreurDistributeur.user'
+            ])
+            ->where('status', 'livre')
+            ->whereBetween('created_at', [$dateDebut, $dateFin])
+            ->get();
+
+            $data = [
+                'periode' => [
+                    'debut' => $dateDebut->format('Y-m-d'),
+                    'fin' => $dateFin->format('Y-m-d'),
+                    'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+                ],
+                'livraisons' => $livraisons,
+                'date_generation' => Carbon::now()->format('d/m/Y H:i:s')
+            ];
+
+            if ($format === 'pdf') {
+                $pdf = Pdf::loadView('pdf.rapport-gains', ['data' => $data]);
+                $pdf->setPaper('A4', 'landscape');
+                return $pdf->download('rapport-gains-' . Carbon::now()->format('Ymd-His') . '.pdf');
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Export Excel en cours de développement'
+                ], 501);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur exportRapport: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'export'
+            ], 500);
+        }
+    }
+
+    /**
+ * Exporter le rapport des gestionnaires (Excel/PDF/CSV)
+ */
+public function exportRapportGestionnaires(Request $request)
+{
+    try {
+        $format = $request->get('format', 'excel');
+        $periode = $request->get('periode', 'mois');
+        $gestionnaireId = $request->get('gestionnaire_id');
+        $wilayaId = $request->get('wilaya_id');
+
+        $dates = $this->getPeriodDates($periode, $request);
+        $dateDebut = $dates[0];
+        $dateFin = $dates[1];
+
+        // Récupérer les gains avec les relations
+        $query = GestionnaireGain::with(['gestionnaire.user', 'livraison.demandeLivraison'])
+            ->whereBetween('created_at', [$dateDebut, $dateFin])
+            ->orderBy('created_at', 'desc');
+
+        if ($gestionnaireId) {
+            $query->where('gestionnaire_id', $gestionnaireId);
+        }
+
+        if ($wilayaId) {
+            $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
+                $q->where('wilaya_id', $wilayaId);
+            });
+        }
+
+        $gains = $query->get();
+
+        $periodeData = [
+            'debut' => $dateDebut->format('d/m/Y'),
+            'fin' => $dateFin->format('d/m/Y'),
+            'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+        ];
+
+        $dateGeneration = Carbon::now();
+
+        switch ($format) {
+            case 'pdf':
+                $data = [
+                    'periode' => $periodeData,
+                    'gains' => $gains,
+                    'date_generation' => $dateGeneration->format('d/m/Y H:i:s'),
+                    'total_montant' => $gains->sum('montant_commission'),
+                    'total_gains' => $gains->count()
+                ];
+
+                $pdf = Pdf::loadView('pdf.rapport-gestionnaires', ['data' => $data]);
+                $pdf->setPaper('A4', 'landscape');
+                $pdf->setOptions([
+                    'defaultFont' => 'DejaVu Sans',
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true
+                ]);
+
+                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.pdf';
+                return $pdf->download($filename);
+
+            case 'csv':
+                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.csv';
+                return Excel::download(
+                    new RapportGestionnairesCsvExport($gains, $periodeData),
+                    $filename
+                );
+
+            case 'excel':
+            default:
+                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.xlsx';
+                return Excel::download(
+                    new RapportGestionnairesExport($gains, $periodeData),
+                    $filename
+                );
+        }
+    } catch (\Exception $e) {
+        Log::error('Erreur exportRapportGestionnaires: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de l\'export: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+    /**
+     * Récupérer les gains détaillés
+     */
+    public function getGainsDetails(Request $request): JsonResponse
+    {
+        try {
+            $periode = $request->get('periode', 'mois');
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
+
+            $gains = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
+                ->whereBetween('created_at', [$dateDebut, $dateFin])
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $gains
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur getGainsDetails: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des gains'
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupérer les gains d'un gestionnaire spécifique
+     */
+    public function getGainsGestionnaire(Request $request, $gestionnaireId): JsonResponse
+    {
+        try {
+            $periode = $request->get('periode', 'mois');
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
+
+            $gains = GestionnaireGain::with('livraison')
+                ->where('gestionnaire_id', $gestionnaireId)
+                ->whereBetween('created_at', [$dateDebut, $dateFin])
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'gestionnaire_id' => $gestionnaireId,
+                    'total_gains' => $gains->sum('montant_commission'),
+                    'nb_livraisons' => $gains->count(),
+                    'details' => $gains
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur getGainsGestionnaire: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des gains'
+            ], 500);
+        }
+    }
+
+    /**
+     * Statistiques mensuelles
+     */
+    public function statistiquesMensuelles(Request $request): JsonResponse
+    {
+        try {
+            $annee = $request->get('annee', Carbon::now()->year);
+            $stats = [];
+
+            for ($mois = 1; $mois <= 12; $mois++) {
+                $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
+                $finMois = Carbon::create($annee, $mois, 1)->endOfMonth();
+
+                $gains = GestionnaireGain::whereBetween('created_at', [$debutMois, $finMois])->sum('montant_commission');
+                $livraisons = Livraison::where('status', 'livre')
+                    ->whereBetween('created_at', [$debutMois, $finMois])
+                    ->count();
+
+                $stats[] = [
+                    'mois' => $debutMois->locale('fr')->isoFormat('MMMM'),
+                    'mois_num' => $mois,
+                    'gains' => $gains,
+                    'livraisons' => $livraisons
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur statistiquesMensuelles: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du calcul des statistiques'
+            ], 500);
+        }
+    }
+
+    /**
+     * Évolution mensuelle
+     */
+    public function evolutionMensuelle(Request $request): JsonResponse
+    {
+        try {
+            $periode = $request->get('periode', 'annee');
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
+
+            $evolution = [];
+            $current = $dateDebut->copy();
+
+            while ($current <= $dateFin) {
+                $debutMois = $current->copy()->startOfMonth();
+                $finMois = $current->copy()->endOfMonth();
+
+                $evolution[] = [
+                    'mois' => $current->locale('fr')->isoFormat('MMM YYYY'),
+                    'date' => $current->format('Y-m'),
+                    'chiffre_affaires' => Livraison::where('status', 'livre')
+                        ->whereBetween('created_at', [$debutMois, $finMois])
+                        ->sum('demandeLivraison.prix'),
+                    'nb_livraisons' => Livraison::where('status', 'livre')
+                        ->whereBetween('created_at', [$debutMois, $finMois])
+                        ->count(),
+                ];
+
+                $current->addMonth();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $evolution
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur evolutionMensuelle: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du calcul de l\'évolution'
+            ], 500);
+        }
+    }
+
+    // ==================== MÉTHODES STATISTIQUES ====================
+
     private function getStatsColis($wilayaId = null, $dateDebut = null, $dateFin = null): array
     {
         $query = Colis::query();
@@ -158,9 +778,6 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Statistiques des livraisons
-     */
     private function getStatsLivraisons($wilayaId = null, $dateDebut = null, $dateFin = null): array
     {
         $query = Livraison::with('demandeLivraison');
@@ -180,7 +797,6 @@ class ComptabiliteController extends Controller
 
         $livraisons = $query->get();
 
-        // Récupérer les prix depuis demandeLivraison
         $prixTotal = 0;
         foreach ($livraisons as $livraison) {
             if ($livraison->demandeLivraison) {
@@ -208,9 +824,6 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Statistiques des navettes
-     */
     private function getStatsNavettes($wilayaId = null, $dateDebut = null, $dateFin = null): array
     {
         $query = Navette::query();
@@ -251,12 +864,8 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Bilan financier
-     */
     private function getBilanFinancier($wilayaId = null, $dateDebut = null, $dateFin = null): array
     {
-        // Valeur des colis
         $colisQuery = Colis::query();
         if ($dateDebut && $dateFin) {
             $colisQuery->whereBetween('created_at', [$dateDebut, $dateFin]);
@@ -268,7 +877,6 @@ class ComptabiliteController extends Controller
         }
         $valeurColis = $colisQuery->sum('colis_prix') ?? 0;
 
-        // Revenus livraisons
         $livraisonsQuery = Livraison::where('status', 'livre')->with('demandeLivraison');
         if ($dateDebut && $dateFin) {
             $livraisonsQuery->whereBetween('created_at', [$dateDebut, $dateFin]);
@@ -290,7 +898,6 @@ class ComptabiliteController extends Controller
             }
         }
 
-        // Revenus navettes
         $navettesQuery = Navette::where('status', 'terminee');
         if ($dateDebut && $dateFin) {
             $navettesQuery->whereBetween('created_at', [$dateDebut, $dateFin]);
@@ -331,16 +938,13 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Top wilayas (CORRIGÉ pour gérer les valeurs NULL)
-     */
     private function getTopWilayas($dateDebut = null, $dateFin = null): array
     {
         $queryDeparts = DemandeLivraison::select('wilaya_depot', DB::raw('count(*) as total'))
-            ->whereNotNull('wilaya_depot'); // ← IGNORER les NULL
+            ->whereNotNull('wilaya_depot');
 
         $queryArrivees = DemandeLivraison::select('wilaya', DB::raw('count(*) as total'))
-            ->whereNotNull('wilaya'); // ← IGNORER les NULL
+            ->whereNotNull('wilaya');
 
         if ($dateDebut && $dateFin) {
             $queryDeparts->whereBetween('created_at', [$dateDebut, $dateFin]);
@@ -379,13 +983,9 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Évolution globale
-     */
     private function getEvolutionGlobale($dateDebut = null, $dateFin = null): array
     {
         if (!$dateDebut || !$dateFin) {
-            // Si pas de filtre, comparer avec l'année précédente
             $dateFin = Carbon::now();
             $dateDebut = Carbon::now()->subYear();
             $dateDebutPrec = Carbon::now()->subYears(2);
@@ -413,13 +1013,9 @@ class ComptabiliteController extends Controller
         ];
     }
 
-    /**
-     * Évolution pour une wilaya
-     */
     private function getEvolutionWilaya($wilayaId, $dateDebut = null, $dateFin = null): array
     {
         if (!$dateDebut || !$dateFin) {
-            // Si pas de filtre, comparer avec l'année précédente
             $dateFin = Carbon::now();
             $dateDebut = Carbon::now()->subYear();
             $dateDebutPrec = Carbon::now()->subYears(2);
@@ -470,7 +1066,6 @@ class ComptabiliteController extends Controller
                     Carbon::parse($request->date_fin)->endOfDay()
                 ];
             default:
-                // Par défaut : toute l'année en cours
                 return [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()];
         }
     }
@@ -495,88 +1090,36 @@ class ComptabiliteController extends Controller
         return $labels[$periode] ?? 'Période';
     }
 
-    /**
-     * CORRIGÉ : Gère les valeurs NULL et retourne une chaîne par défaut
-     */
     private function getWilayaName($code): string
     {
-        // Si le code est null, retourner "Inconnue"
         if ($code === null) {
             return 'Wilaya inconnue';
         }
 
         $wilayas = [
-            '01' => 'Adrar',
-            '02' => 'Chlef',
-            '03' => 'Laghouat',
-            '04' => 'Oum El Bouaghi',
-            '05' => 'Batna',
-            '06' => 'Béjaïa',
-            '07' => 'Biskra',
-            '08' => 'Béchar',
-            '09' => 'Blida',
-            '10' => 'Bouira',
-            '11' => 'Tamanrasset',
-            '12' => 'Tébessa',
-            '13' => 'Tlemcen',
-            '14' => 'Tiaret',
-            '15' => 'Tizi Ouzou',
-            '16' => 'Alger',
-            '17' => 'Djelfa',
-            '18' => 'Jijel',
-            '19' => 'Sétif',
-            '20' => 'Saïda',
-            '21' => 'Skikda',
-            '22' => 'Sidi Bel Abbès',
-            '23' => 'Annaba',
-            '24' => 'Guelma',
-            '25' => 'Constantine',
-            '26' => 'Médéa',
-            '27' => 'Mostaganem',
-            '28' => 'M\'Sila',
-            '29' => 'Mascara',
-            '30' => 'Ouargla',
-            '31' => 'Oran',
-            '32' => 'El Bayadh',
-            '33' => 'Illizi',
-            '34' => 'Bordj Bou Arréridj',
-            '35' => 'Boumerdès',
-            '36' => 'El Tarf',
-            '37' => 'Tindouf',
-            '38' => 'Tissemsilt',
-            '39' => 'El Oued',
-            '40' => 'Khenchela',
-            '41' => 'Souk Ahras',
-            '42' => 'Tipaza',
-            '43' => 'Mila',
-            '44' => 'Aïn Defla',
-            '45' => 'Naâma',
-            '46' => 'Aïn Témouchent',
-            '47' => 'Ghardaïa',
-            '48' => 'Relizane',
-            '49' => 'Timimoun',
-            '50' => 'Bordj Badji Mokhtar',
-            '51' => 'Ouled Djellal',
-            '52' => 'Béni Abbès',
-            '53' => 'In Salah',
-            '54' => 'In Guezzam',
-            '55' => 'Touggourt',
-            '56' => 'Djanet',
-            '57' => 'El M\'Ghair',
-            '58' => 'El Meniaa'
+            '01' => 'Adrar', '02' => 'Chlef', '03' => 'Laghouat', '04' => 'Oum El Bouaghi',
+            '05' => 'Batna', '06' => 'Béjaïa', '07' => 'Biskra', '08' => 'Béchar',
+            '09' => 'Blida', '10' => 'Bouira', '11' => 'Tamanrasset', '12' => 'Tébessa',
+            '13' => 'Tlemcen', '14' => 'Tiaret', '15' => 'Tizi Ouzou', '16' => 'Alger',
+            '17' => 'Djelfa', '18' => 'Jijel', '19' => 'Sétif', '20' => 'Saïda',
+            '21' => 'Skikda', '22' => 'Sidi Bel Abbès', '23' => 'Annaba', '24' => 'Guelma',
+            '25' => 'Constantine', '26' => 'Médéa', '27' => 'Mostaganem', '28' => 'M\'Sila',
+            '29' => 'Mascara', '30' => 'Ouargla', '31' => 'Oran', '32' => 'El Bayadh',
+            '33' => 'Illizi', '34' => 'Bordj Bou Arréridj', '35' => 'Boumerdès',
+            '36' => 'El Tarf', '37' => 'Tindouf', '38' => 'Tissemsilt', '39' => 'El Oued',
+            '40' => 'Khenchela', '41' => 'Souk Ahras', '42' => 'Tipaza', '43' => 'Mila',
+            '44' => 'Aïn Defla', '45' => 'Naâma', '46' => 'Aïn Témouchent', '47' => 'Ghardaïa',
+            '48' => 'Relizane', '49' => 'Timimoun', '50' => 'Bordj Badji Mokhtar',
+            '51' => 'Ouled Djellal', '52' => 'Béni Abbès', '53' => 'In Salah',
+            '54' => 'In Guezzam', '55' => 'Touggourt', '56' => 'Djanet',
+            '57' => 'El M\'Ghair', '58' => 'El Meniaa'
         ];
 
         return $wilayas[$code] ?? 'Wilaya ' . $code;
     }
 
+    // ==================== MÉTHODES D'EXPORT ====================
 
-
-
-// ==================== MÉTHODES D'EXPORT ====================
-
-    /**
-     * Exporter le bilan global (Excel/PDF)
-     */
     public function exportBilanGlobal(Request $request)
     {
         try {
@@ -615,20 +1158,16 @@ class ComptabiliteController extends Controller
             Log::error('Erreur exportBilanGlobal: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'export: ' . $e->getMessage()
+                'message' => 'Erreur lors de l\'export'
             ], 500);
         }
     }
 
-    /**
-     * Exporter le bilan d'un gestionnaire (Excel/PDF)
-     */
     public function exportBilanGestionnaire(Request $request, $wilayaId = null)
     {
         try {
             $user = $request->user();
 
-            // Déterminer la wilaya
             if ($user->role === 'admin' && $wilayaId) {
                 $wilaya = $wilayaId;
             } else {
@@ -683,4 +1222,113 @@ class ComptabiliteController extends Controller
             ], 500);
         }
     }
+
+    /**
+ * Récupérer l'historique des gains traités (payés et annulés)
+ */
+public function historiqueGains(Request $request): JsonResponse
+{
+    try {
+        $historique = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
+            ->whereIn('status', ['paye', 'annule'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        $formattedHistorique = $historique->map(function ($gain) {
+            return [
+                'id' => $gain->id,
+                'gestionnaire_id' => $gain->gestionnaire_id,
+                'livraison_id' => $gain->livraison_id,
+                'montant_commission' => $gain->montant_commission,
+                'pourcentage_applique' => $gain->pourcentage_applique,
+                'status' => $gain->status,
+                'created_at' => $gain->created_at,
+                'updated_at' => $gain->updated_at,
+                'wilaya_type' => $gain->wilaya_type,
+                'date_calcul' => $gain->date_calcul,
+                'date_demande' => $gain->date_demande,
+                'date_paiement' => $gain->date_paiement,
+                'note_admin' => $gain->note_admin,
+                'gestionnaire' => $gain->gestionnaire ? [
+                    'id' => $gain->gestionnaire->id,
+                    'user_id' => $gain->gestionnaire->user_id,
+                    'wilaya_id' => $gain->gestionnaire->wilaya_id,
+                    'status' => $gain->gestionnaire->status,
+                    'user' => $gain->gestionnaire->user ? [
+                        'id' => $gain->gestionnaire->user->id,
+                        'nom' => $gain->gestionnaire->user->nom,
+                        'prenom' => $gain->gestionnaire->user->prenom,
+                        'email' => $gain->gestionnaire->user->email,
+                    ] : null
+                ] : null,
+                'livraison' => $gain->livraison ? [
+                    'id' => $gain->livraison->id,
+                    'status' => $gain->livraison->status,
+                    'code_pin' => $gain->livraison->code_pin,
+                ] : null
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedHistorique
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Erreur historiqueGains: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la récupération de l\'historique'
+        ], 500);
+    }
+}
+
+/**
+ * Supprimer un gain de l'historique
+ */
+public function supprimerGain(Request $request, $gainId): JsonResponse
+{
+    try {
+        DB::beginTransaction();
+
+        $gain = GestionnaireGain::find($gainId);
+
+        if (!$gain) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gain non trouvé'
+            ], 404);
+        }
+
+        // Vérifier que le gain est bien dans l'historique (payé ou annulé)
+        if (!in_array($gain->status, ['paye', 'annule'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Seuls les gains de l\'historique (payés ou annulés) peuvent être supprimés'
+            ], 400);
+        }
+
+        // Supprimer le gain
+        $gain->delete();
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gain supprimé de l\'historique avec succès'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Erreur supprimerGain: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression'
+        ], 500);
+    }
+}
+
+/**
+ * Restaurer un gain supprimé (soft delete si vous voulez)
+ */
+// Optionnel : si vous voulez un soft delete
 }

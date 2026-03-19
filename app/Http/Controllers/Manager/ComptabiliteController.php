@@ -16,6 +16,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BilanGestionnaireExport;
+use App\Models\GestionnaireGain;
+use App\Services\CommissionService;
 
 class ComptabiliteController extends Controller
 {
@@ -832,4 +834,74 @@ class ComptabiliteController extends Controller
 
         return $wilayas[$code] ?? 'Wilaya ' . $code;
     }
+
+    public function mesGains(Request $request): JsonResponse
+{
+    try {
+        $user = $request->user();
+        $gestionnaire = $user->gestionnaire;
+
+        if (!$gestionnaire) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Profil gestionnaire introuvable'
+            ], 403);
+        }
+
+        $periode = $request->get('periode', 'mois');
+        $dates = $this->getPeriodDates($periode, $request);
+
+        $commissionService = new CommissionService();
+        $gains = $commissionService->getGainsGestionnaire(
+            $gestionnaire->id,
+            $dates[0],
+            $dates[1]
+        );
+
+        // Ajouter des statistiques détaillées
+        $gains['details_par_mois'] = $this->getGainsParMois($gestionnaire->id, $dates[0], $dates[1]);
+        $gains['total_attendu'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
+            ->where('status', 'calcule')
+            ->sum('montant_commission');
+        $gains['total_verse'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
+            ->where('status', 'verse')
+            ->sum('montant_commission');
+
+        return response()->json([
+            'success' => true,
+            'data' => $gains
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Erreur récupération gains: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la récupération des gains'
+        ], 500);
+    }
+}
+
+private function getGainsParMois($gestionnaireId, $debut, $fin)
+{
+    $mois = [];
+    $current = $debut->copy();
+
+    while ($current <= $fin) {
+        $debutMois = $current->copy()->startOfMonth();
+        $finMois = $current->copy()->endOfMonth();
+
+        $gainsMois = GestionnaireGain::where('gestionnaire_id', $gestionnaireId)
+            ->whereBetween('created_at', [$debutMois, $finMois])
+            ->sum('montant_commission');
+
+        $mois[] = [
+            'mois' => $current->locale('fr')->isoFormat('MMMM YYYY'),
+            'gains' => $gainsMois
+        ];
+
+        $current->addMonth();
+    }
+
+    return $mois;
+}
 }

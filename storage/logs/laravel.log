@@ -1143,3 +1143,967 @@
 #48 C:\Users\DOKI\Documents\Tawssill_API_3\public\index.php(51): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
 #49 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php(16): require_once('C:\\Users\\DOKI\\D...')
 #50 {main}  
+[2026-03-17 07:20:30] local.ERROR: SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (Connection: mysql, SQL: select * from `personal_access_tokens` where `personal_access_tokens`.`id` = 700 limit 1) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (Connection: mysql, SQL: select * from `personal_access_tokens` where `personal_access_tokens`.`id` = 700 limit 1) at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php:829)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate/Database/Connection->run('select * from `...', Array, Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate/Database/Connection->select('select * from `...', Array, true)
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate/Database/Query/Builder->runSelect()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate/Database/Query/Builder->Illuminate/Database/Query/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(739): Illuminate/Database/Query/Builder->get(Array)
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(723): Illuminate/Database/Eloquent/Builder->getModels(Array)
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Concerns/BuildsQueries.php(333): Illuminate/Database/Eloquent/Builder->get(Array)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(449): Illuminate/Database/Eloquent/Builder->first(Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(23): Illuminate/Database/Eloquent/Builder->find('700')
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2335): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'find', Array)
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2347): Illuminate/Database/Eloquent/Model->__call('find', Array)
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/PersonalAccessToken.php(66): Illuminate/Database/Eloquent/Model::__callStatic('find', Array)
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/Guard.php(67): Laravel/Sanctum/PersonalAccessToken::findToken('zHFo4VqSaASuxds...')
+#15 [internal function]: Laravel/Sanctum/Guard->__invoke(Object(Illuminate/Http/Request), NULL)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/RequestGuard.php(57): call_user_func(Object(Laravel/Sanctum/Guard), Object(Illuminate/Http/Request), NULL)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/GuardHelpers.php(56): Illuminate/Auth/RequestGuard->user()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(76): Illuminate/Auth/RequestGuard->check()
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(55): Illuminate/Auth/Middleware/Authenticate->authenticate(Object(Illuminate/Http/Request), Array)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#47 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:65)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(65): PDO->__construct('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(44): Illuminate/Database/Connectors/Connector->createPdoConnection('mysql:host=127....', 'root', '', Array)
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate/Database/Connectors/Connector->createConnection('mysql:host=127....', Array, Array)
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(184): Illuminate/Database/Connectors/MySqlConnector->connect(Array)
+#4 [internal function]: Illuminate/Database/Connectors/ConnectionFactory->Illuminate/Database/Connectors/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1339): call_user_func(Object(Closure))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1375): Illuminate/Database/Connection->getPdo()
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(528): Illuminate/Database/Connection->getReadPdo()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(423): Illuminate/Database/Connection->getPdoForSelect(true)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(816): Illuminate/Database/Connection->Illuminate/Database/{closure}('select * from `...', Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate/Database/Connection->run('select * from `...', Array, Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate/Database/Connection->select('select * from `...', Array, true)
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate/Database/Query/Builder->runSelect()
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate/Database/Query/Builder->Illuminate/Database/Query/{closure}()
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(739): Illuminate/Database/Query/Builder->get(Array)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(723): Illuminate/Database/Eloquent/Builder->getModels(Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Concerns/BuildsQueries.php(333): Illuminate/Database/Eloquent/Builder->get(Array)
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(449): Illuminate/Database/Eloquent/Builder->first(Array)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(23): Illuminate/Database/Eloquent/Builder->find('700')
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2335): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'find', Array)
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2347): Illuminate/Database/Eloquent/Model->__call('find', Array)
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/PersonalAccessToken.php(66): Illuminate/Database/Eloquent/Model::__callStatic('find', Array)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/Guard.php(67): Laravel/Sanctum/PersonalAccessToken::findToken('zHFo4VqSaASuxds...')
+#25 [internal function]: Laravel/Sanctum/Guard->__invoke(Object(Illuminate/Http/Request), NULL)
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/RequestGuard.php(57): call_user_func(Object(Laravel/Sanctum/Guard), Object(Illuminate/Http/Request), NULL)
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/GuardHelpers.php(56): Illuminate/Auth/RequestGuard->user()
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(76): Illuminate/Auth/RequestGuard->check()
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(55): Illuminate/Auth/Middleware/Authenticate->authenticate(Object(Illuminate/Http/Request), Array)
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#48 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#49 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#50 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#51 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#52 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#53 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#54 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#55 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#56 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#57 {main}
+"} 
+[2026-03-17 07:20:33] local.ERROR: SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (Connection: mysql, SQL: select * from `personal_access_tokens` where `personal_access_tokens`.`id` = 700 limit 1) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (Connection: mysql, SQL: select * from `personal_access_tokens` where `personal_access_tokens`.`id` = 700 limit 1) at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php:829)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate/Database/Connection->run('select * from `...', Array, Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate/Database/Connection->select('select * from `...', Array, true)
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate/Database/Query/Builder->runSelect()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate/Database/Query/Builder->Illuminate/Database/Query/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(739): Illuminate/Database/Query/Builder->get(Array)
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(723): Illuminate/Database/Eloquent/Builder->getModels(Array)
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Concerns/BuildsQueries.php(333): Illuminate/Database/Eloquent/Builder->get(Array)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(449): Illuminate/Database/Eloquent/Builder->first(Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(23): Illuminate/Database/Eloquent/Builder->find('700')
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2335): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'find', Array)
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2347): Illuminate/Database/Eloquent/Model->__call('find', Array)
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/PersonalAccessToken.php(66): Illuminate/Database/Eloquent/Model::__callStatic('find', Array)
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/Guard.php(67): Laravel/Sanctum/PersonalAccessToken::findToken('zHFo4VqSaASuxds...')
+#15 [internal function]: Laravel/Sanctum/Guard->__invoke(Object(Illuminate/Http/Request), NULL)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/RequestGuard.php(57): call_user_func(Object(Laravel/Sanctum/Guard), Object(Illuminate/Http/Request), NULL)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/GuardHelpers.php(56): Illuminate/Auth/RequestGuard->user()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(76): Illuminate/Auth/RequestGuard->check()
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(55): Illuminate/Auth/Middleware/Authenticate->authenticate(Object(Illuminate/Http/Request), Array)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#47 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:65)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(65): PDO->__construct('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(44): Illuminate/Database/Connectors/Connector->createPdoConnection('mysql:host=127....', 'root', '', Array)
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate/Database/Connectors/Connector->createConnection('mysql:host=127....', Array, Array)
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(184): Illuminate/Database/Connectors/MySqlConnector->connect(Array)
+#4 [internal function]: Illuminate/Database/Connectors/ConnectionFactory->Illuminate/Database/Connectors/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1339): call_user_func(Object(Closure))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1375): Illuminate/Database/Connection->getPdo()
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(528): Illuminate/Database/Connection->getReadPdo()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(423): Illuminate/Database/Connection->getPdoForSelect(true)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(816): Illuminate/Database/Connection->Illuminate/Database/{closure}('select * from `...', Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate/Database/Connection->run('select * from `...', Array, Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate/Database/Connection->select('select * from `...', Array, true)
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate/Database/Query/Builder->runSelect()
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate/Database/Query/Builder->Illuminate/Database/Query/{closure}()
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(739): Illuminate/Database/Query/Builder->get(Array)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(723): Illuminate/Database/Eloquent/Builder->getModels(Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Concerns/BuildsQueries.php(333): Illuminate/Database/Eloquent/Builder->get(Array)
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(449): Illuminate/Database/Eloquent/Builder->first(Array)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(23): Illuminate/Database/Eloquent/Builder->find('700')
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2335): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'find', Array)
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2347): Illuminate/Database/Eloquent/Model->__call('find', Array)
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/PersonalAccessToken.php(66): Illuminate/Database/Eloquent/Model::__callStatic('find', Array)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/sanctum/src/Guard.php(67): Laravel/Sanctum/PersonalAccessToken::findToken('zHFo4VqSaASuxds...')
+#25 [internal function]: Laravel/Sanctum/Guard->__invoke(Object(Illuminate/Http/Request), NULL)
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/RequestGuard.php(57): call_user_func(Object(Laravel/Sanctum/Guard), Object(Illuminate/Http/Request), NULL)
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/GuardHelpers.php(56): Illuminate/Auth/RequestGuard->user()
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(76): Illuminate/Auth/RequestGuard->check()
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(55): Illuminate/Auth/Middleware/Authenticate->authenticate(Object(Illuminate/Http/Request), Array)
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#48 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#49 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#50 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#51 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#52 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#53 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#54 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#55 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#56 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#57 {main}
+"} 
+[2026-03-18 07:51:23] local.ERROR: syntax error, unexpected end of file {"exception":"[object] (ParseError(code: 0): syntax error, unexpected end of file at C:/Users/DOKI/Documents/Tawssill_API_3/routes/api.php:303)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(511): Illuminate/Routing/RouteFileRegistrar->register('C://Users//DOKI//D...')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(465): Illuminate/Routing/Router->loadRoutes('C://Users//DOKI//D...')
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(194): Illuminate/Routing/Router->group(Array, 'C://Users//DOKI//D...')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Providers/RouteServiceProvider.php(34): Illuminate/Routing/RouteRegistrar->group('C://Users//DOKI//D...')
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/RouteServiceProvider->App/Providers/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(120): Illuminate/Container/Container->call(Object(Closure))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(45): Illuminate/Foundation/Support/Providers/RouteServiceProvider->loadRoutes()
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Foundation/Support/Providers/RouteServiceProvider->Illuminate/Foundation/Support/Providers/{closure}()
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(119): Illuminate/Container/Container->call(Object(Closure))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1062): Illuminate/Support/ServiceProvider->callBootedCallbacks()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate/Foundation/Application->bootProvider(Object(App/Providers/RouteServiceProvider))
+#19 [internal function]: Illuminate/Foundation/Application->Illuminate/Foundation/{closure}(Object(App/Providers/RouteServiceProvider), 26)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk(Array, Object(Closure))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap(Object(Illuminate/Foundation/Application))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate/Foundation/Application->bootstrapWith(Array)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate/Foundation/Console/Kernel->bootstrap()
+#25 Command line code(1): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#26 {main}
+"} 
+[2026-03-18 07:51:37] local.ERROR: syntax error, unexpected end of file {"exception":"[object] (ParseError(code: 0): syntax error, unexpected end of file at C:/Users/DOKI/Documents/Tawssill_API_3/routes/api.php:303)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(511): Illuminate/Routing/RouteFileRegistrar->register('C://Users//DOKI//D...')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(465): Illuminate/Routing/Router->loadRoutes('C://Users//DOKI//D...')
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(194): Illuminate/Routing/Router->group(Array, 'C://Users//DOKI//D...')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Providers/RouteServiceProvider.php(34): Illuminate/Routing/RouteRegistrar->group('C://Users//DOKI//D...')
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/RouteServiceProvider->App/Providers/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(120): Illuminate/Container/Container->call(Object(Closure))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(45): Illuminate/Foundation/Support/Providers/RouteServiceProvider->loadRoutes()
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Foundation/Support/Providers/RouteServiceProvider->Illuminate/Foundation/Support/Providers/{closure}()
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(119): Illuminate/Container/Container->call(Object(Closure))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1062): Illuminate/Support/ServiceProvider->callBootedCallbacks()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate/Foundation/Application->bootProvider(Object(App/Providers/RouteServiceProvider))
+#19 [internal function]: Illuminate/Foundation/Application->Illuminate/Foundation/{closure}(Object(App/Providers/RouteServiceProvider), 26)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk(Array, Object(Closure))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap(Object(Illuminate/Foundation/Application))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate/Foundation/Application->bootstrapWith(Array)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate/Foundation/Console/Kernel->bootstrap()
+#25 Command line code(1): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#26 {main}
+"} 
+[2026-03-18 07:51:37] local.ERROR: syntax error, unexpected end of file {"exception":"[object] (ParseError(code: 0): syntax error, unexpected end of file at C:/Users/DOKI/Documents/Tawssill_API_3/routes/api.php:303)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(511): Illuminate/Routing/RouteFileRegistrar->register('C://Users//DOKI//D...')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(465): Illuminate/Routing/Router->loadRoutes('C://Users//DOKI//D...')
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(194): Illuminate/Routing/Router->group(Array, 'C://Users//DOKI//D...')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Providers/RouteServiceProvider.php(34): Illuminate/Routing/RouteRegistrar->group('C://Users//DOKI//D...')
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App/Providers/RouteServiceProvider->App/Providers/{closure}()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(120): Illuminate/Container/Container->call(Object(Closure))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(45): Illuminate/Foundation/Support/Providers/RouteServiceProvider->loadRoutes()
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Foundation/Support/Providers/RouteServiceProvider->Illuminate/Foundation/Support/Providers/{closure}()
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(81): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Object(Closure), Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Object(Closure), Array, NULL)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(119): Illuminate/Container/Container->call(Object(Closure))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1062): Illuminate/Support/ServiceProvider->callBootedCallbacks()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate/Foundation/Application->bootProvider(Object(App/Providers/RouteServiceProvider))
+#19 [internal function]: Illuminate/Foundation/Application->Illuminate/Foundation/{closure}(Object(App/Providers/RouteServiceProvider), 26)
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk(Array, Object(Closure))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate/Foundation/Application->boot()
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate/Foundation/Bootstrap/BootProviders->bootstrap(Object(Illuminate/Foundation/Application))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate/Foundation/Application->bootstrapWith(Array)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate/Foundation/Console/Kernel->bootstrap()
+#25 Command line code(1): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#26 {main}
+"} 
+[2026-03-18 08:00:34] local.ERROR: Method App\Http\Controllers\Admin\ComptabiliteController::rapport does not exist. {"userId":"c9bada23-308d-4518-a32b-f05ef4a83750","exception":"[object] (BadMethodCallException(code: 0): Method App\\Http\\Controllers\\Admin\\ComptabiliteController::rapport does not exist. at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php:68)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): Illuminate/Routing/Controller->__call('rapport', Array)
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('rapport', Array)
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Admin/ComptabiliteController), 'rapport')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#40 {main}
+"} 
+[2026-03-18 08:00:35] local.ERROR: Method App\Http\Controllers\Admin\ComptabiliteController::rapport does not exist. {"userId":"c9bada23-308d-4518-a32b-f05ef4a83750","exception":"[object] (BadMethodCallException(code: 0): Method App\\Http\\Controllers\\Admin\\ComptabiliteController::rapport does not exist. at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php:68)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): Illuminate/Routing/Controller->__call('rapport', Array)
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('rapport', Array)
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Admin/ComptabiliteController), 'rapport')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#40 {main}
+"} 
+[2026-03-18 08:46:40] local.ERROR: Erreur rapportGestionnaires: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `created_at` between 2026-03-01 00:00:00 and 2026-03-31 23:59:59)  
+[2026-03-18 08:46:42] local.ERROR: Erreur rapportGestionnaires: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `created_at` between 2026-03-01 00:00:00 and 2026-03-31 23:59:59)  
+[2026-03-18 09:39:08] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:39:09] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:39:32] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:39:33] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:43:29] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:43:44] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:43:47] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:57:27] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 09:57:30] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:01:03] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:01:03] local.ERROR: Trace: #0 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Connection.php(783): Illuminate\Database\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Connection.php(414): Illuminate\Database\Connection->run('select * from `...', Array, Object(Closure))
+#2 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2913): Illuminate\Database\Connection->select('select * from `...', Array, true)
+#3 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2902): Illuminate\Database\Query\Builder->runSelect()
+#4 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(3456): Illuminate\Database\Query\Builder->Illuminate\Database\Query\{closure}()
+#5 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2901): Illuminate\Database\Query\Builder->onceWithColumns(Array, Object(Closure))
+#6 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php(739): Illuminate\Database\Query\Builder->get(Array)
+#7 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php(723): Illuminate\Database\Eloquent\Builder->getModels(Array)
+#8 C:\Users\DOKI\Documents\Tawssill_API_3\app\Http\Controllers\Admin\ComptabiliteController.php(646): Illuminate\Database\Eloquent\Builder->get()
+#9 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Controller.php(54): App\Http\Controllers\Admin\ComptabiliteController->impayes(Object(Illuminate\Http\Request))
+#10 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction('impayes', Array)
+#11 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\Admin\ComptabiliteController), 'impayes')
+#12 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Route.php(205): Illuminate\Routing\Route->runController()
+#13 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(806): Illuminate\Routing\Route->run()
+#14 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}(Object(Illuminate\Http\Request))
+#15 C:\Users\DOKI\Documents\Tawssill_API_3\app\Http\Middleware\RoleMiddleware.php(34): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#16 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): App\Http\Middleware\RoleMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure), 'admin')
+#17 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#18 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#19 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#20 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest(Object(Illuminate\Http\Request), Object(Closure), Array)
+#21 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\Http\Request), Object(Closure), 'api', Object(Closure))
+#22 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle(Object(Illuminate\Http\Request), Object(Closure), 'api')
+#23 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Auth\Middleware\Authenticate.php(57): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#24 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Auth\Middleware\Authenticate->handle(Object(Illuminate\Http\Request), Object(Closure), 'sanctum')
+#25 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#26 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(805): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#27 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(784): Illuminate\Routing\Router->runRouteWithinStack(Object(Illuminate\Routing\Route), Object(Illuminate\Http\Request))
+#28 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(748): Illuminate\Routing\Router->runRoute(Object(Illuminate\Http\Request), Object(Illuminate\Routing\Route))
+#29 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(737): Illuminate\Routing\Router->dispatchToRoute(Object(Illuminate\Http\Request))
+#30 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(200): Illuminate\Routing\Router->dispatch(Object(Illuminate\Http\Request))
+#31 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}(Object(Illuminate\Http\Request))
+#32 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#33 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#34 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle(Object(Illuminate\Http\Request), Object(Closure))
+#35 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#36 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#37 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#38 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#39 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle(Object(Illuminate\Http\Request), Object(Closure))
+#40 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#41 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle(Object(Illuminate\Http\Request), Object(Closure))
+#42 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#43 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle(Object(Illuminate\Http\Request), Object(Closure))
+#44 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#45 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#46 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#47 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(175): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#48 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#49 C:\Users\DOKI\Documents\Tawssill_API_3\public\index.php(51): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#50 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php(16): require_once('C:\\Users\\DOKI\\D...')
+#51 {main}  
+[2026-03-18 10:01:05] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:01:05] local.ERROR: Trace: #0 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Connection.php(783): Illuminate\Database\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Connection.php(414): Illuminate\Database\Connection->run('select * from `...', Array, Object(Closure))
+#2 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2913): Illuminate\Database\Connection->select('select * from `...', Array, true)
+#3 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2902): Illuminate\Database\Query\Builder->runSelect()
+#4 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(3456): Illuminate\Database\Query\Builder->Illuminate\Database\Query\{closure}()
+#5 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(2901): Illuminate\Database\Query\Builder->onceWithColumns(Array, Object(Closure))
+#6 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php(739): Illuminate\Database\Query\Builder->get(Array)
+#7 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php(723): Illuminate\Database\Eloquent\Builder->getModels(Array)
+#8 C:\Users\DOKI\Documents\Tawssill_API_3\app\Http\Controllers\Admin\ComptabiliteController.php(646): Illuminate\Database\Eloquent\Builder->get()
+#9 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Controller.php(54): App\Http\Controllers\Admin\ComptabiliteController->impayes(Object(Illuminate\Http\Request))
+#10 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php(43): Illuminate\Routing\Controller->callAction('impayes', Array)
+#11 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Route.php(259): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\Admin\ComptabiliteController), 'impayes')
+#12 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Route.php(205): Illuminate\Routing\Route->runController()
+#13 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(806): Illuminate\Routing\Route->run()
+#14 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(144): Illuminate\Routing\Router->Illuminate\Routing\{closure}(Object(Illuminate\Http\Request))
+#15 C:\Users\DOKI\Documents\Tawssill_API_3\app\Http\Middleware\RoleMiddleware.php(34): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#16 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): App\Http\Middleware\RoleMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure), 'admin')
+#17 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#18 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Routing\Middleware\SubstituteBindings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#19 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(159): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#20 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(125): Illuminate\Routing\Middleware\ThrottleRequests->handleRequest(Object(Illuminate\Http\Request), Object(Closure), Array)
+#21 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php(87): Illuminate\Routing\Middleware\ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate\Http\Request), Object(Closure), 'api', Object(Closure))
+#22 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Routing\Middleware\ThrottleRequests->handle(Object(Illuminate\Http\Request), Object(Closure), 'api')
+#23 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Auth\Middleware\Authenticate.php(57): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#24 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Auth\Middleware\Authenticate->handle(Object(Illuminate\Http\Request), Object(Closure), 'sanctum')
+#25 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#26 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(805): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#27 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(784): Illuminate\Routing\Router->runRouteWithinStack(Object(Illuminate\Routing\Route), Object(Illuminate\Http\Request))
+#28 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(748): Illuminate\Routing\Router->runRoute(Object(Illuminate\Http\Request), Object(Illuminate\Routing\Route))
+#29 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Routing\Router.php(737): Illuminate\Routing\Router->dispatchToRoute(Object(Illuminate\Http\Request))
+#30 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(200): Illuminate\Routing\Router->dispatch(Object(Illuminate\Http\Request))
+#31 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(144): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}(Object(Illuminate\Http\Request))
+#32 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#33 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#34 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle(Object(Illuminate\Http\Request), Object(Closure))
+#35 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#36 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php(40): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#37 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\TrimStrings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#38 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#39 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\ValidatePostSize->handle(Object(Illuminate\Http\Request), Object(Closure))
+#40 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php(99): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#41 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle(Object(Illuminate\Http\Request), Object(Closure))
+#42 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php(62): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#43 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Http\Middleware\HandleCors->handle(Object(Illuminate\Http\Request), Object(Closure))
+#44 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php(39): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#45 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(183): Illuminate\Http\Middleware\TrustProxies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#46 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(119): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}(Object(Illuminate\Http\Request))
+#47 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(175): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#48 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#49 C:\Users\DOKI\Documents\Tawssill_API_3\public\index.php(51): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#50 C:\Users\DOKI\Documents\Tawssill_API_3\vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php(16): require_once('C:\\Users\\DOKI\\D...')
+#51 {main}  
+[2026-03-18 10:05:53] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:05:55] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:20:15] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 10:20:16] local.ERROR: Erreur impayes: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'tdb3.gestionnaire_gains' doesn't exist (Connection: mysql, SQL: select * from `gestionnaire_gains` where `status` = en_attente)  
+[2026-03-18 11:55:26] local.ERROR: Unknown column type "enum" requested. Any Doctrine type that you use has to be registered with \Doctrine\DBAL\Types\Type::addType(). You can get a list of all the known types with \Doctrine\DBAL\Types\Type::getTypesMap(). If this error occurs during database introspection then you might have forgotten to register all database types for a Doctrine Type. Use AbstractPlatform#registerDoctrineTypeMapping() or have your custom types implement Type#getMappedDatabaseTypes(). If the type name is empty you might have a problem with the cache or forgot some mapping information. {"exception":"[object] (Doctrine\\DBAL\\Exception(code: 0): Unknown column type \"enum\" requested. Any Doctrine type that you use has to be registered with \\Doctrine\\DBAL\\Types\\Type::addType(). You can get a list of all the known types with \\Doctrine\\DBAL\\Types\\Type::getTypesMap(). If this error occurs during database introspection then you might have forgotten to register all database types for a Doctrine Type. Use AbstractPlatform#registerDoctrineTypeMapping() or have your custom types implement Type#getMappedDatabaseTypes(). If the type name is empty you might have a problem with the cache or forgot some mapping information. at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Exception.php:114)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Types/TypeRegistry.php(41): Doctrine/DBAL/Exception::unknownColumnType('enum')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Types/Type.php(138): Doctrine/DBAL/Types/TypeRegistry->get('enum')
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(155): Doctrine/DBAL/Types/Type::getType('enum')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(121): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumnType('enum')
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(109): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumnChangeOptions(Object(Illuminate/Database/Schema/ColumnDefinition))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(79): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumn(Object(Doctrine/DBAL/Schema/Table), Object(Illuminate/Database/Schema/ColumnDefinition))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(63): Illuminate/Database/Schema/Grammars/ChangeColumn::getTableWithColumnChanges(Object(Illuminate/Database/Schema/Blueprint), Object(Doctrine/DBAL/Schema/Table))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(39): Illuminate/Database/Schema/Grammars/ChangeColumn::getChangedDiff(Object(Illuminate/Database/Schema/Grammars/MySqlGrammar), Object(Illuminate/Database/Schema/Blueprint), Object(Doctrine/DBAL/Schema/MySQLSchemaManager))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/Grammar.php(94): Illuminate/Database/Schema/Grammars/ChangeColumn::compile(Object(Illuminate/Database/Schema/Grammars/MySqlGrammar), Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/MySqlGrammar.php(391): Illuminate/Database/Schema/Grammars/Grammar->compileChange(Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(140): Illuminate/Database/Schema/Grammars/MySqlGrammar->compileChange(Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(109): Illuminate/Database/Schema/Blueprint->toSql(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(602): Illuminate/Database/Schema/Blueprint->build(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(444): Illuminate/Database/Schema/Builder->build(Object(Illuminate/Database/Schema/Blueprint))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(355): Illuminate/Database/Schema/Builder->table('gestionnaire_ga...', Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/database/migrations/2026_03_18_115406_add_status_to_gestionnaire_gains_table.php(12): Illuminate/Support/Facades/Facade::__callStatic('table', Array)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(501): AddStatusToGestionnaireGainsTable->up()
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(418): Illuminate/Database/Migrations/Migrator->runMethod(Object(Illuminate/Database/MySqlConnection), Object(AddStatusToGestionnaireGainsTable), 'up')
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(427): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->runMigration(Object(AddStatusToGestionnaireGainsTable), 'up')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(37): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(783): Illuminate/Console/View/Components/Task->render('2026_03_18_1154...', Object(Closure))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->write('Illuminate//Cons...', '2026_03_18_1154...', Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(189): Illuminate/Database/Migrations/Migrator->runUp('C://Users//DOKI//D...', 13, false)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(132): Illuminate/Database/Migrations/Migrator->runPending(Array, Array)
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(90): Illuminate/Database/Migrations/Migrator->run(Array, Array)
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(641): Illuminate/Database/Console/Migrations/MigrateCommand->Illuminate/Database/Console/Migrations/{closure}()
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(83): Illuminate/Database/Migrations/Migrator->usingConnection(NULL, Object(Closure))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Migrations/MigrateCommand->handle()
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(1106): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(324): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Migrations/MigrateCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(175): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#41 {main}
+"} 
+[2026-03-18 11:56:25] local.ERROR: SQLSTATE[42S21]: Column already exists: 1060 Duplicate column name 'status' (Connection: mysql, SQL: alter table `gestionnaire_gains` add `status` varchar(255) not null default 'en_attente', add `date_demande` timestamp null, add `date_paiement` timestamp null, add `note_admin` text null) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S21): SQLSTATE[42S21]: Column already exists: 1060 Duplicate column name 'status' (Connection: mysql, SQL: alter table `gestionnaire_gains` add `status` varchar(255) not null default 'en_attente', add `date_demande` timestamp null, add `date_paiement` timestamp null, add `note_admin` text null) at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php:829)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('alter table `ge...', Array, Object(Closure))
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(576): Illuminate/Database/Connection->run('alter table `ge...', Array, Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(110): Illuminate/Database/Connection->statement('alter table `ge...')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(602): Illuminate/Database/Schema/Blueprint->build(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(444): Illuminate/Database/Schema/Builder->build(Object(Illuminate/Database/Schema/Blueprint))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(355): Illuminate/Database/Schema/Builder->table('gestionnaire_ga...', Object(Closure))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/database/migrations/2026_03_18_115406_add_status_to_gestionnaire_gains_table.php(13): Illuminate/Support/Facades/Facade::__callStatic('table', Array)
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(501): AddStatusToGestionnaireGainsTable->up()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(418): Illuminate/Database/Migrations/Migrator->runMethod(Object(Illuminate/Database/MySqlConnection), Object(AddStatusToGestionnaireGainsTable), 'up')
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(427): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->runMigration(Object(AddStatusToGestionnaireGainsTable), 'up')
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(37): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(783): Illuminate/Console/View/Components/Task->render('2026_03_18_1154...', Object(Closure))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->write('Illuminate//Cons...', '2026_03_18_1154...', Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(189): Illuminate/Database/Migrations/Migrator->runUp('C://Users//DOKI//D...', 13, false)
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(132): Illuminate/Database/Migrations/Migrator->runPending(Array, Array)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(90): Illuminate/Database/Migrations/Migrator->run(Array, Array)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(641): Illuminate/Database/Console/Migrations/MigrateCommand->Illuminate/Database/Console/Migrations/{closure}()
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(83): Illuminate/Database/Migrations/Migrator->usingConnection(NULL, Object(Closure))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Migrations/MigrateCommand->handle()
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(1106): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(324): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Migrations/MigrateCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(175): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#32 {main}
+
+[previous exception] [object] (PDOException(code: 42S21): SQLSTATE[42S21]: Column already exists: 1060 Duplicate column name 'status' at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php:587)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(587): PDOStatement->execute()
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(816): Illuminate/Database/Connection->Illuminate/Database/{closure}('alter table `ge...', Array)
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate/Database/Connection->runQueryCallback('alter table `ge...', Array, Object(Closure))
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Connection.php(576): Illuminate/Database/Connection->run('alter table `ge...', Array, Object(Closure))
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(110): Illuminate/Database/Connection->statement('alter table `ge...')
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(602): Illuminate/Database/Schema/Blueprint->build(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(444): Illuminate/Database/Schema/Builder->build(Object(Illuminate/Database/Schema/Blueprint))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(355): Illuminate/Database/Schema/Builder->table('gestionnaire_ga...', Object(Closure))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/database/migrations/2026_03_18_115406_add_status_to_gestionnaire_gains_table.php(13): Illuminate/Support/Facades/Facade::__callStatic('table', Array)
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(501): AddStatusToGestionnaireGainsTable->up()
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(418): Illuminate/Database/Migrations/Migrator->runMethod(Object(Illuminate/Database/MySqlConnection), Object(AddStatusToGestionnaireGainsTable), 'up')
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(427): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->runMigration(Object(AddStatusToGestionnaireGainsTable), 'up')
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(37): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(783): Illuminate/Console/View/Components/Task->render('2026_03_18_1154...', Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->write('Illuminate//Cons...', '2026_03_18_1154...', Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(189): Illuminate/Database/Migrations/Migrator->runUp('C://Users//DOKI//D...', 13, false)
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(132): Illuminate/Database/Migrations/Migrator->runPending(Array, Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(90): Illuminate/Database/Migrations/Migrator->run(Array, Array)
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(641): Illuminate/Database/Console/Migrations/MigrateCommand->Illuminate/Database/Console/Migrations/{closure}()
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(83): Illuminate/Database/Migrations/Migrator->usingConnection(NULL, Object(Closure))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Migrations/MigrateCommand->handle()
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(1106): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(324): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Migrations/MigrateCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(175): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#34 {main}
+"} 
+[2026-03-18 12:20:00] local.ERROR: Unknown column type "enum" requested. Any Doctrine type that you use has to be registered with \Doctrine\DBAL\Types\Type::addType(). You can get a list of all the known types with \Doctrine\DBAL\Types\Type::getTypesMap(). If this error occurs during database introspection then you might have forgotten to register all database types for a Doctrine Type. Use AbstractPlatform#registerDoctrineTypeMapping() or have your custom types implement Type#getMappedDatabaseTypes(). If the type name is empty you might have a problem with the cache or forgot some mapping information. {"exception":"[object] (Doctrine\\DBAL\\Exception(code: 0): Unknown column type \"enum\" requested. Any Doctrine type that you use has to be registered with \\Doctrine\\DBAL\\Types\\Type::addType(). You can get a list of all the known types with \\Doctrine\\DBAL\\Types\\Type::getTypesMap(). If this error occurs during database introspection then you might have forgotten to register all database types for a Doctrine Type. Use AbstractPlatform#registerDoctrineTypeMapping() or have your custom types implement Type#getMappedDatabaseTypes(). If the type name is empty you might have a problem with the cache or forgot some mapping information. at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Exception.php:114)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Types/TypeRegistry.php(41): Doctrine/DBAL/Exception::unknownColumnType('enum')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/doctrine/dbal/src/Types/Type.php(138): Doctrine/DBAL/Types/TypeRegistry->get('enum')
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(155): Doctrine/DBAL/Types/Type::getType('enum')
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(121): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumnType('enum')
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(109): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumnChangeOptions(Object(Illuminate/Database/Schema/ColumnDefinition))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(79): Illuminate/Database/Schema/Grammars/ChangeColumn::getDoctrineColumn(Object(Doctrine/DBAL/Schema/Table), Object(Illuminate/Database/Schema/ColumnDefinition))
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(63): Illuminate/Database/Schema/Grammars/ChangeColumn::getTableWithColumnChanges(Object(Illuminate/Database/Schema/Blueprint), Object(Doctrine/DBAL/Schema/Table))
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/ChangeColumn.php(39): Illuminate/Database/Schema/Grammars/ChangeColumn::getChangedDiff(Object(Illuminate/Database/Schema/Grammars/MySqlGrammar), Object(Illuminate/Database/Schema/Blueprint), Object(Doctrine/DBAL/Schema/MySQLSchemaManager))
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/Grammar.php(94): Illuminate/Database/Schema/Grammars/ChangeColumn::compile(Object(Illuminate/Database/Schema/Grammars/MySqlGrammar), Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Grammars/MySqlGrammar.php(391): Illuminate/Database/Schema/Grammars/Grammar->compileChange(Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(140): Illuminate/Database/Schema/Grammars/MySqlGrammar->compileChange(Object(Illuminate/Database/Schema/Blueprint), Object(Illuminate/Support/Fluent), Object(Illuminate/Database/MySqlConnection))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php(109): Illuminate/Database/Schema/Blueprint->toSql(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(602): Illuminate/Database/Schema/Blueprint->build(Object(Illuminate/Database/MySqlConnection), Object(Illuminate/Database/Schema/Grammars/MySqlGrammar))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php(444): Illuminate/Database/Schema/Builder->build(Object(Illuminate/Database/Schema/Blueprint))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(355): Illuminate/Database/Schema/Builder->table('gestionnaire_ga...', Object(Closure))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/database/migrations/2026_03_18_115406_add_status_to_gestionnaire_gains_table.php(12): Illuminate/Support/Facades/Facade::__callStatic('table', Array)
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(501): AddStatusToGestionnaireGainsTable->up()
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(418): Illuminate/Database/Migrations/Migrator->runMethod(Object(Illuminate/Database/MySqlConnection), Object(AddStatusToGestionnaireGainsTable), 'up')
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(427): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->runMigration(Object(AddStatusToGestionnaireGainsTable), 'up')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(37): Illuminate/Database/Migrations/Migrator->Illuminate/Database/Migrations/{closure}()
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(783): Illuminate/Console/View/Components/Task->render('2026_03_18_1154...', Object(Closure))
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(224): Illuminate/Database/Migrations/Migrator->write('Illuminate//Cons...', '2026_03_18_1154...', Object(Closure))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(189): Illuminate/Database/Migrations/Migrator->runUp('C://Users//DOKI//D...', 13, false)
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(132): Illuminate/Database/Migrations/Migrator->runPending(Array, Array)
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(90): Illuminate/Database/Migrations/Migrator->run(Array, Array)
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(641): Illuminate/Database/Console/Migrations/MigrateCommand->Illuminate/Database/Console/Migrations/{closure}()
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(83): Illuminate/Database/Migrations/Migrator->usingConnection(NULL, Object(Closure))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/Migrations/MigrateCommand->handle()
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(1106): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(324): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/Migrations/MigrateCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/symfony/console/Application.php(175): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/artisan(35): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#41 {main}
+"} 
+[2026-03-18 14:26:29] local.WARNING: No file found for field {"field_name":"photo"} 
+[2026-03-18 14:41:07] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 14:41:07] local.INFO: Request method: POST  
+[2026-03-18 14:41:07] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-18 14:41:07] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-18 14:41:07] local.INFO: Has file colis_photo: YES  
+[2026-03-18 14:41:08] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-18 14:41:08] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 14:41:08] local.INFO: Photo field exists in request  
+[2026-03-18 14:41:08] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-18 14:41:10] local.INFO: Photo uploaded successfully {"path":"photos/j2P1FOU2p3XhoTYaW0sL0yAIYUp5KqWKSwYqpnfg.png"} 
+[2026-03-18 14:41:10] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 14:41:12] local.INFO: 📧 [MAIL] Constructeur - Demande #9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:41:13] local.INFO: 📎 [MAIL] Début attachments() pour la demande #9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:41:13] local.INFO: 📦 [MAIL] Livraison #990f009a-43d9-4304-9e25-881d93191b6d trouvée  
+[2026-03-18 14:41:13] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 14:41:13] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 14:41:13] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 14:41:13] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 14:41:13] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 14:41:23] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15812 octets  
+[2026-03-18 14:41:27] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 14:44:09] local.INFO: Début mise à jour du statut pour livraison ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:44:09] local.WARNING: Livraison introuvable pour mise à jour statut: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:49:55] local.INFO: Début mise à jour du statut pour livraison ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:49:55] local.WARNING: Livraison introuvable pour mise à jour statut: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:51:10] local.INFO: Début mise à jour du statut pour livraison ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:51:10] local.WARNING: Livraison introuvable pour mise à jour statut: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:55:50] local.INFO: Récupération de la livraison avec ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:55:50] local.WARNING: Livraison introuvable pour ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:58:12] local.INFO: Récupération de la livraison avec ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:58:12] local.WARNING: Livraison introuvable pour ID: 9805121a-d6ff-42c0-963c-5acdfb80d4e4  
+[2026-03-18 14:58:32] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 14:58:32] local.INFO: Request method: POST  
+[2026-03-18 14:58:32] local.INFO: Content-Type: multipart/form-data; boundary=X-INSOMNIA-BOUNDARY  
+[2026-03-18 14:58:32] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","info_additionnel","lat_depot","lng_depot","lat_delivery","lng_delivery","destinataire_nom","destinataire_email","destinataire_telephone","colis_poids","colis_prix","prix","colis_type","wilaya_depot","commune_depot","wilaya","commune","colis_photo"]  
+[2026-03-18 14:58:32] local.INFO: Has file colis_photo: YES  
+[2026-03-18 14:58:32] local.INFO: Photo file details BEFORE validation: {"original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","extension":"png","is_valid":true,"error_code":0,"max_file_size":"40M","post_max_size":"40M"} 
+[2026-03-18 14:58:32] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 14:58:32] local.INFO: Photo field exists in request  
+[2026-03-18 14:58:32] local.INFO: Photo upload attempt {"field_name":"colis_photo","original_name":"Capture d’écran (1).png","size":326066,"mime_type":"image/png","is_valid":true,"error":0} 
+[2026-03-18 14:58:32] local.INFO: Photo uploaded successfully {"path":"photos/FidF629I92lb7QJbKxegVfmNJlieh32P3rZZMRR5.png"} 
+[2026-03-18 14:58:32] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 14:58:32] local.INFO: 📧 [MAIL] Constructeur - Demande #215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 14:58:32] local.INFO: 📎 [MAIL] Début attachments() pour la demande #215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 14:58:32] local.INFO: 📦 [MAIL] Livraison #a9f36c61-6172-4c05-a873-b15eda19b7e4 trouvée  
+[2026-03-18 14:58:32] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 14:58:32] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 14:58:32] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 14:58:32] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 14:58:32] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 14:58:34] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15654 octets  
+[2026-03-18 14:58:36] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 15:00:32] local.INFO: Récupération de la livraison avec ID: 215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 15:00:32] local.WARNING: Livraison introuvable pour ID: 215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 15:01:49] local.INFO: Récupération de la livraison avec ID: 215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 15:01:49] local.WARNING: Livraison introuvable pour ID: 215fb1a9-da1f-45b2-8284-bc3da996c322  
+[2026-03-18 15:22:01] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 15:22:01] local.INFO: Request method: POST  
+[2026-03-18 15:22:01] local.INFO: Content-Type: application/json  
+[2026-03-18 15:22:01] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","destinataire_nom","destinataire_telephone","colis_poids","colis_prix","prix","wilaya_depot","commune_depot","wilaya","commune","lat_depot","lng_depot","lat_delivery","lng_delivery"]  
+[2026-03-18 15:22:01] local.INFO: Has file colis_photo: NO  
+[2026-03-18 15:22:01] local.WARNING: NO FILE FOUND - Checking all files in request  
+[2026-03-18 15:22:01] local.INFO: All files: []  
+[2026-03-18 15:22:02] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 15:22:02] local.WARNING: No colis_photo field in request {"all_files":[],"has_file":false} 
+[2026-03-18 15:22:57] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 15:22:57] local.INFO: Request method: POST  
+[2026-03-18 15:22:57] local.INFO: Content-Type: application/json  
+[2026-03-18 15:22:57] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","destinataire_nom","destinataire_telephone","colis_poids","colis_prix","colis_type","prix","wilaya_depot","commune_depot","wilaya","commune","lat_depot","lng_depot","lat_delivery","lng_delivery"]  
+[2026-03-18 15:22:57] local.INFO: Has file colis_photo: NO  
+[2026-03-18 15:22:57] local.WARNING: NO FILE FOUND - Checking all files in request  
+[2026-03-18 15:22:57] local.INFO: All files: []  
+[2026-03-18 15:22:57] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 15:22:57] local.WARNING: No colis_photo field in request {"all_files":[],"has_file":false} 
+[2026-03-18 15:22:57] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 15:22:57] local.INFO: 📧 [MAIL] Constructeur - Demande #c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:22:57] local.INFO: 📎 [MAIL] Début attachments() pour la demande #c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:22:57] local.INFO: 📦 [MAIL] Livraison #72688af4-776e-4821-97bb-8d51c8978ae6 trouvée  
+[2026-03-18 15:22:57] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 15:22:57] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 15:22:57] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 15:22:57] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 15:22:57] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 15:22:59] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15368 octets  
+[2026-03-18 15:23:01] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 15:23:33] local.INFO: Récupération de la livraison avec ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:23:33] local.WARNING: Livraison introuvable pour ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:25:11] local.INFO: Début mise à jour du statut pour livraison ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:25:11] local.WARNING: Livraison introuvable pour mise à jour statut: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:25:22] local.INFO: Récupération de la livraison avec ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:25:22] local.WARNING: Livraison introuvable pour ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:47:24] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 15:47:24] local.INFO: Request method: POST  
+[2026-03-18 15:47:24] local.INFO: Content-Type: application/json  
+[2026-03-18 15:47:24] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","destinataire_nom","destinataire_telephone","colis_poids","colis_prix","colis_type","prix","wilaya_depot","commune_depot","wilaya","commune","lat_depot","lng_depot","lat_delivery","lng_delivery"]  
+[2026-03-18 15:47:24] local.INFO: Has file colis_photo: NO  
+[2026-03-18 15:47:24] local.WARNING: NO FILE FOUND - Checking all files in request  
+[2026-03-18 15:47:24] local.INFO: All files: []  
+[2026-03-18 15:47:24] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 15:47:24] local.WARNING: No colis_photo field in request {"all_files":[],"has_file":false} 
+[2026-03-18 15:47:24] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 15:47:24] local.INFO: 📧 [MAIL] Constructeur - Demande #73f0e9f0-980e-425b-8525-9d0353c7ccc4  
+[2026-03-18 15:47:24] local.INFO: 📎 [MAIL] Début attachments() pour la demande #73f0e9f0-980e-425b-8525-9d0353c7ccc4  
+[2026-03-18 15:47:24] local.INFO: 📦 [MAIL] Livraison #cf0b6d29-7790-4dae-b577-a01c0e560e96 trouvée  
+[2026-03-18 15:47:24] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 15:47:24] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 15:47:24] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 15:47:24] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 15:47:24] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 15:47:26] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15552 octets  
+[2026-03-18 15:47:28] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 15:48:12] local.INFO: Récupération de la livraison avec ID: cf0b6d29-7790-4dae-b577-a01c0e560e96  
+[2026-03-18 15:48:12] local.INFO: Livraison trouvée: cf0b6d29-7790-4dae-b577-a01c0e560e96  
+[2026-03-18 15:48:23] local.INFO: Début mise à jour du statut pour livraison ID: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:48:23] local.WARNING: Livraison introuvable pour mise à jour statut: c317dd72-46c9-40ce-aacb-8376954e8145  
+[2026-03-18 15:48:49] local.INFO: Début mise à jour du statut pour livraison ID: cf0b6d29-7790-4dae-b577-a01c0e560e96  
+[2026-03-18 15:48:49] local.INFO: Mise à jour du statut de en_attente à livre pour la livraison cf0b6d29-7790-4dae-b577-a01c0e560e96  
+[2026-03-18 15:48:49] local.INFO: Commissions calculées avec succès pour la livraison cf0b6d29-7790-4dae-b577-a01c0e560e96 {"prix_livraison":800.0,"pourcentage_depart":25.0,"montant_depart":200.0,"gestionnaire_depart":" ","pourcentage_arrivee":25.0,"montant_arrivee":200.0,"gestionnaire_arrivee":" ","montant_admin":400.0,"gains_enregistres":[]} 
+[2026-03-18 15:48:49] local.INFO: Statut mis à jour avec succès pour la livraison cf0b6d29-7790-4dae-b577-a01c0e560e96  
+[2026-03-18 16:21:21] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 16:21:21] local.INFO: Request method: POST  
+[2026-03-18 16:21:21] local.INFO: Content-Type: application/json  
+[2026-03-18 16:21:21] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","destinataire_nom","destinataire_telephone","colis_poids","colis_prix","colis_type","prix","wilaya_depot","commune_depot","wilaya","commune","lat_depot","lng_depot","lat_delivery","lng_delivery"]  
+[2026-03-18 16:21:21] local.INFO: Has file colis_photo: NO  
+[2026-03-18 16:21:21] local.WARNING: NO FILE FOUND - Checking all files in request  
+[2026-03-18 16:21:21] local.INFO: All files: []  
+[2026-03-18 16:21:21] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 16:21:21] local.WARNING: No colis_photo field in request {"all_files":[],"has_file":false} 
+[2026-03-18 16:21:21] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 16:21:21] local.INFO: 📧 [MAIL] Constructeur - Demande #38f81a80-ebb4-4c7d-84a4-b9bccc9c99f7  
+[2026-03-18 16:21:21] local.INFO: 📎 [MAIL] Début attachments() pour la demande #38f81a80-ebb4-4c7d-84a4-b9bccc9c99f7  
+[2026-03-18 16:21:21] local.INFO: 📦 [MAIL] Livraison #511b5d5a-b456-41de-83a4-78541038da62 trouvée  
+[2026-03-18 16:21:21] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 16:21:21] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 16:21:21] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 16:21:21] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 16:21:21] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 16:21:23] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15803 octets  
+[2026-03-18 16:21:25] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 16:22:46] local.INFO: Récupération de la livraison avec ID: 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:22:46] local.INFO: Livraison trouvée: 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:23:15] local.INFO: Début mise à jour du statut pour livraison ID: 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:23:15] local.INFO: Mise à jour du statut de en_attente à livre pour la livraison 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:23:15] local.INFO: Recherche gestionnaire pour wilaya: 16  
+[2026-03-18 16:23:15] local.INFO: Recherche gestionnaire pour wilaya: 31  
+[2026-03-18 16:23:15] local.ERROR: Erreur calcul commissions: SQLSTATE[23000]: Integrity constraint violation: 4025 CONSTRAINT `gestionnaire_gains_status_check` failed for `tdb3`.`gestionnaire_gains` (Connection: mysql, SQL: insert into `gestionnaire_gains` (`gestionnaire_id`, `livraison_id`, `wilaya_type`, `montant_commission`, `pourcentage_applique`, `date_calcul`, `status`, `id`, `updated_at`, `created_at`) values (763c841d-e41b-44b4-90fc-6a34efa655e8, 511b5d5a-b456-41de-83a4-78541038da62, depart, 200, 25, 2026-03-18 16:23:15, calcule, dcd8c79e-50f7-469c-b1bc-b71d30a6d55c, 2026-03-18 16:23:15, 2026-03-18 16:23:15))  
+[2026-03-18 16:23:15] local.WARNING: Échec du calcul des commissions pour la livraison 511b5d5a-b456-41de-83a4-78541038da62: Erreur lors du calcul des commissions: SQLSTATE[23000]: Integrity constraint violation: 4025 CONSTRAINT `gestionnaire_gains_status_check` failed for `tdb3`.`gestionnaire_gains` (Connection: mysql, SQL: insert into `gestionnaire_gains` (`gestionnaire_id`, `livraison_id`, `wilaya_type`, `montant_commission`, `pourcentage_applique`, `date_calcul`, `status`, `id`, `updated_at`, `created_at`) values (763c841d-e41b-44b4-90fc-6a34efa655e8, 511b5d5a-b456-41de-83a4-78541038da62, depart, 200, 25, 2026-03-18 16:23:15, calcule, dcd8c79e-50f7-469c-b1bc-b71d30a6d55c, 2026-03-18 16:23:15, 2026-03-18 16:23:15))  
+[2026-03-18 16:23:15] local.INFO: Statut mis à jour avec succès pour la livraison 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:27:53] local.INFO: Début mise à jour du statut pour livraison ID: 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:27:53] local.INFO: Mise à jour du statut de livre à livre pour la livraison 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:27:53] local.INFO: Statut mis à jour avec succès pour la livraison 511b5d5a-b456-41de-83a4-78541038da62  
+[2026-03-18 16:29:34] local.INFO: === DEBUT DEMANDE LIVRAISON ===  
+[2026-03-18 16:29:34] local.INFO: Request method: POST  
+[2026-03-18 16:29:34] local.INFO: Content-Type: application/json  
+[2026-03-18 16:29:34] local.INFO: All input keys: ["client_id","addresse_depot","addresse_delivery","destinataire_nom","destinataire_telephone","colis_poids","colis_prix","colis_type","prix","wilaya_depot","commune_depot","wilaya","commune","lat_depot","lng_depot","lat_delivery","lng_delivery"]  
+[2026-03-18 16:29:34] local.INFO: Has file colis_photo: NO  
+[2026-03-18 16:29:34] local.WARNING: NO FILE FOUND - Checking all files in request  
+[2026-03-18 16:29:34] local.INFO: All files: []  
+[2026-03-18 16:29:34] local.INFO: === VALIDATION PASSED ===  
+[2026-03-18 16:29:34] local.WARNING: No colis_photo field in request {"all_files":[],"has_file":false} 
+[2026-03-18 16:29:34] local.WARNING: Aucun admin trouvé ou email admin non défini  
+[2026-03-18 16:29:34] local.INFO: 📧 [MAIL] Constructeur - Demande #ce79b99f-efab-4e6e-ad7d-d02f545b898c  
+[2026-03-18 16:29:34] local.INFO: 📎 [MAIL] Début attachments() pour la demande #ce79b99f-efab-4e6e-ad7d-d02f545b898c  
+[2026-03-18 16:29:34] local.INFO: 📦 [MAIL] Livraison #28b486ab-1f10-4eae-af93-576b72ff2b82 trouvée  
+[2026-03-18 16:29:34] local.INFO: 🖨️ [MAIL] Préparation des données pour le PDF...  
+[2026-03-18 16:29:34] local.INFO: 🔄 [MAIL] preparePrintData - Début  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Recherche du logo...  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Chemin du logo: C:\Users\DOKI\Documents\Tawssill_API_3\public\Tawsillogo.png  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Fichier logo trouvé  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Logo converti en base64, taille: 4544 octets  
+[2026-03-18 16:29:34] local.INFO: ✅ [MAIL] preparePrintData - Terminé avec succès  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Logo base64 généré, longueur: 6082 caractères  
+[2026-03-18 16:29:34] local.INFO: 🖼️ [MAIL] Aperçu logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMA...  
+[2026-03-18 16:29:34] local.INFO: 📄 [MAIL] Génération du PDF avec vue: pdf.bordereau-mail  
+[2026-03-18 16:29:36] local.INFO: ✅ [MAIL] PDF généré avec succès, taille: 15619 octets  
+[2026-03-18 16:29:39] local.ERROR: Erreur lors de l'envoi du mail au client: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-18 16:31:37] local.INFO: Récupération de la livraison avec ID: 28b486ab-1f10-4eae-af93-576b72ff2b82  
+[2026-03-18 16:31:37] local.INFO: Livraison trouvée: 28b486ab-1f10-4eae-af93-576b72ff2b82  
+[2026-03-18 16:32:00] local.INFO: Début mise à jour du statut pour livraison ID: 28b486ab-1f10-4eae-af93-576b72ff2b82  
+[2026-03-18 16:32:00] local.INFO: Mise à jour du statut de en_attente à livre pour la livraison 28b486ab-1f10-4eae-af93-576b72ff2b82  
+[2026-03-18 16:32:00] local.INFO: Recherche gestionnaire pour wilaya: 16  
+[2026-03-18 16:32:00] local.INFO: Recherche gestionnaire pour wilaya: 31  
+[2026-03-18 16:32:00] local.INFO: Commissions calculées avec succès pour la livraison 28b486ab-1f10-4eae-af93-576b72ff2b82 {"prix_livraison":800.0,"pourcentage_depart":25.0,"montant_depart":200.0,"gestionnaire_depart":"Gestionnaire Alger Centre","pourcentage_arrivee":25.0,"montant_arrivee":200.0,"gestionnaire_arrivee":"Gestionnaire Oran","montant_admin":400.0,"gains_enregistres":{"depart":{"App\\Models\\GestionnaireGain":{"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","livraison_id":"28b486ab-1f10-4eae-af93-576b72ff2b82","wilaya_type":"depart","montant_commission":"200.00","pourcentage_applique":"25.00","date_calcul":"2026-03-18T16:32:00.000000Z","status":"en_attente","id":"6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","updated_at":"2026-03-18T16:32:00.000000Z","created_at":"2026-03-18T16:32:00.000000Z"}},"arrivee":{"App\\Models\\GestionnaireGain":{"gestionnaire_id":"c7da12d2-2372-4065-8303-18a64bf19012","livraison_id":"28b486ab-1f10-4eae-af93-576b72ff2b82","wilaya_type":"arrivee","montant_commission":"200.00","pourcentage_applique":"25.00","date_calcul":"2026-03-18T16:32:00.000000Z","status":"en_attente","id":"52a0a948-4646-4b29-97b7-61494f4a5ca6","updated_at":"2026-03-18T16:32:00.000000Z","created_at":"2026-03-18T16:32:00.000000Z"}}}} 
+[2026-03-18 16:32:00] local.INFO: Statut mis à jour avec succès pour la livraison 28b486ab-1f10-4eae-af93-576b72ff2b82  
+[2026-03-18 16:37:57] local.ERROR: Erreur demanderPaiement: Connection could not be established with host "127.0.0.1:1025": stream_socket_client(): Unable to connect to 127.0.0.1:1025 (Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée)  
+[2026-03-19 08:27:37] local.ERROR: Out of memory (allocated 39845888 bytes) (tried to allocate 20480 bytes) {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Out of memory (allocated 39845888 bytes) (tried to allocate 20480 bytes) at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:2714)
+[stacktrace]
+#0 {main}
+"} 
+[2026-03-19 09:08:32] local.INFO: 📊 Génération rapport gestionnaires {"periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59","gestionnaire_id":null,"wilaya_id":null} 
+[2026-03-19 09:08:32] local.INFO: 📦 Gains trouvés {"count":21,"sample":{"App\\Models\\GestionnaireGain":{"id":"24528bf8-b674-41df-bc42-5d32057d5b90","gestionnaire_id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","livraison_id":"430eab66-299d-4287-9d91-483641cc7828","wilaya_type":"depart","montant_commission":"125.00","pourcentage_applique":"25.00","date_calcul":"2026-03-18T14:04:23.000000Z","status":"en_attente","created_at":"2026-03-18T14:04:23.000000Z","updated_at":"2026-03-18T14:04:23.000000Z","date_demande":null,"date_paiement":null,"note_admin":null,"gestionnaire":{"id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","user_id":"68b5375e-73b1-4ab1-b0fe-2985a5bf34a5","wilaya_id":"16","status":"active","created_at":"2026-03-05T10:05:07.000000Z","updated_at":"2026-03-05T10:05:07.000000Z","user":{"id":"68b5375e-73b1-4ab1-b0fe-2985a5bf34a5","nom":"tarzan","prenom":"Aaaayyyuuu","email":"tarzan@gmail.com","email_verified_at":null,"telephone":"012233445566","photo":null,"photo_url":null,"latitude":13.2,"longitude":2.1,"created_at":"2026-03-05T10:05:07.000000Z","updated_at":"2026-03-05T10:05:07.000000Z","deleted_at":null,"actif":1,"role":"gestionnaire"}},"livraison":{"id":"430eab66-299d-4287-9d91-483641cc7828","client_id":"2c30bcad-4832-4ed0-a742-9a6baaf4a02f","demande_livraisons_id":"a5bd1a56-3006-43e6-b15a-60cfcac7538b","livreur_distributeur_id":"3309eb74-4c25-4a00-a0a4-361c9be8cafe","livreur_ramasseur_id":"3309eb74-4c25-4a00-a0a4-361c9be8cafe","bordereau_id":null,"navette_id":null,"code_pin":"08880","date_ramassage":"2026-02-12T00:00:00.000000Z","date_livraison":"2026-02-13T00:00:00.000000Z","status":"livre","created_at":"2026-02-12T09:31:18.000000Z","updated_at":"2026-02-13T11:23:27.000000Z","demande_livraison":{"id":"a5bd1a56-3006-43e6-b15a-60cfcac7538b","client_id":"2c30bcad-4832-4ed0-a742-9a6baaf4a02f","wilaya_depot":"Alger","commune_depot":"Draria","destinataire_id":"823cb354-8b51-41d1-b8eb-cd0724f5d4ad","colis_id":"b4a3c623-5a3f-4882-8179-4e08b2a28ce6","addresse_depot":"Sebala سبالة, Draria ⴷⵔⴰⵔⵢⴰ درارية, Draria, Alger, 16305, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":null,"info_additionnel":null,"prix":500.0,"lat_depot":36.71309027062921,"lng_depot":2.9965195215894718,"lat_delivery":0.0,"wilaya":"Blida","commune":"Blida","lng_delivery":0.0,"created_at":"2026-02-12T09:31:18.000000Z","updated_at":"2026-02-12T09:31:18.000000Z"}}}}} 
+[2026-03-19 09:08:32] local.INFO: ✅ Rapport généré avec succès {"nb_wilayas":2,"nb_gestionnaires":3,"total_commissions":2425.0} 
+[2026-03-19 09:08:34] local.INFO: 📊 Génération rapport gestionnaires {"periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59","gestionnaire_id":null,"wilaya_id":null} 
+[2026-03-19 09:08:34] local.INFO: 📦 Gains trouvés {"count":21,"sample":{"App\\Models\\GestionnaireGain":{"id":"24528bf8-b674-41df-bc42-5d32057d5b90","gestionnaire_id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","livraison_id":"430eab66-299d-4287-9d91-483641cc7828","wilaya_type":"depart","montant_commission":"125.00","pourcentage_applique":"25.00","date_calcul":"2026-03-18T14:04:23.000000Z","status":"en_attente","created_at":"2026-03-18T14:04:23.000000Z","updated_at":"2026-03-18T14:04:23.000000Z","date_demande":null,"date_paiement":null,"note_admin":null,"gestionnaire":{"id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","user_id":"68b5375e-73b1-4ab1-b0fe-2985a5bf34a5","wilaya_id":"16","status":"active","created_at":"2026-03-05T10:05:07.000000Z","updated_at":"2026-03-05T10:05:07.000000Z","user":{"id":"68b5375e-73b1-4ab1-b0fe-2985a5bf34a5","nom":"tarzan","prenom":"Aaaayyyuuu","email":"tarzan@gmail.com","email_verified_at":null,"telephone":"012233445566","photo":null,"photo_url":null,"latitude":13.2,"longitude":2.1,"created_at":"2026-03-05T10:05:07.000000Z","updated_at":"2026-03-05T10:05:07.000000Z","deleted_at":null,"actif":1,"role":"gestionnaire"}},"livraison":{"id":"430eab66-299d-4287-9d91-483641cc7828","client_id":"2c30bcad-4832-4ed0-a742-9a6baaf4a02f","demande_livraisons_id":"a5bd1a56-3006-43e6-b15a-60cfcac7538b","livreur_distributeur_id":"3309eb74-4c25-4a00-a0a4-361c9be8cafe","livreur_ramasseur_id":"3309eb74-4c25-4a00-a0a4-361c9be8cafe","bordereau_id":null,"navette_id":null,"code_pin":"08880","date_ramassage":"2026-02-12T00:00:00.000000Z","date_livraison":"2026-02-13T00:00:00.000000Z","status":"livre","created_at":"2026-02-12T09:31:18.000000Z","updated_at":"2026-02-13T11:23:27.000000Z","demande_livraison":{"id":"a5bd1a56-3006-43e6-b15a-60cfcac7538b","client_id":"2c30bcad-4832-4ed0-a742-9a6baaf4a02f","wilaya_depot":"Alger","commune_depot":"Draria","destinataire_id":"823cb354-8b51-41d1-b8eb-cd0724f5d4ad","colis_id":"b4a3c623-5a3f-4882-8179-4e08b2a28ce6","addresse_depot":"Sebala سبالة, Draria ⴷⵔⴰⵔⵢⴰ درارية, Draria, Alger, 16305, Algérie ⵍⵣⵣⴰⵢⴻⵔ الجزائر","addresse_delivery":null,"info_additionnel":null,"prix":500.0,"lat_depot":36.71309027062921,"lng_depot":2.9965195215894718,"lat_delivery":0.0,"wilaya":"Blida","commune":"Blida","lng_delivery":0.0,"created_at":"2026-02-12T09:31:18.000000Z","updated_at":"2026-02-12T09:31:18.000000Z"}}}}} 
+[2026-03-19 09:08:34] local.INFO: ✅ Rapport généré avec succès {"nb_wilayas":2,"nb_gestionnaires":3,"total_commissions":2425.0} 
+[2026-03-19 09:12:46] local.INFO: 📊 Génération rapport gestionnaires {"periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59","gestionnaire_id":null,"wilaya_id":null} 
+[2026-03-19 09:12:46] local.INFO: 📊 Total gains dans la base {"total":21} 
+[2026-03-19 09:12:46] local.INFO: 📊 Gains dans la période {"periode":21,"date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-03-19 09:12:46] local.INFO: 💰 Gain payé trouvé {"id":"6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","montant":"200.00","created_at":"2026-03-18 16:32:00","wilaya_type":"depart","dans_periode":true} 
+[2026-03-19 09:12:46] local.INFO: 📦 Gains après tous filtres {"count":21,"ids":["24528bf8-b674-41df-bc42-5d32057d5b90","2727786b-f3bb-42a6-9c4c-8c7e65a5e597","2870d337-88f0-4049-984a-856dc47c7bca","3ba9ab82-25e5-458a-811f-7aea531fce0e","44e43225-4eb4-4cc0-a57c-968e10369462","4dc26fcf-992d-41d0-ae62-bdccc375d94b","52a0a948-4646-4b29-97b7-61494f4a5ca6","548f063d-4cd9-4ca5-bd44-cc0da6db92ac","62b69786-1509-4e85-860e-3120bf992615","6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","76d9770f-5cc6-4769-a346-6b19fe281b53","88ea8d90-ce07-4878-ad71-d9de5ed0d583","8eb5362b-8b9f-4a36-ac4a-23fca66368c9","a1fddebb-8b82-4e00-9310-19de508c138d","a9d66de1-d2cf-4406-9d2f-14a66b6452fe","b321afa8-76ca-42a0-8d93-76ba848a270b","bcdb0542-2b3f-41f9-9ca5-276e3ebd7a4b","d28370c0-ecfc-4f32-b245-228c7651b02a","e9dfe49a-40dc-4970-8fb1-5ff0491725e0","ee7ecade-3bfe-46dc-838c-907018ad2047","ee8ad977-3fa9-4b40-bde3-4c3ee1b3d5cf"],"status":["en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","paye","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente"]} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"24528bf8-b674-41df-bc42-5d32057d5b90","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"2727786b-f3bb-42a6-9c4c-8c7e65a5e597","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"2870d337-88f0-4049-984a-856dc47c7bca","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"3ba9ab82-25e5-458a-811f-7aea531fce0e","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"44e43225-4eb4-4cc0-a57c-968e10369462","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"4dc26fcf-992d-41d0-ae62-bdccc375d94b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"52a0a948-4646-4b29-97b7-61494f4a5ca6","status":"en_attente","gestionnaire_exists":true,"montant":"200.00","created_at":"2026-03-18 16:32:00"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"548f063d-4cd9-4ca5-bd44-cc0da6db92ac","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"62b69786-1509-4e85-860e-3120bf992615","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","status":"paye","gestionnaire_exists":true,"montant":"200.00","created_at":"2026-03-18 16:32:00"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"76d9770f-5cc6-4769-a346-6b19fe281b53","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"88ea8d90-ce07-4878-ad71-d9de5ed0d583","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"8eb5362b-8b9f-4a36-ac4a-23fca66368c9","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"a1fddebb-8b82-4e00-9310-19de508c138d","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"a9d66de1-d2cf-4406-9d2f-14a66b6452fe","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"b321afa8-76ca-42a0-8d93-76ba848a270b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"bcdb0542-2b3f-41f9-9ca5-276e3ebd7a4b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"d28370c0-ecfc-4f32-b245-228c7651b02a","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"e9dfe49a-40dc-4970-8fb1-5ff0491725e0","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"ee7ecade-3bfe-46dc-838c-907018ad2047","status":"en_attente","gestionnaire_exists":true,"montant":"150.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:46] local.INFO: 🔍 Traitement gain {"gain_id":"ee8ad977-3fa9-4b40-bde3-4c3ee1b3d5cf","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:46] local.INFO: 📍 Wilayas dans le rapport {"wilayas":[16,31],"details":{"16":{"code":"16","nom":"Alger","gestionnaire_nom":"Aaaayyyuuu tarzan","gestionnaire_id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","nb_livraisons":20,"total_commissions":2225.0,"pourcentage":0,"status":["en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","paye","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente"]},"31":{"code":"31","nom":"Oran","gestionnaire_nom":"Oran Gestionnaire","gestionnaire_id":"c7da12d2-2372-4065-8303-18a64bf19012","nb_livraisons":1,"total_commissions":200.0,"pourcentage":0,"status":["en_attente"]}}} 
+[2026-03-19 09:12:46] local.INFO: ✅ Rapport généré avec succès {"nb_wilayas":2,"nb_gestionnaires":3,"total_commissions":2425.0,"wilayas_details":[{"code":"16","nb_livraisons":20,"total":2225.0,"status":{"0":"en_attente","8":"paye"}},{"code":"31","nb_livraisons":1,"total":200.0,"status":["en_attente"]}]} 
+[2026-03-19 09:12:48] local.INFO: 📊 Génération rapport gestionnaires {"periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59","gestionnaire_id":null,"wilaya_id":null} 
+[2026-03-19 09:12:48] local.INFO: 📊 Total gains dans la base {"total":21} 
+[2026-03-19 09:12:48] local.INFO: 📊 Gains dans la période {"periode":21,"date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-03-19 09:12:48] local.INFO: 💰 Gain payé trouvé {"id":"6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","montant":"200.00","created_at":"2026-03-18 16:32:00","wilaya_type":"depart","dans_periode":true} 
+[2026-03-19 09:12:48] local.INFO: 📦 Gains après tous filtres {"count":21,"ids":["24528bf8-b674-41df-bc42-5d32057d5b90","2727786b-f3bb-42a6-9c4c-8c7e65a5e597","2870d337-88f0-4049-984a-856dc47c7bca","3ba9ab82-25e5-458a-811f-7aea531fce0e","44e43225-4eb4-4cc0-a57c-968e10369462","4dc26fcf-992d-41d0-ae62-bdccc375d94b","52a0a948-4646-4b29-97b7-61494f4a5ca6","548f063d-4cd9-4ca5-bd44-cc0da6db92ac","62b69786-1509-4e85-860e-3120bf992615","6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","76d9770f-5cc6-4769-a346-6b19fe281b53","88ea8d90-ce07-4878-ad71-d9de5ed0d583","8eb5362b-8b9f-4a36-ac4a-23fca66368c9","a1fddebb-8b82-4e00-9310-19de508c138d","a9d66de1-d2cf-4406-9d2f-14a66b6452fe","b321afa8-76ca-42a0-8d93-76ba848a270b","bcdb0542-2b3f-41f9-9ca5-276e3ebd7a4b","d28370c0-ecfc-4f32-b245-228c7651b02a","e9dfe49a-40dc-4970-8fb1-5ff0491725e0","ee7ecade-3bfe-46dc-838c-907018ad2047","ee8ad977-3fa9-4b40-bde3-4c3ee1b3d5cf"],"status":["en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","paye","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente"]} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"24528bf8-b674-41df-bc42-5d32057d5b90","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"2727786b-f3bb-42a6-9c4c-8c7e65a5e597","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"2870d337-88f0-4049-984a-856dc47c7bca","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"3ba9ab82-25e5-458a-811f-7aea531fce0e","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"44e43225-4eb4-4cc0-a57c-968e10369462","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"4dc26fcf-992d-41d0-ae62-bdccc375d94b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"52a0a948-4646-4b29-97b7-61494f4a5ca6","status":"en_attente","gestionnaire_exists":true,"montant":"200.00","created_at":"2026-03-18 16:32:00"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"548f063d-4cd9-4ca5-bd44-cc0da6db92ac","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"62b69786-1509-4e85-860e-3120bf992615","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"6dc3440b-8e53-4c8e-9d7f-6ca1209a724f","status":"paye","gestionnaire_exists":true,"montant":"200.00","created_at":"2026-03-18 16:32:00"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"76d9770f-5cc6-4769-a346-6b19fe281b53","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"88ea8d90-ce07-4878-ad71-d9de5ed0d583","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"8eb5362b-8b9f-4a36-ac4a-23fca66368c9","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"a1fddebb-8b82-4e00-9310-19de508c138d","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"a9d66de1-d2cf-4406-9d2f-14a66b6452fe","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"b321afa8-76ca-42a0-8d93-76ba848a270b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"bcdb0542-2b3f-41f9-9ca5-276e3ebd7a4b","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"d28370c0-ecfc-4f32-b245-228c7651b02a","status":"en_attente","gestionnaire_exists":true,"montant":"125.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"e9dfe49a-40dc-4970-8fb1-5ff0491725e0","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"ee7ecade-3bfe-46dc-838c-907018ad2047","status":"en_attente","gestionnaire_exists":true,"montant":"150.00","created_at":"2026-03-18 14:04:23"} 
+[2026-03-19 09:12:48] local.INFO: 🔍 Traitement gain {"gain_id":"ee8ad977-3fa9-4b40-bde3-4c3ee1b3d5cf","status":"en_attente","gestionnaire_exists":true,"montant":"100.00","created_at":"2026-03-18 14:04:24"} 
+[2026-03-19 09:12:48] local.INFO: 📍 Wilayas dans le rapport {"wilayas":[16,31],"details":{"16":{"code":"16","nom":"Alger","gestionnaire_nom":"Aaaayyyuuu tarzan","gestionnaire_id":"c5ae99e2-e7cd-431f-b683-6e78a8a43e2a","nb_livraisons":20,"total_commissions":2225.0,"pourcentage":0,"status":["en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","paye","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente","en_attente"]},"31":{"code":"31","nom":"Oran","gestionnaire_nom":"Oran Gestionnaire","gestionnaire_id":"c7da12d2-2372-4065-8303-18a64bf19012","nb_livraisons":1,"total_commissions":200.0,"pourcentage":0,"status":["en_attente"]}}} 
+[2026-03-19 09:12:48] local.INFO: ✅ Rapport généré avec succès {"nb_wilayas":2,"nb_gestionnaires":3,"total_commissions":2425.0,"wilayas_details":[{"code":"16","nb_livraisons":20,"total":2225.0,"status":{"0":"en_attente","8":"paye"}},{"code":"31","nb_livraisons":1,"total":200.0,"status":["en_attente"]}]} 

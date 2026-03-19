@@ -27,6 +27,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LivraisonsExport;
+use App\Models\CommissionConfig;
+use App\Models\Gestionnaire;
+use App\Models\GestionnaireGain;
 
 class LivraisonController extends Controller
 {
@@ -594,57 +597,92 @@ class LivraisonController extends Controller
      * Mettre à jour le status d'une livraison.
      */
     public function updateStatus(Request $request, $id): JsonResponse
-    {
-        Log::info("Début mise à jour du statut pour livraison ID: " . $id);
+{
+    Log::info("Début mise à jour du statut pour livraison ID: " . $id);
 
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:en_attente,prise_en_charge_ramassage,ramasse,en_transit,prise_en_charge_livraison,livre,annule',
+    $validator = Validator::make($request->all(), [
+        'status' => 'required|string|in:en_attente,prise_en_charge_ramassage,ramasse,en_transit,prise_en_charge_livraison,livre,annule',
+    ]);
+
+    if ($validator->fails()) {
+        Log::warning("Validation échouée pour mise à jour statut: " . json_encode($validator->errors()));
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur de validation',
+            'errors'  => $validator->errors(),
+        ], 422);
+    }
+
+    $validatedData = $validator->validated();
+
+    try {
+        DB::beginTransaction();
+
+        $livraison = $this->findLivraison($id);
+
+        if (!$livraison) {
+            Log::warning("Livraison introuvable pour mise à jour statut: " . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'Livraison introuvable',
+            ], 404);
+        }
+
+        $ancienStatus = $livraison->status;
+        $nouveauStatus = $validatedData['status'];
+
+        Log::info("Mise à jour du statut de {$ancienStatus} à {$nouveauStatus} pour la livraison " . $id);
+
+        // Mise à jour du statut
+        $livraison->update([
+            'status' => $nouveauStatus,
         ]);
 
-        if ($validator->fails()) {
-            Log::warning("Validation échouée pour mise à jour statut: " . json_encode($validator->errors()));
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur de validation',
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
+        // Si la livraison est marquée comme 'livre' et qu'elle ne l'était pas avant
+        // => Calculer les commissions pour les gestionnaires
+        $resultatCommission = null;
+        if ($nouveauStatus === 'livre' && $ancienStatus !== 'livre') {
+            $resultatCommission = $this->calculerCommissionsLivraison($livraison);
 
-        $validatedData = $validator->validated();
-
-        try {
-            $livraison = $this->findLivraison($id);
-
-            if (!$livraison) {
-                Log::warning("Livraison introuvable pour mise à jour statut: " . $id);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Livraison introuvable',
-                ], 404);
+            if ($resultatCommission['success']) {
+                Log::info("Commissions calculées avec succès pour la livraison {$id}", $resultatCommission['data']);
+            } else {
+                Log::warning("Échec du calcul des commissions pour la livraison {$id}: " . $resultatCommission['message']);
             }
-
-            Log::info("Mise à jour du statut de {$livraison->status} à {$validatedData['status']} pour la livraison " . $id);
-
-            $livraison->update([
-                'status' => $validatedData['status'],
-            ]);
-
-            Log::info("Statut mis à jour avec succès pour la livraison " . $id);
-
-            return response()->json(
-                $livraison,
-                200
-            );
-        } catch (\Exception $e) {
-            Log::error("Erreur lors de la mise à jour du statut pour la livraison {$id}: " . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de l\'attribution du status',
-                'error' => $e->getMessage(),
-            ], 500);
         }
+
+        // Si la livraison est annulée, on peut éventuellement supprimer les commissions si elles avaient été calculées
+        if ($nouveauStatus === 'annule' && $ancienStatus === 'livre') {
+            // Supprimer les gains associés à cette livraison
+            GestionnaireGain::where('livraison_id', $livraison->id)->delete();
+            Log::info("Gains supprimés pour la livraison annulée {$id}");
+        }
+
+        DB::commit();
+
+        Log::info("Statut mis à jour avec succès pour la livraison " . $id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Statut mis à jour avec succès',
+            'data' => [
+                'livraison' => $livraison,
+                'commission' => $resultatCommission
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error("Erreur lors de la mise à jour du statut pour la livraison {$id}: " . $e->getMessage());
+        Log::error("Trace: " . $e->getTraceAsString());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la mise à jour du statut',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
 
     public function trackByColisLabel($colis_label): JsonResponse
     {
@@ -2024,4 +2062,143 @@ class LivraisonController extends Controller
             ], 500);
         }
     }
+
+    private function calculerCommissionsLivraison(Livraison $livraison): array
+{
+    try {
+        $demande = $livraison->demandeLivraison;
+
+        if (!$demande) {
+            return [
+                'success' => false,
+                'message' => 'Demande de livraison non trouvée'
+            ];
+        }
+
+        $prixLivraison = (float) ($demande->prix ?? 0);
+
+        if ($prixLivraison <= 0) {
+            return [
+                'success' => false,
+                'message' => 'Le prix de la livraison est invalide ou nul'
+            ];
+        }
+
+        // Récupérer les pourcentages de commission depuis la configuration
+        $pourcentageDepart = CommissionConfig::getValue('commission_depart_default') ?? 25;
+        $pourcentageArrivee = CommissionConfig::getValue('commission_arrivee_default') ?? 25;
+
+        // Calculer les montants
+        $montantDepart = round($prixLivraison * ($pourcentageDepart / 100), 2);
+        $montantArrivee = round($prixLivraison * ($pourcentageArrivee / 100), 2);
+        $montantAdmin = $prixLivraison - $montantDepart - $montantArrivee;
+
+        // Récupérer les gestionnaires
+        $gestionnaireDepart = $this->getGestionnaireByWilaya($demande->wilaya_depot);
+        $gestionnaireArrivee = $this->getGestionnaireByWilaya($demande->wilaya);
+
+        $gainsEnregistres = [];
+
+        // Enregistrer le gain pour la wilaya de départ
+        if ($gestionnaireDepart && $montantDepart > 0) {
+            $gainDepart = GestionnaireGain::create([
+                'gestionnaire_id' => $gestionnaireDepart->id,
+                'livraison_id' => $livraison->id,
+                'wilaya_type' => 'depart',
+                'montant_commission' => $montantDepart,
+                'pourcentage_applique' => $pourcentageDepart,
+                'date_calcul' => now(),
+                'status' => 'en_attente'  // ✅ CORRIGÉ: 'calcule' → 'en_attente'
+            ]);
+            $gainsEnregistres['depart'] = $gainDepart;
+        }
+
+        // Enregistrer le gain pour la wilaya d'arrivée
+        if ($gestionnaireArrivee && $montantArrivee > 0) {
+            $gainArrivee = GestionnaireGain::create([
+                'gestionnaire_id' => $gestionnaireArrivee->id,
+                'livraison_id' => $livraison->id,
+                'wilaya_type' => 'arrivee',
+                'montant_commission' => $montantArrivee,
+                'pourcentage_applique' => $pourcentageArrivee,
+                'date_calcul' => now(),
+                'status' => 'en_attente'  // ✅ CORRIGÉ: 'calcule' → 'en_attente'
+            ]);
+            $gainsEnregistres['arrivee'] = $gainArrivee;
+        }
+
+        return [
+            'success' => true,
+            'data' => [
+                'prix_livraison' => $prixLivraison,
+                'pourcentage_depart' => $pourcentageDepart,
+                'montant_depart' => $montantDepart,
+                'gestionnaire_depart' => $gestionnaireDepart?->user?->nom . ' ' . $gestionnaireDepart?->user?->prenom,
+                'pourcentage_arrivee' => $pourcentageArrivee,
+                'montant_arrivee' => $montantArrivee,
+                'gestionnaire_arrivee' => $gestionnaireArrivee?->user?->nom . ' ' . $gestionnaireArrivee?->user?->prenom,
+                'montant_admin' => $montantAdmin,
+                'gains_enregistres' => $gainsEnregistres
+            ]
+        ];
+
+    } catch (\Exception $e) {
+        Log::error('Erreur calcul commissions: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => 'Erreur lors du calcul des commissions: ' . $e->getMessage()
+        ];
+    }
+}
+
+private function getGestionnaireByWilaya($wilayaId)
+{
+    if (!$wilayaId) {
+        return null;
+    }
+
+    // Mapping des noms de wilayas vers leurs codes
+    $wilayaMapping = [
+        'Adrar' => '01', 'Chlef' => '02', 'Laghouat' => '03',
+        'Oum El Bouaghi' => '04', 'Batna' => '05', 'Béjaïa' => '06',
+        'Biskra' => '07', 'Béchar' => '08', 'Blida' => '09',
+        'Bouira' => '10', 'Tamanrasset' => '11', 'Tébessa' => '12',
+        'Tlemcen' => '13', 'Tiaret' => '14', 'Tizi Ouzou' => '15',
+        'Alger' => '16', 'Djelfa' => '17', 'Jijel' => '18',
+        'Sétif' => '19', 'Saïda' => '20', 'Skikda' => '21',
+        'Sidi Bel Abbès' => '22', 'Annaba' => '23', 'Guelma' => '24',
+        'Constantine' => '25', 'Médéa' => '26', 'Mostaganem' => '27',
+        "M'Sila" => '28', 'Mascara' => '29', 'Ouargla' => '30',
+        'Oran' => '31', 'El Bayadh' => '32', 'Illizi' => '33',
+        'Bordj Bou Arréridj' => '34', 'Boumerdès' => '35',
+        'El Tarf' => '36', 'Tindouf' => '37', 'Tissemsilt' => '38',
+        'El Oued' => '39', 'Khenchela' => '40', 'Souk Ahras' => '41',
+        'Tipaza' => '42', 'Mila' => '43', 'Aïn Defla' => '44',
+        'Naâma' => '45', 'Aïn Témouchent' => '46', 'Ghardaïa' => '47',
+        'Relizane' => '48', 'Timimoun' => '49', 'Bordj Badji Mokhtar' => '50',
+        'Ouled Djellal' => '51', 'Béni Abbès' => '52', 'In Salah' => '53',
+        'In Guezzam' => '54', 'Touggourt' => '55', 'Djanet' => '56',
+        "El M'Ghair" => '57', 'El Meniaa' => '58'
+    ];
+
+    // Nettoyer la valeur (enlever les espaces)
+    $wilayaId = trim($wilayaId);
+
+    // Si c'est un nom de wilaya (ex: "Alger"), le convertir en code
+    if (isset($wilayaMapping[$wilayaId])) {
+        $wilayaId = $wilayaMapping[$wilayaId];
+    }
+    // Sinon, si c'est un nombre, le formater sur 2 chiffres
+    elseif (is_numeric($wilayaId)) {
+        $wilayaId = str_pad($wilayaId, 2, '0', STR_PAD_LEFT);
+    }
+
+    // Log pour déboguer
+    \Log::info("Recherche gestionnaire pour wilaya: " . $wilayaId);
+
+    return Gestionnaire::where('wilaya_id', $wilayaId)
+        ->where('status', 'active')
+        ->with('user')
+        ->first();
+}
 }
