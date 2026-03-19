@@ -25,7 +25,10 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Mail\NewLivreurAssignmentMail; 
+use App\Mail\NewLivreurAssignmentMail;
+use App\Models\CommissionConfig;
+use App\Models\Gestionnaire;
+use App\Models\GestionnaireGain;
 
 class LivraisonController extends Controller
 {
@@ -56,19 +59,19 @@ class LivraisonController extends Controller
                 'demande_livraison' => $livraison->demandeLivraison->load([
                     'client',
                     'destinataire',
-                    'colis',     
+                    'colis',
                       ]),
                'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
                 'client'=> $livraison->client?->user,
                 'commentaires' => $livraison->commentaires,
                 'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-            
+
             ];
         }
-        
+
         return response()->json($datas, 200);
     }
-    
+
 
     public function statistiquesClient( $id): JsonResponse
     {
@@ -81,11 +84,11 @@ class LivraisonController extends Controller
             'livraisons_en_cours' => 0,
             'total_livraisons' => $total
         ];
-        
+
         // Récupérer les données des livraisons
         // Initialiser les compteurs
 
-            
+
 
             // Compter les livraisons selon leur status
             foreach ($livraisons as $livraison) {
@@ -105,8 +108,8 @@ class LivraisonController extends Controller
                 }
             }
 
-      
-        
+
+
         return response()->json(
             $statuss, 200);
     }
@@ -127,11 +130,11 @@ class LivraisonController extends Controller
 		    'livraisons_en_cours' => 0,
 		    'total_livraisons' => $total
 		];
-		
+
 		// Récupérer les données des livraisons
 		// Initialiser les compteurs
 
-		    
+
 
 		    // Compter les livraisons selon leur status
 		    foreach ($livraisons as $livraison) {
@@ -151,8 +154,8 @@ class LivraisonController extends Controller
 		        }
 		    }
 
-	      
-		
+
+
 		return response()->json(
 		    $status, 200);
 	    }
@@ -161,7 +164,7 @@ class LivraisonController extends Controller
 	public function livraisonsEnCours(): JsonResponse
 	{
 	    $livraisons = Livraison::whereNotIn('status', ['en_attente', 'livre'])->get();
-	    
+
 
 		$datas = [];
 		foreach ($livraisons as $livraison) {
@@ -181,13 +184,13 @@ class LivraisonController extends Controller
 		        'demande_livraison' => $livraison->demandeLivraison->load([
 		            'client',
 		            'destinataire',
-		            'colis',     
+		            'colis',
 		              ]),
 		       'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
 		        'client'=> $livraison->client?->user,
 		        'commentaires' => $livraison->commentaires,
 		        'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-		    
+
 		    ];
 		}
 	    return response()->json($datas, 200);
@@ -218,19 +221,19 @@ class LivraisonController extends Controller
 		        'demande_livraison' => $livraison->demandeLivraison->load([
 		            'client',
 		            'destinataire',
-		            'colis',     
+		            'colis',
 		              ]),
 		       'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
 		        'client'=> $livraison->client?->user,
 		        'commentaires' => $livraison->commentaires,
 		        'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-		    
+
 		    ];
 		}
 	    return response()->json($datas, 200);
 	}
-	
-	
+
+
 	public function livraisonsLivreurEnCours($livreurId): JsonResponse
 	{
 	    $livraisons = Livraison::where(function ($query) use ($livreurId) {
@@ -239,7 +242,7 @@ class LivraisonController extends Controller
 		})
 		->whereNotIn('status', ['en_attente', 'livre'])
 		->get();
-		
+
 		$datas = [];
 		foreach ($livraisons as $livraison) {
 		    $datas[] = [
@@ -258,13 +261,13 @@ class LivraisonController extends Controller
 		        'demande_livraison' => $livraison->demandeLivraison->load([
 		            'client',
 		            'destinataire',
-		            'colis',     
+		            'colis',
 		              ]),
 		       'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
 		        'client'=> $livraison->client?->user,
 		        'commentaires' => $livraison->commentaires,
 		        'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-		    
+
 		    ];
 		}
 
@@ -318,7 +321,7 @@ class LivraisonController extends Controller
             ], 404);
         }
 
-        return response()->json( 
+        return response()->json(
             [
                 'id' => $livraison->id,
                 'client_id' => $livraison->client_id,
@@ -335,15 +338,15 @@ class LivraisonController extends Controller
                 'demande_livraison' => $livraison->demandeLivraison->load([
                     'client',
                     'destinataire',
-                    'colis',     
+                    'colis',
                       ]),
                    'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
                 'client'=> $livraison->client?->user,
                 'commentaires' => $livraison->commentaires,
                 'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-            
+
             ],
-               
+
          200);
     }
 
@@ -353,13 +356,13 @@ class LivraisonController extends Controller
         try{
             $livraisons = Livraison::where('client_id', $id)
             ->get();
-               
+
         $datas = [];
         foreach ($livraisons as $livraison) {
             $demandeLivraison = $livraison->demandeLivraison->load([
-                'colis',     
+                'colis',
             ]);
-            
+
             $datas[] = [
                 'id' => $livraison->id,
                 'client_id' => $livraison->client_id,
@@ -400,10 +403,10 @@ class LivraisonController extends Controller
                       ]),
                 'commentaires' => $livraison->commentaires,
                 'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-            
+
             ];
         }
-    
+
             /*
               if ($livraisons->isEmpty()) {
             return response()->json([
@@ -412,7 +415,7 @@ class LivraisonController extends Controller
             ], 404);
             }
             */
-    
+
             /*
             return response()->json([
                // 'success' => true,
@@ -422,14 +425,14 @@ class LivraisonController extends Controller
                    // 'commentaires' => Commentaire::firstWhere('livraison_id', $livraison->id),
                    // 'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
                     ,
-                    
+
             , 200]);
               */
 
               return response()->json(
-               
+
                       $datas
-                    
+
              , 200);
 
 
@@ -440,7 +443,7 @@ class LivraisonController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-        
+
     }
 
     public function getByLivreur($id): JsonResponse
@@ -453,10 +456,10 @@ class LivraisonController extends Controller
                 'livreur_distributeur_id' => $id,
             ])->orWhere([
                 'livreur_ramasseur_id' => $id,
-            ])->get();   
-    
+            ])->get();
+
             // Vérifier si la livraison existe
-    
+
             /*
             if (!$livraisons) {
                 return response()->json([
@@ -465,8 +468,8 @@ class LivraisonController extends Controller
                 ], 404);
             }
             */
-    
-               
+
+
         $datas = [];
         foreach ($livraisons as $livraison) {
             $datas[] = [
@@ -485,13 +488,13 @@ class LivraisonController extends Controller
                 'demande_livraison' => $livraison->demandeLivraison->load([
                     'client',
                     'destinataire',
-                    'colis',     
+                    'colis',
                       ]),
                 'destinataire'=> $livraison->demandeLivraison->destinataire?->user,
                 'client'=> $livraison->client?->user,
                 'commentaires' => $livraison->commentaires,
                 'bordereau' => $livraison->bordereau_id ? $livraison->bordereau : null,
-            
+
             ];
         }
             return response()->json(
@@ -512,7 +515,7 @@ class LivraisonController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-        
+
     }
     /**
      * Mettre à jour une livraison.
@@ -544,7 +547,7 @@ class LivraisonController extends Controller
         ], 200);
     }
 
-    
+
     /**
      * Attribuer un livreur à une livraison.
      */
@@ -563,7 +566,7 @@ class LivraisonController extends Controller
                 'errors'  => $validated->errors(),
             ], 422);
         }
-        
+
         $validatedData = $validated->validated();
 
         $livraison = Livraison::find($id);
@@ -601,7 +604,7 @@ class LivraisonController extends Controller
                     'status' => 'prise_en_charge_livraison'
                 ]);
                 }
-                
+
             } elseif ($type == 1) {
                 // Type 1 : Livreurs ramasseurs
                 if( $livraison->status == 'ramasse') {
@@ -617,7 +620,7 @@ class LivraisonController extends Controller
                         'status' => 'prise_en_charge_ramassage'
                     ]);
                 }
-                
+
             } else {
                 return response()->json([
                     'success' => false,
@@ -642,11 +645,11 @@ class LivraisonController extends Controller
                 body: "Vous avez été attribué à une livraison. Veuillez vérifier les détails de la livraison."
             );
             */
-            
+
              // Envoyer un email au livreur
             try {
                 $livreur = Livreur::with('user')->find($validatedData['livreur_id']);
-                
+
                 if ($livreur && $livreur->user && $livreur->user->email) {
                     Mail::to($livreur->user->email)->send(new NewLivreurAssignmentMail($livraison, $livreur->user, $type));
                     Log::info('Email d\'assignation envoyé au livreur: ' . $livreur->user->email . ' (Type: ' . ($type === 1 ? 'Ramasseur' : 'Distributeur') . ')');
@@ -657,7 +660,7 @@ class LivraisonController extends Controller
                 // L'envoi d'email a échoué, mais on continue l'action
                 Log::error('Erreur lors de l\'envoi du mail au livreur: ' . $e->getMessage());
             }
-            
+
             DB::commit();
 
             /*
@@ -750,7 +753,9 @@ class LivraisonController extends Controller
 
         $validatedData = $validator->validated();
 
-        try{
+        try {
+            DB::beginTransaction();
+
             $livraison = Livraison::find($id);
 
             if (!$livraison) {
@@ -759,75 +764,92 @@ class LivraisonController extends Controller
                     'message' => 'Livraison introuvable',
                 ], 404);
             }
-    
+
+            $ancienStatus = $livraison->status;
+            $nouveauStatus = $validatedData['status'];
+
+            Log::info("Mise à jour du statut de {$ancienStatus} à {$nouveauStatus} pour la livraison " . $id);
+
+            // Mise à jour du statut
             $livraison->update([
-                'status' => $validatedData['status'],
+                'status' => $nouveauStatus,
             ]);
-    
-            /*
-            $notificationController = new NotificationController();
-            // Envoi de la notification à l'utilisateur
-            $notificationController->sendNotificationToUser(
-                userId: [$livraison->demandeLivraison->client_id, $livraison->livreur_ramasseur_id, $livraison->livreur_distributeur_id, User::where('role', 'admin')->first()->id],
-                type: NotificationType::LIVRAISON_status_MISE_A_JOUR,
-                title: "status de la livraison mis à jour",
-                body: "Le status de votre livraison a été mis à jour. Veuillez vérifier les détails de la livraison."
-            );
-            */
-    
-            /*
+
+            // Si la livraison est marquée comme 'livre' et qu'elle ne l'était pas avant
+            // => Calculer les commissions pour les gestionnaires
+            $resultatCommission = null;
+            if ($nouveauStatus === 'livre' && $ancienStatus !== 'livre') {
+                $resultatCommission = $this->calculerCommissionsLivraison($livraison);
+
+                if ($resultatCommission['success']) {
+                    Log::info("Commissions calculées avec succès pour la livraison {$id}", $resultatCommission['data']);
+                } else {
+                    Log::warning("Échec du calcul des commissions pour la livraison {$id}: " . $resultatCommission['message']);
+                }
+            }
+
+            // Si la livraison est annulée, supprimer les gains associés
+            if ($nouveauStatus === 'annule' && $ancienStatus === 'livre') {
+                GestionnaireGain::where('livraison_id', $livraison->id)->delete();
+                Log::info("Gains supprimés pour la livraison annulée {$id}");
+            }
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
-                'message' => 'status de la livraison mis à jour avec succès',
-                'data' => $livraison,
+                'message' => 'Statut mis à jour avec succès',
+                'data' => [
+                    'livraison' => $livraison,
+                    'commission' => $resultatCommission
+                ]
             ], 200);
-            */
-    
-            return response()->json($livraison,
-             200);
-        }catch (\Exception $e) {
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur lors de la mise à jour du statut: " . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'attribution du status',
+                'message' => 'Erreur lors de la mise à jour du statut',
                 'error' => $e->getMessage(),
             ], 500);
         }
-       
+
     }
-    
+
 
 public function trackByColisLabel($colis_label): JsonResponse
 {
     try {
         \Log::info('Recherche du colis: ' . $colis_label);
-        
+
         // 1. Trouver le colis
         $colis = \App\Models\Colis::where('colis_label', $colis_label)->first();
-        
+
         if (!$colis) {
             \Log::warning('Colis non trouvé: ' . $colis_label);
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Colis introuvable avec ce code de suivi'
             ], 404);
         }
-        
+
         \Log::info('Colis trouvé, ID: ' . $colis->id);
-        
+
         // 2. Trouver la demande de livraison qui a ce colis_id
         $demandeLivraison = \App\Models\DemandeLivraison::where('colis_id', $colis->id)->first();
-        
+
         if (!$demandeLivraison) {
             \Log::warning('Aucune demande de livraison pour le colis ID: ' . $colis->id);
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Aucune demande de livraison trouvée pour ce colis'
             ], 404);
         }
-        
+
         \Log::info('Demande de livraison trouvée, ID: ' . $demandeLivraison->id);
-        
+
         // 3. Trouver la livraison associée à cette demande
         $livraison = Livraison::where('demande_livraisons_id', $demandeLivraison->id)
             ->with([
@@ -841,17 +863,17 @@ public function trackByColisLabel($colis_label): JsonResponse
                 'bordereau'
             ])
             ->first();
-        
+
         if (!$livraison) {
             \Log::warning('Aucune livraison pour la demande ID: ' . $demandeLivraison->id);
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Aucune livraison en cours pour ce colis'
             ], 404);
         }
-        
+
         \Log::info('Livraison trouvée, ID: ' . $livraison->id . ', Status: ' . $livraison->status);
-        
+
         // 4. Retourner les données formatées
         return response()->json([
             'id' => $livraison->id,
@@ -873,13 +895,13 @@ public function trackByColisLabel($colis_label): JsonResponse
             'bordereau' => $livraison->bordereau,
             'colis' => $colis,
         ], 200);
-        
+
     } catch (\Exception $e) {
         \Log::error('Erreur trackByColisLabel: ' . $e->getMessage());
         \Log::error('Stack trace: ' . $e->getTraceAsString());
-        
+
         return response()->json([
-            'success' => false, 
+            'success' => false,
             'message' => 'Erreur lors de la recherche de la livraison',
             'error' => $e->getMessage()
         ], 500);
@@ -893,23 +915,23 @@ public function generatePrintHTML($id): JsonResponse
 {
     try {
         $livraison = Livraison::find($id);
-        
+
         if (!$livraison) {
             return response()->json([
                 'success' => false,
                 'message' => 'Livraison introuvable',
             ], 404);
         }
-        
+
         $data = $this->preparePrintData($livraison);
-        
+
         $html = View::make('pdf.bordereau', $data)->render();
-        
+
         return response()->json([
             'success' => true,
             'html' => $html,
         ], 200);
-        
+
     } catch (\Exception $e) {
         \Log::error('Erreur génération HTML: ' . $e->getMessage());
         return response()->json([
@@ -927,33 +949,33 @@ public function generateBordereauPDF($id)
 {
     try {
         $livraison = Livraison::find($id);
-        
+
         if (!$livraison) {
             return response()->json([
                 'success' => false,
                 'message' => 'Livraison introuvable',
             ], 404);
         }
-        
+
         $data = $this->preparePrintData($livraison);
-        
+
         $pdf = Pdf::loadView('pdf.bordereau', $data);
-        
+
         $pdf->setPaper([0, 0, 380, 700], 'portrait');
         $pdf->setOption('enable_html5_parser', true);
         $pdf->setOption('enable_remote', true);
         $pdf->setOption('defaultFont', 'DejaVu Sans');
         $pdf->setOption('isHtml5ParserEnabled', true);
         $pdf->setOption('isPhpEnabled', false);
-        
+
         $fileName = 'bordereau_livraison_' . $livraison->id . '_' . date('Ymd_His') . '.pdf';
-        
+
         return $pdf->download($fileName);
-        
+
     } catch (\Exception $e) {
         \Log::error('Erreur génération PDF: ' . $e->getMessage());
         \Log::error('Stack trace: ' . $e->getTraceAsString());
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Erreur lors de la génération du PDF',
@@ -976,14 +998,14 @@ private function preparePrintData($livraison): array
         'livreurRamasseur.user',
         'livreurDistributeur.user',
     ]);
-    
+
     $demande = $livraison->demandeLivraison;
     $colis = $demande->colis ?? null;
     $client = $demande->client->user ?? null;
     $destinataire = $demande->destinataire->user ?? null;
     $livreurRamasseur = $livraison->livreurRamasseur->user ?? null;
     $livreurDistributeur = $livraison->livreurDistributeur->user ?? null;
-    
+
     $qrCodeData = json_encode([
         'id' => $livraison->id,
         'code_pin' => $livraison->code_pin,
@@ -993,22 +1015,22 @@ private function preparePrintData($livraison): array
         'destinataire' => ($destinataire->prenom ?? '') . ' ' . ($destinataire->nom ?? ''),
         'date' => now()->toISOString(),
     ]);
-    
+
     $qrCode = $this->generateQRCode($qrCodeData);
-    
+
     $barcodeValue = $colis->colis_label ?? 'COLIS-' . $livraison->id;
     $barcode = $this->generateBarcode($barcodeValue);
-    
+
     $createdAt = $livraison->created_at
         ? Carbon::parse($livraison->created_at)->locale('fr_FR')->isoFormat('DD/MM/YYYY HH:mm')
         : 'Non définie';
-        
+
     $dateLivraison = $livraison->date_livraison
         ? Carbon::parse($livraison->date_livraison)->locale('fr_FR')->isoFormat('DD/MM/YYYY HH:mm')
         : 'Non définie';
-        
+
     $printDate = now()->locale('fr_FR')->isoFormat('DD/MM/YYYY');
-    
+
     $statusLabels = [
         'en_attente' => 'En attente',
         'prise_en_charge_ramassage' => 'Prise en charge',
@@ -1018,9 +1040,9 @@ private function preparePrintData($livraison): array
         'livre' => 'Livré',
         'annule' => 'Annulé',
     ];
-    
+
     $statusLabel = $statusLabels[$livraison->status] ?? str_replace('_', ' ', $livraison->status);
-    
+
     return [
         'livraison' => $livraison,
         'demande' => $demande,
@@ -1050,16 +1072,16 @@ private function generateQRCode(string $data): string
                 new RendererStyle(90),
                 new ImagickImageBackEnd()
             );
-            
+
             $writer = new Writer($renderer);
             $qrCode = $writer->writeString($data);
-            
+
             return 'data:image/png;base64,' . base64_encode($qrCode);
         }
     } catch (\Exception $e) {
         \Log::warning('Erreur génération QR Code local: ' . $e->getMessage());
     }
-    
+
     $encodedData = urlencode($data);
     return "https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={$encodedData}&format=png&margin=1";
 }
@@ -1073,13 +1095,13 @@ private function generateBarcode(string $value): string
         if (class_exists('Picqer\Barcode\BarcodeGeneratorPNG')) {
             $generator = new BarcodeGeneratorPNG();
             $barcode = $generator->getBarcode($value, $generator::TYPE_CODE_128, 2, 50);
-            
+
             return 'data:image/png;base64,' . base64_encode($barcode);
         }
     } catch (\Exception $e) {
         \Log::warning('Erreur génération code-barres local: ' . $e->getMessage());
     }
-    
+
     return $this->generateSimpleBarcode($value);
 }
 
@@ -1096,34 +1118,174 @@ private function generateSimpleBarcode(string $value): string
             </svg>
         ');
     }
-    
+
     $width = 250;
     $height = 50;
-    
+
     $image = imagecreatetruecolor($width, $height);
     $white = imagecolorallocate($image, 255, 255, 255);
     $black = imagecolorallocate($image, 0, 0, 0);
-    
+
     imagefill($image, 0, 0, $white);
-    
+
     $charWidth = 3;
     $x = 10;
-    
+
     for ($i = 0; $i < strlen($value); $i++) {
         $char = ord($value[$i]);
         $barHeight = ($char % 40) + 10;
-        
+
         imagefilledrectangle($image, $x, 10, $x + $charWidth, 10 + $barHeight, $black);
         $x += $charWidth + 1;
     }
-    
+
     imagestring($image, 2, $width / 2 - (strlen($value) * 3), $height - 15, $value, $black);
-    
+
     ob_start();
     imagepng($image);
     $barcode = ob_get_clean();
     imagedestroy($image);
-    
+
     return 'data:image/png;base64,' . base64_encode($barcode);
+}
+
+// ==================== MÉTHODES DE GESTION DES COMMISSIONS ====================
+
+private function calculerCommissionsLivraison(Livraison $livraison): array
+{
+    try {
+        $demande = $livraison->demandeLivraison;
+
+        if (!$demande) {
+            return [
+                'success' => false,
+                'message' => 'Demande de livraison non trouvée'
+            ];
+        }
+
+        $prixLivraison = (float) ($demande->prix ?? 0);
+
+        if ($prixLivraison <= 0) {
+            return [
+                'success' => false,
+                'message' => 'Le prix de la livraison est invalide ou nul'
+            ];
+        }
+
+        // Récupérer les pourcentages de commission depuis la configuration
+        $pourcentageDepart = CommissionConfig::getValue('commission_depart_default') ?? 25;
+        $pourcentageArrivee = CommissionConfig::getValue('commission_arrivee_default') ?? 25;
+
+        // Calculer les montants
+        $montantDepart = round($prixLivraison * ($pourcentageDepart / 100), 2);
+        $montantArrivee = round($prixLivraison * ($pourcentageArrivee / 100), 2);
+        $montantAdmin = $prixLivraison - $montantDepart - $montantArrivee;
+
+        // Récupérer les gestionnaires
+        $gestionnaireDepart = $this->getGestionnaireByWilaya($demande->wilaya_depot);
+        $gestionnaireArrivee = $this->getGestionnaireByWilaya($demande->wilaya);
+
+        $gainsEnregistres = [];
+
+        // Enregistrer le gain pour la wilaya de départ
+        if ($gestionnaireDepart && $montantDepart > 0) {
+            $gainDepart = GestionnaireGain::create([
+                'gestionnaire_id' => $gestionnaireDepart->id,
+                'livraison_id' => $livraison->id,
+                'wilaya_type' => 'depart',
+                'montant_commission' => $montantDepart,
+                'pourcentage_applique' => $pourcentageDepart,
+                'date_calcul' => now(),
+                'status' => 'en_attente'
+            ]);
+            $gainsEnregistres['depart'] = $gainDepart;
+        }
+
+        // Enregistrer le gain pour la wilaya d'arrivée
+        if ($gestionnaireArrivee && $montantArrivee > 0) {
+            $gainArrivee = GestionnaireGain::create([
+                'gestionnaire_id' => $gestionnaireArrivee->id,
+                'livraison_id' => $livraison->id,
+                'wilaya_type' => 'arrivee',
+                'montant_commission' => $montantArrivee,
+                'pourcentage_applique' => $pourcentageArrivee,
+                'date_calcul' => now(),
+                'status' => 'en_attente'
+            ]);
+            $gainsEnregistres['arrivee'] = $gainArrivee;
+        }
+
+        return [
+            'success' => true,
+            'data' => [
+                'prix_livraison' => $prixLivraison,
+                'pourcentage_depart' => $pourcentageDepart,
+                'montant_depart' => $montantDepart,
+                'gestionnaire_depart' => $gestionnaireDepart?->user?->nom . ' ' . $gestionnaireDepart?->user?->prenom,
+                'pourcentage_arrivee' => $pourcentageArrivee,
+                'montant_arrivee' => $montantArrivee,
+                'gestionnaire_arrivee' => $gestionnaireArrivee?->user?->nom . ' ' . $gestionnaireArrivee?->user?->prenom,
+                'montant_admin' => $montantAdmin,
+                'gains_enregistres' => $gainsEnregistres
+            ]
+        ];
+
+    } catch (\Exception $e) {
+        Log::error('Erreur calcul commissions: ' . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => 'Erreur lors du calcul des commissions: ' . $e->getMessage()
+        ];
+    }
+}
+
+private function getGestionnaireByWilaya($wilayaId)
+{
+    if (!$wilayaId) {
+        return null;
+    }
+
+    // Mapping des noms de wilayas vers leurs codes
+    $wilayaMapping = [
+        'Adrar' => '01', 'Chlef' => '02', 'Laghouat' => '03',
+        'Oum El Bouaghi' => '04', 'Batna' => '05', 'Béjaïa' => '06',
+        'Biskra' => '07', 'Béchar' => '08', 'Blida' => '09',
+        'Bouira' => '10', 'Tamanrasset' => '11', 'Tébessa' => '12',
+        'Tlemcen' => '13', 'Tiaret' => '14', 'Tizi Ouzou' => '15',
+        'Alger' => '16', 'Djelfa' => '17', 'Jijel' => '18',
+        'Sétif' => '19', 'Saïda' => '20', 'Skikda' => '21',
+        'Sidi Bel Abbès' => '22', 'Annaba' => '23', 'Guelma' => '24',
+        'Constantine' => '25', 'Médéa' => '26', 'Mostaganem' => '27',
+        "M'Sila" => '28', 'Mascara' => '29', 'Ouargla' => '30',
+        'Oran' => '31', 'El Bayadh' => '32', 'Illizi' => '33',
+        'Bordj Bou Arréridj' => '34', 'Boumerdès' => '35',
+        'El Tarf' => '36', 'Tindouf' => '37', 'Tissemsilt' => '38',
+        'El Oued' => '39', 'Khenchela' => '40', 'Souk Ahras' => '41',
+        'Tipaza' => '42', 'Mila' => '43', 'Aïn Defla' => '44',
+        'Naâma' => '45', 'Aïn Témouchent' => '46', 'Ghardaïa' => '47',
+        'Relizane' => '48', 'Timimoun' => '49', 'Bordj Badji Mokhtar' => '50',
+        'Ouled Djellal' => '51', 'Béni Abbès' => '52', 'In Salah' => '53',
+        'In Guezzam' => '54', 'Touggourt' => '55', 'Djanet' => '56',
+        "El M'Ghair" => '57', 'El Meniaa' => '58'
+    ];
+
+    // Nettoyer la valeur
+    $wilayaId = trim($wilayaId);
+
+    // Si c'est un nom de wilaya, le convertir en code
+    if (isset($wilayaMapping[$wilayaId])) {
+        $wilayaId = $wilayaMapping[$wilayaId];
+    }
+    // Sinon, si c'est un nombre, le formater sur 2 chiffres
+    elseif (is_numeric($wilayaId)) {
+        $wilayaId = str_pad($wilayaId, 2, '0', STR_PAD_LEFT);
+    }
+
+    Log::info("Recherche gestionnaire pour wilaya: " . $wilayaId);
+
+    return Gestionnaire::where('wilaya_id', $wilayaId)
+        ->where('status', 'active')
+        ->with('user')
+        ->first();
 }
 }
