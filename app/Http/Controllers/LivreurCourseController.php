@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Livraison;
+use App\Models\GestionnaireGain;
+use App\Models\CommissionConfig;
+use App\Models\Gestionnaire;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class LivreurCourseController extends Controller
@@ -98,6 +102,8 @@ class LivreurCourseController extends Controller
     public function complete(string $id): JsonResponse
     {
         try {
+            DB::beginTransaction();
+
             $livreur = $this->getLivreur();
 
             if (!$livreur) {
@@ -141,24 +147,21 @@ class LivreurCourseController extends Controller
             $nextStatus = null;
 
             // 🔄 Déterminer le rôle du livreur DANS CETTE LIVRAISON
-            // (pas selon $livreur->type, mais selon qui est assigné)
             $userRoleInThisDelivery = '';
-            
+
             // ✅ Si c'est la MÊME PERSONNE pour les deux rôles, déterminer le rôle par le statut
             $isSamePerson = (
-                $course->livreur_ramasseur_id === $livreurId && 
+                $course->livreur_ramasseur_id === $livreurId &&
                 $course->livreur_distributeur_id === $livreurId
             );
-            
+
             // ✅ Cas spécial: Ramasseur qui continue en tant que distributeur
-            // Si le distributeur n'a pas été assigné, mais c'est la même personne qui était ramasseur
-            // et le statut est déjà en_transit (ramassage terminé), elle peut continuer
             $isRamasseurContinuingAsDistributeur = (
                 $course->livreur_ramasseur_id === $livreurId &&
                 ($course->livreur_distributeur_id === null || $course->livreur_distributeur_id === '') &&
                 in_array($currentStatus, ['en_transit', 'prise_en_charge_livraison', 'livre'])
             );
-            
+
             if ($isSamePerson) {
                 // Déterminer le rôle basé sur le statut actuel
                 $pickupStatuses = ['en_attente', 'prise_en_charge_ramassage', 'ramasse'];
@@ -174,9 +177,9 @@ class LivreurCourseController extends Controller
                 $userRoleInThisDelivery = 'distributeur';
             }
 
-            \Log::info('Role determination - Livreur ID: ' . $livreurId . 
-                       ', Ramasseur ID: ' . $course->livreur_ramasseur_id . 
-                       ', Distributeur ID: ' . $course->livreur_distributeur_id . 
+            \Log::info('Role determination - Livreur ID: ' . $livreurId .
+                       ', Ramasseur ID: ' . $course->livreur_ramasseur_id .
+                       ', Distributeur ID: ' . $course->livreur_distributeur_id .
                        ', Is Same Person: ' . ($isSamePerson ? 'YES' : 'NO') .
                        ', Is Ramasseur Continuing: ' . ($isRamasseurContinuingAsDistributeur ? 'YES' : 'NO') .
                        ', Current Status: ' . $currentStatus .
@@ -227,8 +230,22 @@ class LivreurCourseController extends Controller
 
             // Mettre à jour le statut et les dates
             $course->update($updateData);
-            
+
             \Log::info("Course transition: {$currentStatus} → {$nextStatus} (Livreur Role: {$userRoleInThisDelivery})");
+
+            // ✅ CALCULER LES COMMISSIONS SI LA LIVRAISON EST MARQUÉE COMME LIVRÉE
+            $resultatCommission = null;
+            if ($nextStatus === 'livre' && $currentStatus !== 'livre') {
+                $resultatCommission = $this->calculerCommissionsLivraison($course);
+
+                if ($resultatCommission['success']) {
+                    \Log::info("✅ Commissions calculées avec succès pour la livraison {$id} par le livreur");
+                } else {
+                    \Log::warning("⚠️ Échec du calcul des commissions pour la livraison {$id}: " . $resultatCommission['message']);
+                }
+            }
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -239,9 +256,11 @@ class LivreurCourseController extends Controller
                     'new_status' => $nextStatus,
                     'user_role_in_delivery' => $userRoleInThisDelivery,
                 ],
+                'commission' => $resultatCommission
             ], 200);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             \Log::error('Error completing course: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -337,10 +356,10 @@ class LivreurCourseController extends Controller
             if (!$course->demandeLivraison || !$course->demandeLivraison->colis) {
                 return null;
             }
-            
+
             $demande = $course->demandeLivraison;
             $colisData = $demande->colis->toArray();
-            
+
             // DEBUG: Log la demande de livraison
             \Log::info('===== COLIS DEBUG =====');
             \Log::info('Demande ID: ' . $demande->id);
@@ -348,7 +367,7 @@ class LivreurCourseController extends Controller
                 'wilaya' => $demande->wilaya,
                 'commune' => $demande->commune,
             ]);
-            
+
             // Ajouter les informations de l'expéditeur (client)
             if ($demande->client && $demande->client->user) {
                 $colisData['expediteur_nom'] = $demande->client->user->nom . ' ' . $demande->client->user->prenom;
@@ -358,7 +377,7 @@ class LivreurCourseController extends Controller
                 $colisData['expediteur_telephone'] = 'Non renseigné';
             }
             $colisData['expediteur_adresse'] = $demande->addresse_depot ?? 'Non renseigné';
-            
+
             // Ajouter les informations du destinataire
             if ($demande->destinataire && $demande->destinataire->user) {
                 $colisData['destinataire_nom'] = $demande->destinataire->user->nom . ' ' . $demande->destinataire->user->prenom;
@@ -368,35 +387,35 @@ class LivreurCourseController extends Controller
                 $colisData['destinataire_telephone'] = 'Non renseigné';
             }
             $colisData['destinataire_adresse'] = $demande->addresse_delivery ?? 'Non renseigné';
-            
+
             // 🔑 AJOUTER WILAYA ET COMMUNE - CRUCIAL!
             $colisData['wilaya'] = $demande->wilaya ?? 'Non renseigné';
             $colisData['commune'] = $demande->commune ?? 'Non renseigné';
             $colisData['wilaya_depot'] = $demande->wilaya_depot ?? 'Non renseigné';
             $colisData['commune_depot'] = $demande->commune_depot ?? 'Non renseigné';
-            
+
             // Ajouter les coordonnées GPS pour le tracking
             $colisData['lat_depot'] = $demande->lat_depot;
             $colisData['lng_depot'] = $demande->lng_depot;
             $colisData['lat_delivery'] = $demande->lat_delivery;
             $colisData['lng_delivery'] = $demande->lng_delivery;
-            
+
             // Ajouter le statut de la livraison
             $colisData['status'] = $course->status;
             $colisData['livraison_id'] = $course->id;
-            
-             
+
+
             // ✅ AJOUT CRUCIAL - IDs des livreurs assignés à cette livraison
             $colisData['livreur_ramasseur_id'] = $course->livreur_ramasseur_id;
             $colisData['livreur_distributeur_id'] = $course->livreur_distributeur_id;
-            
+
             // 💰 AJOUTER LES PRIX - Dynamiquement depuis la base de données
             $colisData['prix_colis'] = (float) ($demande->colis->colis_prix ?? 0);
             $colisData['prix_livraison'] = (float) ($demande->prix ?? 0);
-            
+
              $colisData['date_ramassage'] = $course->date_ramassage;
             $colisData['date_livraison'] = $course->date_livraison;
-            
+
             // DEBUG: Log les données du colis retournées
             \Log::info('Colis Data Being Returned:', [
                 'colis_id' => $colisData['id'],
@@ -404,7 +423,7 @@ class LivreurCourseController extends Controller
                 'commune' => $colisData['commune'],
                 'prix_livraison' => $colisData['prix_livraison'] ?? 'NULL',
             ]);
-            
+
             return $colisData;
         })->filter(); // enlève les null
 
@@ -424,8 +443,8 @@ class LivreurCourseController extends Controller
             'data' => $colis->values(),
         ], 200);
     }
-    
-    
+
+
     /**
      * Les 7 statuts de livraison possibles
      */
@@ -441,7 +460,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Met à jour le statut d'une livraison avec validation du type de livreur
-     * 
+     *
      * @param Request $request
      * @param string $id ID de la livraison
      * @return JsonResponse
@@ -449,6 +468,8 @@ class LivreurCourseController extends Controller
     public function updateStatusByLivreurType(Request $request, $id): JsonResponse
     {
         try {
+            DB::beginTransaction();
+
             $livraison = Livraison::with(['livreurDistributeur', 'livreurRamasseur'])->find($id);
 
             if (!$livraison) {
@@ -482,17 +503,33 @@ class LivreurCourseController extends Controller
                 'status' => $newStatus,
             ]);
 
+            // ✅ CALCULER LES COMMISSIONS SI LA LIVRAISON EST MARQUÉE COMME LIVRÉE
+            $resultatCommission = null;
+            if ($newStatus === 'livre' && $currentStatus !== 'livre') {
+                $resultatCommission = $this->calculerCommissionsLivraison($livraison);
+
+                if ($resultatCommission['success']) {
+                    \Log::info("✅ Commissions calculées avec succès pour la livraison {$id} via updateStatusByLivreurType");
+                } else {
+                    \Log::warning("⚠️ Échec du calcul des commissions pour la livraison {$id}: " . $resultatCommission['message']);
+                }
+            }
+
             // Enregistrer un commentaire si fourni
             if (!empty($validated['comment'])) {
                 \Log::info("Transition de statut pour la livraison {$id}: {$currentStatus} → {$newStatus}. Comment: {$validated['comment']}");
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => "Statut mis à jour à '" . $this->getStatusLabel($newStatus) . "'",
                 'data' => $livraison->refresh(),
+                'commission' => $resultatCommission
             ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la mise à jour du statut',
@@ -503,7 +540,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Valide la transition d'un statut à un autre selon le type de livreur
-     * 
+     *
      * @param string $currentStatus
      * @param string $newStatus
      * @param Livreur|null $livreur
@@ -543,7 +580,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Récupère le label lisible d'un statut
-     * 
+     *
      * @param string $status
      * @return string
      */
@@ -564,7 +601,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Récupère les livraisons selon le statut et le type de livreur
-     * 
+     *
      * @param Request $request
      * @param string $status
      * @return JsonResponse
@@ -614,7 +651,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Récupère les transitions valides pour le statut actuel selon le type de livreur
-     * 
+     *
      * @param Request $request
      * @param string $livraisonId
      * @return JsonResponse
@@ -679,7 +716,7 @@ class LivreurCourseController extends Controller
 
     /**
      * Récupère les statistiques de livraison par statut pour le livreur connecté
-     * 
+     *
      * @return JsonResponse
      */
     public function getStatistiquesByStatus(): JsonResponse
@@ -726,5 +763,145 @@ class LivreurCourseController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    // ==================== MÉTHODES DE GESTION DES COMMISSIONS ====================
+
+    private function calculerCommissionsLivraison(Livraison $livraison): array
+    {
+        try {
+            $demande = $livraison->demandeLivraison;
+
+            if (!$demande) {
+                return [
+                    'success' => false,
+                    'message' => 'Demande de livraison non trouvée'
+                ];
+            }
+
+            $prixLivraison = (float) ($demande->prix ?? 0);
+
+            if ($prixLivraison <= 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Le prix de la livraison est invalide ou nul'
+                ];
+            }
+
+            // Récupérer les pourcentages de commission depuis la configuration
+            $pourcentageDepart = CommissionConfig::getValue('commission_depart_default') ?? 25;
+            $pourcentageArrivee = CommissionConfig::getValue('commission_arrivee_default') ?? 25;
+
+            // Calculer les montants
+            $montantDepart = round($prixLivraison * ($pourcentageDepart / 100), 2);
+            $montantArrivee = round($prixLivraison * ($pourcentageArrivee / 100), 2);
+            $montantAdmin = $prixLivraison - $montantDepart - $montantArrivee;
+
+            // Récupérer les gestionnaires
+            $gestionnaireDepart = $this->getGestionnaireByWilaya($demande->wilaya_depot);
+            $gestionnaireArrivee = $this->getGestionnaireByWilaya($demande->wilaya);
+
+            $gainsEnregistres = [];
+
+            // Enregistrer le gain pour la wilaya de départ
+            if ($gestionnaireDepart && $montantDepart > 0) {
+                $gainDepart = GestionnaireGain::create([
+                    'gestionnaire_id' => $gestionnaireDepart->id,
+                    'livraison_id' => $livraison->id,
+                    'wilaya_type' => 'depart',
+                    'montant_commission' => $montantDepart,
+                    'pourcentage_applique' => $pourcentageDepart,
+                    'date_calcul' => now(),
+                    'status' => 'en_attente'
+                ]);
+                $gainsEnregistres['depart'] = $gainDepart;
+            }
+
+            // Enregistrer le gain pour la wilaya d'arrivée
+            if ($gestionnaireArrivee && $montantArrivee > 0) {
+                $gainArrivee = GestionnaireGain::create([
+                    'gestionnaire_id' => $gestionnaireArrivee->id,
+                    'livraison_id' => $livraison->id,
+                    'wilaya_type' => 'arrivee',
+                    'montant_commission' => $montantArrivee,
+                    'pourcentage_applique' => $pourcentageArrivee,
+                    'date_calcul' => now(),
+                    'status' => 'en_attente'
+                ]);
+                $gainsEnregistres['arrivee'] = $gainArrivee;
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'prix_livraison' => $prixLivraison,
+                    'pourcentage_depart' => $pourcentageDepart,
+                    'montant_depart' => $montantDepart,
+                    'gestionnaire_depart' => $gestionnaireDepart?->user?->nom . ' ' . $gestionnaireDepart?->user?->prenom,
+                    'pourcentage_arrivee' => $pourcentageArrivee,
+                    'montant_arrivee' => $montantArrivee,
+                    'gestionnaire_arrivee' => $gestionnaireArrivee?->user?->nom . ' ' . $gestionnaireArrivee?->user?->prenom,
+                    'montant_admin' => $montantAdmin,
+                    'gains_enregistres' => $gainsEnregistres
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Erreur calcul commissions: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Erreur lors du calcul des commissions: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    private function getGestionnaireByWilaya($wilayaId)
+    {
+        if (!$wilayaId) {
+            return null;
+        }
+
+        // Mapping des noms de wilayas vers leurs codes
+        $wilayaMapping = [
+            'Adrar' => '01', 'Chlef' => '02', 'Laghouat' => '03',
+            'Oum El Bouaghi' => '04', 'Batna' => '05', 'Béjaïa' => '06',
+            'Biskra' => '07', 'Béchar' => '08', 'Blida' => '09',
+            'Bouira' => '10', 'Tamanrasset' => '11', 'Tébessa' => '12',
+            'Tlemcen' => '13', 'Tiaret' => '14', 'Tizi Ouzou' => '15',
+            'Alger' => '16', 'Djelfa' => '17', 'Jijel' => '18',
+            'Sétif' => '19', 'Saïda' => '20', 'Skikda' => '21',
+            'Sidi Bel Abbès' => '22', 'Annaba' => '23', 'Guelma' => '24',
+            'Constantine' => '25', 'Médéa' => '26', 'Mostaganem' => '27',
+            "M'Sila" => '28', 'Mascara' => '29', 'Ouargla' => '30',
+            'Oran' => '31', 'El Bayadh' => '32', 'Illizi' => '33',
+            'Bordj Bou Arréridj' => '34', 'Boumerdès' => '35',
+            'El Tarf' => '36', 'Tindouf' => '37', 'Tissemsilt' => '38',
+            'El Oued' => '39', 'Khenchela' => '40', 'Souk Ahras' => '41',
+            'Tipaza' => '42', 'Mila' => '43', 'Aïn Defla' => '44',
+            'Naâma' => '45', 'Aïn Témouchent' => '46', 'Ghardaïa' => '47',
+            'Relizane' => '48', 'Timimoun' => '49', 'Bordj Badji Mokhtar' => '50',
+            'Ouled Djellal' => '51', 'Béni Abbès' => '52', 'In Salah' => '53',
+            'In Guezzam' => '54', 'Touggourt' => '55', 'Djanet' => '56',
+            "El M'Ghair" => '57', 'El Meniaa' => '58'
+        ];
+
+        // Nettoyer la valeur
+        $wilayaId = trim($wilayaId);
+
+        // Si c'est un nom de wilaya, le convertir en code
+        if (isset($wilayaMapping[$wilayaId])) {
+            $wilayaId = $wilayaMapping[$wilayaId];
+        }
+        // Sinon, si c'est un nombre, le formater sur 2 chiffres
+        elseif (is_numeric($wilayaId)) {
+            $wilayaId = str_pad($wilayaId, 2, '0', STR_PAD_LEFT);
+        }
+
+        \Log::info("Recherche gestionnaire pour wilaya: " . $wilayaId);
+
+        return Gestionnaire::where('wilaya_id', $wilayaId)
+            ->where('status', 'active')
+            ->with('user')
+            ->first();
     }
 }
