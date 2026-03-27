@@ -128,6 +128,14 @@ class ComptabiliteController extends Controller
     }
 
     /**
+     * Alias de bilanGestionnaire pour les wilayas (appelé depuis le frontend)
+     */
+    public function bilanWilaya(Request $request, $wilayaId): JsonResponse
+    {
+        return $this->bilanGestionnaire($request, $wilayaId);
+    }
+
+    /**
      * Rapport détaillé des gains
      */
     public function rapport(Request $request): JsonResponse
@@ -144,9 +152,9 @@ class ComptabiliteController extends Controller
                 'livreurRamasseur.user',
                 'livreurDistributeur.user'
             ])
-            ->where('status', 'livre')
-            ->whereBetween('created_at', [$dateDebut, $dateFin])
-            ->get();
+                ->where('status', 'livre')
+                ->whereBetween('created_at', [$dateDebut, $dateFin])
+                ->get();
 
             $statsGlobales = [
                 'total_livraisons' => $livraisons->count(),
@@ -229,7 +237,6 @@ class ComptabiliteController extends Controller
                 'success' => true,
                 'data' => $rapport
             ]);
-
         } catch (\Exception $e) {
             Log::error('Erreur rapport: ' . $e->getMessage());
             return response()->json([
@@ -240,231 +247,230 @@ class ComptabiliteController extends Controller
     }
 
     /**
- * Rapport détaillé des gains par gestionnaire
- */
-public function rapportGestionnaires(Request $request): JsonResponse
-{
-    try {
-        $periode = $request->get('periode', 'mois');
-        $dates = $this->getPeriodDates($periode, $request);
-        $dateDebut = $dates[0];
-        $dateFin = $dates[1];
+     * Rapport détaillé des gains par gestionnaire
+     */
+    public function rapportGestionnaires(Request $request): JsonResponse
+    {
+        try {
+            $periode = $request->get('periode', 'mois');
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
 
-        // Filtres optionnels
-        $gestionnaireId = $request->get('gestionnaire_id');
-        $wilayaId = $request->get('wilaya_id');
+            // Filtres optionnels
+            $gestionnaireId = $request->get('gestionnaire_id');
+            $wilayaId = $request->get('wilaya_id');
 
-        // Récupérer TOUS les gains avec leurs relations
-        $query = GestionnaireGain::with([
-            'gestionnaire.user',
-            'livraison.demandeLivraison'
-        ])->whereBetween('created_at', [$dateDebut, $dateFin]);
+            // Récupérer TOUS les gains avec leurs relations
+            $query = GestionnaireGain::with([
+                'gestionnaire.user',
+                'livraison.demandeLivraison'
+            ])->whereBetween('created_at', [$dateDebut, $dateFin]);
 
-        // Appliquer les filtres si présents
-        if ($gestionnaireId) {
-            $query->where('gestionnaire_id', $gestionnaireId);
-        }
-
-        if ($wilayaId) {
-            $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
-                $q->where('wilaya_id', $wilayaId);
-            });
-        }
-
-        $gains = $query->get();
-
-        // Statistiques
-        $statsParWilaya = []; // Un ligne par (wilaya + gestionnaire)
-        $gainsParGestionnaire = [];
-        $totalCommissions = 0;
-        $totalPrixLivraisons = 0;
-
-        foreach ($gains as $gain) {
-            $gestionnaire = $gain->gestionnaire;
-
-            if (!$gestionnaire) {
-                continue;
+            // Appliquer les filtres si présents
+            if ($gestionnaireId) {
+                $query->where('gestionnaire_id', $gestionnaireId);
             }
 
-            $wilayaCode = $gestionnaire->wilaya_id;
-            $gestionnaireId = $gestionnaire->id;
-            $montantCommission = (float) $gain->montant_commission;
-
-            // Prix de la livraison
-            if ($gain->livraison && $gain->livraison->demandeLivraison) {
-                $totalPrixLivraisons += (float) ($gain->livraison->demandeLivraison->prix ?? 0);
+            if ($wilayaId) {
+                $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
+                    $q->where('wilaya_id', $wilayaId);
+                });
             }
 
-            // 1. STATS PAR WILAYA (une ligne par gestionnaire dans sa wilaya)
-            $cleWilaya = $wilayaCode . '_' . $gestionnaireId; // Clé unique !
+            $gains = $query->get();
 
-            if (!isset($statsParWilaya[$cleWilaya])) {
-                $statsParWilaya[$cleWilaya] = [
-                    'code' => $wilayaCode,
-                    'nom' => $this->getWilayaName($wilayaCode),
-                    'gestionnaire_nom' => $gestionnaire->user ?
-                        trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
-                        'Non assigné',
-                    'gestionnaire_id' => $gestionnaireId,
-                    'gestionnaire_email' => $gestionnaire->user->email ?? '',
-                    'nb_livraisons' => 0,
-                    'total_commissions' => 0,
-                    'pourcentage' => 0
-                ];
+            // Statistiques
+            $statsParWilaya = []; // Un ligne par (wilaya + gestionnaire)
+            $gainsParGestionnaire = [];
+            $totalCommissions = 0;
+            $totalPrixLivraisons = 0;
+
+            foreach ($gains as $gain) {
+                $gestionnaire = $gain->gestionnaire;
+
+                if (!$gestionnaire) {
+                    continue;
+                }
+
+                $wilayaCode = $gestionnaire->wilaya_id;
+                $gestionnaireId = $gestionnaire->id;
+                $montantCommission = (float) $gain->montant_commission;
+
+                // Prix de la livraison
+                if ($gain->livraison && $gain->livraison->demandeLivraison) {
+                    $totalPrixLivraisons += (float) ($gain->livraison->demandeLivraison->prix ?? 0);
+                }
+
+                // 1. STATS PAR WILAYA (une ligne par gestionnaire dans sa wilaya)
+                $cleWilaya = $wilayaCode . '_' . $gestionnaireId; // Clé unique !
+
+                if (!isset($statsParWilaya[$cleWilaya])) {
+                    $statsParWilaya[$cleWilaya] = [
+                        'code' => $wilayaCode,
+                        'nom' => $this->getWilayaName($wilayaCode),
+                        'gestionnaire_nom' => $gestionnaire->user ?
+                            trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
+                            'Non assigné',
+                        'gestionnaire_id' => $gestionnaireId,
+                        'gestionnaire_email' => $gestionnaire->user->email ?? '',
+                        'nb_livraisons' => 0,
+                        'total_commissions' => 0,
+                        'pourcentage' => 0
+                    ];
+                }
+
+                $statsParWilaya[$cleWilaya]['nb_livraisons']++;
+                $statsParWilaya[$cleWilaya]['total_commissions'] += $montantCommission;
+
+                // 2. GAINS PAR GESTIONNAIRE (pour le détail)
+                if (!isset($gainsParGestionnaire[$gestionnaireId])) {
+                    $gainsParGestionnaire[$gestionnaireId] = [
+                        'gestionnaire_id' => $gestionnaireId,
+                        'gestionnaire_nom' => $gestionnaire->user ?
+                            trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
+                            'Inconnu',
+                        'gestionnaire_email' => $gestionnaire->user->email ?? '',
+                        'wilaya_code' => $wilayaCode,
+                        'wilaya_nom' => $this->getWilayaName($wilayaCode),
+                        'total_commissions' => 0,
+                        'nb_livraisons' => 0,
+                        'pourcentage_applique' => (float) $gain->pourcentage_applique,
+                        'statut' => $gain->status
+                    ];
+                }
+
+                $gainsParGestionnaire[$gestionnaireId]['total_commissions'] += $montantCommission;
+                $gainsParGestionnaire[$gestionnaireId]['nb_livraisons']++;
+                $totalCommissions += $montantCommission;
             }
 
-            $statsParWilaya[$cleWilaya]['nb_livraisons']++;
-            $statsParWilaya[$cleWilaya]['total_commissions'] += $montantCommission;
-
-            // 2. GAINS PAR GESTIONNAIRE (pour le détail)
-            if (!isset($gainsParGestionnaire[$gestionnaireId])) {
-                $gainsParGestionnaire[$gestionnaireId] = [
-                    'gestionnaire_id' => $gestionnaireId,
-                    'gestionnaire_nom' => $gestionnaire->user ?
-                        trim(($gestionnaire->user->prenom ?? '') . ' ' . ($gestionnaire->user->nom ?? '')) :
-                        'Inconnu',
-                    'gestionnaire_email' => $gestionnaire->user->email ?? '',
-                    'wilaya_code' => $wilayaCode,
-                    'wilaya_nom' => $this->getWilayaName($wilayaCode),
-                    'total_commissions' => 0,
-                    'nb_livraisons' => 0,
-                    'pourcentage_applique' => (float) $gain->pourcentage_applique,
-                    'statut' => $gain->status
-                ];
+            // Calculer les pourcentages pour chaque ligne
+            foreach ($statsParWilaya as &$ligne) {
+                $ligne['pourcentage'] = $totalCommissions > 0
+                    ? round(($ligne['total_commissions'] / $totalCommissions) * 100, 1)
+                    : 0;
             }
 
-            $gainsParGestionnaire[$gestionnaireId]['total_commissions'] += $montantCommission;
-            $gainsParGestionnaire[$gestionnaireId]['nb_livraisons']++;
-            $totalCommissions += $montantCommission;
-        }
-
-        // Calculer les pourcentages pour chaque ligne
-        foreach ($statsParWilaya as &$ligne) {
-            $ligne['pourcentage'] = $totalCommissions > 0
-                ? round(($ligne['total_commissions'] / $totalCommissions) * 100, 1)
-                : 0;
-        }
-
-        // Réindexer et trier
-        $statsParWilaya = array_values($statsParWilaya);
-        usort($statsParWilaya, function($a, $b) {
-            return $b['total_commissions'] <=> $a['total_commissions'];
-        });
-
-        // Top gestionnaires
-        $topGestionnaires = collect($gainsParGestionnaire)
-            ->sortByDesc('total_commissions')
-            ->take(5)
-            ->values()
-            ->map(function ($item) {
-                return [
-                    'id' => $item['gestionnaire_id'],
-                    'nom' => $item['gestionnaire_nom'],
-                    'email' => $item['gestionnaire_email'],
-                    'wilaya' => $item['wilaya_code'],
-                    'total_gains' => $item['total_commissions'],
-                    'nb_livraisons' => $item['nb_livraisons'],
-                ];
+            // Réindexer et trier
+            $statsParWilaya = array_values($statsParWilaya);
+            usort($statsParWilaya, function ($a, $b) {
+                return $b['total_commissions'] <=> $a['total_commissions'];
             });
 
-        // Totaux
-        $totaux = [
-            'total_commissions' => $totalCommissions,
-            'nb_gestionnaires' => count($gainsParGestionnaire),
-            'nb_livraisons' => $gains->count(),
-            'moyenne_par_gestionnaire' => count($gainsParGestionnaire) > 0
-                ? round($totalCommissions / count($gainsParGestionnaire), 2)
-                : 0,
-            'part_societe_mere' => $totalPrixLivraisons - $totalCommissions
-        ];
+            // Top gestionnaires
+            $topGestionnaires = collect($gainsParGestionnaire)
+                ->sortByDesc('total_commissions')
+                ->take(5)
+                ->values()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item['gestionnaire_id'],
+                        'nom' => $item['gestionnaire_nom'],
+                        'email' => $item['gestionnaire_email'],
+                        'wilaya' => $item['wilaya_code'],
+                        'total_gains' => $item['total_commissions'],
+                        'nb_livraisons' => $item['nb_livraisons'],
+                    ];
+                });
 
-        // Détails par gestionnaire
-        $details = array_values($gainsParGestionnaire);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'periode' => [
-                    'debut' => $dateDebut->format('Y-m-d'),
-                    'fin' => $dateFin->format('Y-m-d'),
-                    'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
-                ],
-                'totaux' => $totaux,
-                'par_wilaya' => $statsParWilaya,
-                'top_gestionnaires' => $topGestionnaires,
-                'details' => $details
-            ]
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('❌ Erreur rapportGestionnaires: ' . $e->getMessage());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la génération du rapport: ' . $e->getMessage()
-        ], 500);
-    }
-}
-
-   /**
- * Liste des impayés (gains en attente et demandes envoyées)
- */
-public function impayes(Request $request): JsonResponse
-{
-    try {
-        // Récupérer les gains en attente ET les demandes envoyées
-        $impayes = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
-            ->whereIn('status', ['en_attente', 'demande_envoyee'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $formattedImpayes = $impayes->map(function ($gain) {
-            return [
-                'id' => $gain->id,
-                'gestionnaire_id' => $gain->gestionnaire_id,
-                'livraison_id' => $gain->livraison_id,
-                'montant_commission' => $gain->montant_commission,
-                'pourcentage_applique' => $gain->pourcentage_applique,
-                'status' => $gain->status,
-                'created_at' => $gain->created_at,
-                'updated_at' => $gain->updated_at,
-                'wilaya_type' => $gain->wilaya_type,
-                'date_calcul' => $gain->date_calcul,
-                'date_demande' => $gain->date_demande,
-                'date_paiement' => $gain->date_paiement,
-                'note_admin' => $gain->note_admin,
-                'gestionnaire' => $gain->gestionnaire ? [
-                    'id' => $gain->gestionnaire->id,
-                    'user_id' => $gain->gestionnaire->user_id,
-                    'wilaya_id' => $gain->gestionnaire->wilaya_id,
-                    'status' => $gain->gestionnaire->status,
-                    'user' => $gain->gestionnaire->user ? [
-                        'id' => $gain->gestionnaire->user->id,
-                        'nom' => $gain->gestionnaire->user->nom,
-                        'prenom' => $gain->gestionnaire->user->prenom,
-                        'email' => $gain->gestionnaire->user->email,
-                    ] : null
-                ] : null,
-                'livraison' => $gain->livraison ? [
-                    'id' => $gain->livraison->id,
-                    'status' => $gain->livraison->status,
-                    'code_pin' => $gain->livraison->code_pin,
-                ] : null
+            // Totaux
+            $totaux = [
+                'total_commissions' => $totalCommissions,
+                'nb_gestionnaires' => count($gainsParGestionnaire),
+                'nb_livraisons' => $gains->count(),
+                'moyenne_par_gestionnaire' => count($gainsParGestionnaire) > 0
+                    ? round($totalCommissions / count($gainsParGestionnaire), 2)
+                    : 0,
+                'part_societe_mere' => $totalPrixLivraisons - $totalCommissions
             ];
-        });
 
-        return response()->json([
-            'success' => true,
-            'data' => $formattedImpayes
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Erreur impayes: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des impayés'
-        ], 500);
+            // Détails par gestionnaire
+            $details = array_values($gainsParGestionnaire);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'periode' => [
+                        'debut' => $dateDebut->format('Y-m-d'),
+                        'fin' => $dateFin->format('Y-m-d'),
+                        'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+                    ],
+                    'totaux' => $totaux,
+                    'par_wilaya' => $statsParWilaya,
+                    'top_gestionnaires' => $topGestionnaires,
+                    'details' => $details
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('❌ Erreur rapportGestionnaires: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la génération du rapport: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
+
+    /**
+     * Liste des impayés (gains en attente et demandes envoyées)
+     */
+    public function impayes(Request $request): JsonResponse
+    {
+        try {
+            // Récupérer les gains en attente ET les demandes envoyées
+            $impayes = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
+                ->whereIn('status', ['en_attente', 'demande_envoyee'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $formattedImpayes = $impayes->map(function ($gain) {
+                return [
+                    'id' => $gain->id,
+                    'gestionnaire_id' => $gain->gestionnaire_id,
+                    'livraison_id' => $gain->livraison_id,
+                    'montant_commission' => $gain->montant_commission,
+                    'pourcentage_applique' => $gain->pourcentage_applique,
+                    'status' => $gain->status,
+                    'created_at' => $gain->created_at,
+                    'updated_at' => $gain->updated_at,
+                    'wilaya_type' => $gain->wilaya_type,
+                    'date_calcul' => $gain->date_calcul,
+                    'date_demande' => $gain->date_demande,
+                    'date_paiement' => $gain->date_paiement,
+                    'note_admin' => $gain->note_admin,
+                    'gestionnaire' => $gain->gestionnaire ? [
+                        'id' => $gain->gestionnaire->id,
+                        'user_id' => $gain->gestionnaire->user_id,
+                        'wilaya_id' => $gain->gestionnaire->wilaya_id,
+                        'status' => $gain->gestionnaire->status,
+                        'user' => $gain->gestionnaire->user ? [
+                            'id' => $gain->gestionnaire->user->id,
+                            'nom' => $gain->gestionnaire->user->nom,
+                            'prenom' => $gain->gestionnaire->user->prenom,
+                            'email' => $gain->gestionnaire->user->email,
+                        ] : null
+                    ] : null,
+                    'livraison' => $gain->livraison ? [
+                        'id' => $gain->livraison->id,
+                        'status' => $gain->livraison->status,
+                        'code_pin' => $gain->livraison->code_pin,
+                    ] : null
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $formattedImpayes
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur impayes: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des impayés'
+            ], 500);
+        }
+    }
 
     /**
      * Exporter le rapport
@@ -485,9 +491,9 @@ public function impayes(Request $request): JsonResponse
                 'livreurRamasseur.user',
                 'livreurDistributeur.user'
             ])
-            ->where('status', 'livre')
-            ->whereBetween('created_at', [$dateDebut, $dateFin])
-            ->get();
+                ->where('status', 'livre')
+                ->whereBetween('created_at', [$dateDebut, $dateFin])
+                ->get();
 
             $data = [
                 'periode' => [
@@ -519,89 +525,89 @@ public function impayes(Request $request): JsonResponse
     }
 
     /**
- * Exporter le rapport des gestionnaires (Excel/PDF/CSV)
- */
-public function exportRapportGestionnaires(Request $request)
-{
-    try {
-        $format = $request->get('format', 'excel');
-        $periode = $request->get('periode', 'mois');
-        $gestionnaireId = $request->get('gestionnaire_id');
-        $wilayaId = $request->get('wilaya_id');
+     * Exporter le rapport des gestionnaires (Excel/PDF/CSV)
+     */
+    public function exportRapportGestionnaires(Request $request)
+    {
+        try {
+            $format = $request->get('format', 'excel');
+            $periode = $request->get('periode', 'mois');
+            $gestionnaireId = $request->get('gestionnaire_id');
+            $wilayaId = $request->get('wilaya_id');
 
-        $dates = $this->getPeriodDates($periode, $request);
-        $dateDebut = $dates[0];
-        $dateFin = $dates[1];
+            $dates = $this->getPeriodDates($periode, $request);
+            $dateDebut = $dates[0];
+            $dateFin = $dates[1];
 
-        // Récupérer les gains avec les relations
-        $query = GestionnaireGain::with(['gestionnaire.user', 'livraison.demandeLivraison'])
-            ->whereBetween('created_at', [$dateDebut, $dateFin])
-            ->orderBy('created_at', 'desc');
+            // Récupérer les gains avec les relations
+            $query = GestionnaireGain::with(['gestionnaire.user', 'livraison.demandeLivraison'])
+                ->whereBetween('created_at', [$dateDebut, $dateFin])
+                ->orderBy('created_at', 'desc');
 
-        if ($gestionnaireId) {
-            $query->where('gestionnaire_id', $gestionnaireId);
+            if ($gestionnaireId) {
+                $query->where('gestionnaire_id', $gestionnaireId);
+            }
+
+            if ($wilayaId) {
+                $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
+                    $q->where('wilaya_id', $wilayaId);
+                });
+            }
+
+            $gains = $query->get();
+
+            $periodeData = [
+                'debut' => $dateDebut->format('d/m/Y'),
+                'fin' => $dateFin->format('d/m/Y'),
+                'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
+            ];
+
+            $dateGeneration = Carbon::now();
+
+            switch ($format) {
+                case 'pdf':
+                    $data = [
+                        'periode' => $periodeData,
+                        'gains' => $gains,
+                        'date_generation' => $dateGeneration->format('d/m/Y H:i:s'),
+                        'total_montant' => $gains->sum('montant_commission'),
+                        'total_gains' => $gains->count()
+                    ];
+
+                    $pdf = Pdf::loadView('pdf.rapport-gestionnaires', ['data' => $data]);
+                    $pdf->setPaper('A4', 'landscape');
+                    $pdf->setOptions([
+                        'defaultFont' => 'DejaVu Sans',
+                        'isHtml5ParserEnabled' => true,
+                        'isRemoteEnabled' => true
+                    ]);
+
+                    $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.pdf';
+                    return $pdf->download($filename);
+
+                case 'csv':
+                    $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.csv';
+                    return Excel::download(
+                        new RapportGestionnairesCsvExport($gains, $periodeData),
+                        $filename
+                    );
+
+                case 'excel':
+                default:
+                    $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.xlsx';
+                    return Excel::download(
+                        new RapportGestionnairesExport($gains, $periodeData),
+                        $filename
+                    );
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur exportRapportGestionnaires: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'export: ' . $e->getMessage()
+            ], 500);
         }
-
-        if ($wilayaId) {
-            $query->whereHas('gestionnaire', function ($q) use ($wilayaId) {
-                $q->where('wilaya_id', $wilayaId);
-            });
-        }
-
-        $gains = $query->get();
-
-        $periodeData = [
-            'debut' => $dateDebut->format('d/m/Y'),
-            'fin' => $dateFin->format('d/m/Y'),
-            'libelle' => $this->getPeriodLibelle($periode, $dateDebut, $dateFin)
-        ];
-
-        $dateGeneration = Carbon::now();
-
-        switch ($format) {
-            case 'pdf':
-                $data = [
-                    'periode' => $periodeData,
-                    'gains' => $gains,
-                    'date_generation' => $dateGeneration->format('d/m/Y H:i:s'),
-                    'total_montant' => $gains->sum('montant_commission'),
-                    'total_gains' => $gains->count()
-                ];
-
-                $pdf = Pdf::loadView('pdf.rapport-gestionnaires', ['data' => $data]);
-                $pdf->setPaper('A4', 'landscape');
-                $pdf->setOptions([
-                    'defaultFont' => 'DejaVu Sans',
-                    'isHtml5ParserEnabled' => true,
-                    'isRemoteEnabled' => true
-                ]);
-
-                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.pdf';
-                return $pdf->download($filename);
-
-            case 'csv':
-                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.csv';
-                return Excel::download(
-                    new RapportGestionnairesCsvExport($gains, $periodeData),
-                    $filename
-                );
-
-            case 'excel':
-            default:
-                $filename = 'rapport-gestionnaires-' . $dateGeneration->format('Ymd-His') . '.xlsx';
-                return Excel::download(
-                    new RapportGestionnairesExport($gains, $periodeData),
-                    $filename
-                );
-        }
-    } catch (\Exception $e) {
-        Log::error('Erreur exportRapportGestionnaires: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de l\'export: ' . $e->getMessage()
-        ], 500);
     }
-}
 
     /**
      * Récupérer les gains détaillés
@@ -666,144 +672,143 @@ public function exportRapportGestionnaires(Request $request)
     }
 
     /**
- * Récupérer les gains d'une navette spécifique
- */
-public function getGainsNavette(Request $request, $navetteId): JsonResponse
-{
-    try {
-        $navette = Navette::find($navetteId);
+     * Récupérer les gains d'une navette spécifique
+     */
+    public function getGainsNavette(Request $request, $navetteId): JsonResponse
+    {
+        try {
+            $navette = Navette::find($navetteId);
 
-        if (!$navette) {
+            if (!$navette) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Navette introuvable'
+                ], 404);
+            }
+
+            // Récupérer tous les gains de cette navette avec les relations
+            $gains = GestionnaireGain::with(['gestionnaire.user', 'hub', 'livraison.demandeLivraison'])
+                ->where('navette_id', $navetteId)
+                ->get();
+
+            // Récupérer la répartition des acteurs
+            $acteurs = $navette->acteurs;
+
+            // Formater les gains par acteur
+            $gainsParActeur = [];
+            $totalGains = 0;
+            $totalPrixLivraisons = 0;
+
+            foreach ($gains as $gain) {
+                if ($gain->gestionnaire_id) {
+                    $key = "gestionnaire_{$gain->gestionnaire_id}";
+                    if (!isset($gainsParActeur[$key])) {
+                        $gainsParActeur[$key] = [
+                            'type' => 'gestionnaire',
+                            'id' => $gain->gestionnaire_id,
+                            'nom' => $gain->gestionnaire->user->prenom . ' ' . $gain->gestionnaire->user->nom,
+                            'email' => $gain->gestionnaire->user->email,
+                            'wilaya' => $gain->gestionnaire->wilaya_id,
+                            'total_gains' => 0,
+                            'nb_livraisons' => 0,
+                            'details' => []
+                        ];
+                    }
+                    $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
+                    $gainsParActeur[$key]['nb_livraisons']++;
+                    $gainsParActeur[$key]['details'][] = [
+                        'livraison_id' => $gain->livraison_id,
+                        'montant' => $gain->montant_commission,
+                        'pourcentage' => $gain->pourcentage_applique,
+                        'date' => $gain->date_calcul->format('d/m/Y H:i'),
+                        'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
+                    ];
+                } elseif ($gain->hub_id) {
+                    $key = "hub_{$gain->hub_id}";
+                    if (!isset($gainsParActeur[$key])) {
+                        $gainsParActeur[$key] = [
+                            'type' => 'hub',
+                            'id' => $gain->hub_id,
+                            'nom' => $gain->hub->nom,
+                            'email' => $gain->hub->email,
+                            'total_gains' => 0,
+                            'nb_livraisons' => 0,
+                            'details' => []
+                        ];
+                    }
+                    $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
+                    $gainsParActeur[$key]['nb_livraisons']++;
+                    $gainsParActeur[$key]['details'][] = [
+                        'livraison_id' => $gain->livraison_id,
+                        'montant' => $gain->montant_commission,
+                        'pourcentage' => $gain->pourcentage_applique,
+                        'date' => $gain->date_calcul->format('d/m/Y H:i'),
+                        'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
+                    ];
+                }
+                $totalGains += $gain->montant_commission;
+
+                // Calculer le prix total des livraisons
+                if ($gain->livraison && $gain->livraison->demandeLivraison) {
+                    $totalPrixLivraisons += $gain->livraison->demandeLivraison->prix ?? 0;
+                }
+            }
+
+            // Formater la répartition
+            $repartition = [];
+            foreach ($acteurs as $acteur) {
+                if ($acteur->type === 'gestionnaire') {
+                    $gestionnaire = $acteur->gestionnaire;
+                    if ($gestionnaire && $gestionnaire->user) {
+                        $repartition[] = [
+                            'type' => 'gestionnaire',
+                            'id' => $acteur->acteur_id,
+                            'nom' => $gestionnaire->user->prenom . ' ' . $gestionnaire->user->nom,
+                            'email' => $gestionnaire->user->email,
+                            'wilaya' => $acteur->wilaya_code,
+                            'part_pourcentage' => (float) $acteur->part_pourcentage
+                        ];
+                    }
+                } elseif ($acteur->type === 'hub') {
+                    $hub = $acteur->hub;
+                    if ($hub) {
+                        $repartition[] = [
+                            'type' => 'hub',
+                            'id' => $acteur->acteur_id,
+                            'nom' => $hub->nom,
+                            'email' => $hub->email,
+                            'part_pourcentage' => (float) $acteur->part_pourcentage
+                        ];
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'navette' => [
+                        'id' => $navette->id,
+                        'reference' => $navette->reference,
+                        'status' => $navette->status,
+                        'date_depart' => $navette->date_depart,
+                        'date_arrivee_reelle' => $navette->date_arrivee_reelle
+                    ],
+                    'repartition' => $repartition,
+                    'gains_par_acteur' => array_values($gainsParActeur),
+                    'total_gains' => $totalGains,
+                    'total_prix_livraisons' => $totalPrixLivraisons,
+                    'part_admin' => $totalPrixLivraisons - $totalGains,
+                    'date_generation' => Carbon::now()->format('d/m/Y H:i:s')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur getGainsNavette: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Navette introuvable'
-            ], 404);
+                'message' => 'Erreur lors de la récupération des gains de la navette'
+            ], 500);
         }
-
-        // Récupérer tous les gains de cette navette avec les relations
-        $gains = GestionnaireGain::with(['gestionnaire.user', 'hub', 'livraison.demandeLivraison'])
-            ->where('navette_id', $navetteId)
-            ->get();
-
-        // Récupérer la répartition des acteurs
-        $acteurs = $navette->acteurs;
-
-        // Formater les gains par acteur
-        $gainsParActeur = [];
-        $totalGains = 0;
-        $totalPrixLivraisons = 0;
-
-        foreach ($gains as $gain) {
-            if ($gain->gestionnaire_id) {
-                $key = "gestionnaire_{$gain->gestionnaire_id}";
-                if (!isset($gainsParActeur[$key])) {
-                    $gainsParActeur[$key] = [
-                        'type' => 'gestionnaire',
-                        'id' => $gain->gestionnaire_id,
-                        'nom' => $gain->gestionnaire->user->prenom . ' ' . $gain->gestionnaire->user->nom,
-                        'email' => $gain->gestionnaire->user->email,
-                        'wilaya' => $gain->gestionnaire->wilaya_id,
-                        'total_gains' => 0,
-                        'nb_livraisons' => 0,
-                        'details' => []
-                    ];
-                }
-                $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
-                $gainsParActeur[$key]['nb_livraisons']++;
-                $gainsParActeur[$key]['details'][] = [
-                    'livraison_id' => $gain->livraison_id,
-                    'montant' => $gain->montant_commission,
-                    'pourcentage' => $gain->pourcentage_applique,
-                    'date' => $gain->date_calcul->format('d/m/Y H:i'),
-                    'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
-                ];
-            } elseif ($gain->hub_id) {
-                $key = "hub_{$gain->hub_id}";
-                if (!isset($gainsParActeur[$key])) {
-                    $gainsParActeur[$key] = [
-                        'type' => 'hub',
-                        'id' => $gain->hub_id,
-                        'nom' => $gain->hub->nom,
-                        'email' => $gain->hub->email,
-                        'total_gains' => 0,
-                        'nb_livraisons' => 0,
-                        'details' => []
-                    ];
-                }
-                $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
-                $gainsParActeur[$key]['nb_livraisons']++;
-                $gainsParActeur[$key]['details'][] = [
-                    'livraison_id' => $gain->livraison_id,
-                    'montant' => $gain->montant_commission,
-                    'pourcentage' => $gain->pourcentage_applique,
-                    'date' => $gain->date_calcul->format('d/m/Y H:i'),
-                    'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
-                ];
-            }
-            $totalGains += $gain->montant_commission;
-
-            // Calculer le prix total des livraisons
-            if ($gain->livraison && $gain->livraison->demandeLivraison) {
-                $totalPrixLivraisons += $gain->livraison->demandeLivraison->prix ?? 0;
-            }
-        }
-
-        // Formater la répartition
-        $repartition = [];
-        foreach ($acteurs as $acteur) {
-            if ($acteur->type === 'gestionnaire') {
-                $gestionnaire = $acteur->gestionnaire;
-                if ($gestionnaire && $gestionnaire->user) {
-                    $repartition[] = [
-                        'type' => 'gestionnaire',
-                        'id' => $acteur->acteur_id,
-                        'nom' => $gestionnaire->user->prenom . ' ' . $gestionnaire->user->nom,
-                        'email' => $gestionnaire->user->email,
-                        'wilaya' => $acteur->wilaya_code,
-                        'part_pourcentage' => (float) $acteur->part_pourcentage
-                    ];
-                }
-            } elseif ($acteur->type === 'hub') {
-                $hub = $acteur->hub;
-                if ($hub) {
-                    $repartition[] = [
-                        'type' => 'hub',
-                        'id' => $acteur->acteur_id,
-                        'nom' => $hub->nom,
-                        'email' => $hub->email,
-                        'part_pourcentage' => (float) $acteur->part_pourcentage
-                    ];
-                }
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'navette' => [
-                    'id' => $navette->id,
-                    'reference' => $navette->reference,
-                    'status' => $navette->status,
-                    'date_depart' => $navette->date_depart,
-                    'date_arrivee_reelle' => $navette->date_arrivee_reelle
-                ],
-                'repartition' => $repartition,
-                'gains_par_acteur' => array_values($gainsParActeur),
-                'total_gains' => $totalGains,
-                'total_prix_livraisons' => $totalPrixLivraisons,
-                'part_admin' => $totalPrixLivraisons - $totalGains,
-                'date_generation' => Carbon::now()->format('d/m/Y H:i:s')
-            ]
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Erreur getGainsNavette: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des gains de la navette'
-        ], 500);
     }
-}
 
     /**
      * Statistiques mensuelles
@@ -964,6 +969,8 @@ public function getGainsNavette(Request $request, $navetteId): JsonResponse
         ];
     }
 
+
+
     private function getStatsNavettes($wilayaId = null, $dateDebut = null, $dateFin = null): array
     {
         $query = Navette::query();
@@ -976,7 +983,8 @@ public function getGainsNavette(Request $request, $navetteId): JsonResponse
             $query->where(function ($q) use ($wilayaId) {
                 $q->where('wilaya_depart_id', $wilayaId)
                     ->orWhere('wilaya_arrivee_id', $wilayaId)
-                    ->orWhere('wilaya_transit_id', $wilayaId);
+                    // Correction : utiliser JSON_CONTAINS ou LIKE pour les wilayas de transit
+                    ->orWhereJsonContains('wilayas_transit', $wilayaId);
             });
         }
 
@@ -999,8 +1007,8 @@ public function getGainsNavette(Request $request, $navetteId): JsonResponse
             'revenus' => $revenusNavettes,
             'colis_transportes' => $colisTransportes,
             'distance_totale' => $navettes->sum('distance_km') ?? 0,
-            'distance_moyenne' => $navettes->avg('distance_km') ?? 0,
-            'taux_remplissage_moyen' => $navettes->avg('taux_remplissage') ?? 0
+            'distance_moyenne' => $navettes->count() > 0 ? round($navettes->avg('distance_km') ?? 0, 2) : 0,
+            'taux_remplissage_moyen' => $navettes->count() > 0 ? round($navettes->avg('taux_remplissage') ?? 0, 2) : 0
         ];
     }
 
@@ -1237,22 +1245,64 @@ public function getGainsNavette(Request $request, $navetteId): JsonResponse
         }
 
         $wilayas = [
-            '01' => 'Adrar', '02' => 'Chlef', '03' => 'Laghouat', '04' => 'Oum El Bouaghi',
-            '05' => 'Batna', '06' => 'Béjaïa', '07' => 'Biskra', '08' => 'Béchar',
-            '09' => 'Blida', '10' => 'Bouira', '11' => 'Tamanrasset', '12' => 'Tébessa',
-            '13' => 'Tlemcen', '14' => 'Tiaret', '15' => 'Tizi Ouzou', '16' => 'Alger',
-            '17' => 'Djelfa', '18' => 'Jijel', '19' => 'Sétif', '20' => 'Saïda',
-            '21' => 'Skikda', '22' => 'Sidi Bel Abbès', '23' => 'Annaba', '24' => 'Guelma',
-            '25' => 'Constantine', '26' => 'Médéa', '27' => 'Mostaganem', '28' => 'M\'Sila',
-            '29' => 'Mascara', '30' => 'Ouargla', '31' => 'Oran', '32' => 'El Bayadh',
-            '33' => 'Illizi', '34' => 'Bordj Bou Arréridj', '35' => 'Boumerdès',
-            '36' => 'El Tarf', '37' => 'Tindouf', '38' => 'Tissemsilt', '39' => 'El Oued',
-            '40' => 'Khenchela', '41' => 'Souk Ahras', '42' => 'Tipaza', '43' => 'Mila',
-            '44' => 'Aïn Defla', '45' => 'Naâma', '46' => 'Aïn Témouchent', '47' => 'Ghardaïa',
-            '48' => 'Relizane', '49' => 'Timimoun', '50' => 'Bordj Badji Mokhtar',
-            '51' => 'Ouled Djellal', '52' => 'Béni Abbès', '53' => 'In Salah',
-            '54' => 'In Guezzam', '55' => 'Touggourt', '56' => 'Djanet',
-            '57' => 'El M\'Ghair', '58' => 'El Meniaa'
+            '01' => 'Adrar',
+            '02' => 'Chlef',
+            '03' => 'Laghouat',
+            '04' => 'Oum El Bouaghi',
+            '05' => 'Batna',
+            '06' => 'Béjaïa',
+            '07' => 'Biskra',
+            '08' => 'Béchar',
+            '09' => 'Blida',
+            '10' => 'Bouira',
+            '11' => 'Tamanrasset',
+            '12' => 'Tébessa',
+            '13' => 'Tlemcen',
+            '14' => 'Tiaret',
+            '15' => 'Tizi Ouzou',
+            '16' => 'Alger',
+            '17' => 'Djelfa',
+            '18' => 'Jijel',
+            '19' => 'Sétif',
+            '20' => 'Saïda',
+            '21' => 'Skikda',
+            '22' => 'Sidi Bel Abbès',
+            '23' => 'Annaba',
+            '24' => 'Guelma',
+            '25' => 'Constantine',
+            '26' => 'Médéa',
+            '27' => 'Mostaganem',
+            '28' => 'M\'Sila',
+            '29' => 'Mascara',
+            '30' => 'Ouargla',
+            '31' => 'Oran',
+            '32' => 'El Bayadh',
+            '33' => 'Illizi',
+            '34' => 'Bordj Bou Arréridj',
+            '35' => 'Boumerdès',
+            '36' => 'El Tarf',
+            '37' => 'Tindouf',
+            '38' => 'Tissemsilt',
+            '39' => 'El Oued',
+            '40' => 'Khenchela',
+            '41' => 'Souk Ahras',
+            '42' => 'Tipaza',
+            '43' => 'Mila',
+            '44' => 'Aïn Defla',
+            '45' => 'Naâma',
+            '46' => 'Aïn Témouchent',
+            '47' => 'Ghardaïa',
+            '48' => 'Relizane',
+            '49' => 'Timimoun',
+            '50' => 'Bordj Badji Mokhtar',
+            '51' => 'Ouled Djellal',
+            '52' => 'Béni Abbès',
+            '53' => 'In Salah',
+            '54' => 'In Guezzam',
+            '55' => 'Touggourt',
+            '56' => 'Djanet',
+            '57' => 'El M\'Ghair',
+            '58' => 'El Meniaa'
         ];
 
         return $wilayas[$code] ?? 'Wilaya ' . $code;
@@ -1364,111 +1414,110 @@ public function getGainsNavette(Request $request, $navetteId): JsonResponse
     }
 
     /**
- * Récupérer l'historique des gains traités (payés et annulés)
- */
-public function historiqueGains(Request $request): JsonResponse
-{
-    try {
-        $historique = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
-            ->whereIn('status', ['paye', 'annule'])
-            ->orderBy('updated_at', 'desc')
-            ->get();
+     * Récupérer l'historique des gains traités (payés et annulés)
+     */
+    public function historiqueGains(Request $request): JsonResponse
+    {
+        try {
+            $historique = GestionnaireGain::with(['gestionnaire.user', 'livraison'])
+                ->whereIn('status', ['paye', 'annule'])
+                ->orderBy('updated_at', 'desc')
+                ->get();
 
-        $formattedHistorique = $historique->map(function ($gain) {
-            return [
-                'id' => $gain->id,
-                'gestionnaire_id' => $gain->gestionnaire_id,
-                'livraison_id' => $gain->livraison_id,
-                'montant_commission' => $gain->montant_commission,
-                'pourcentage_applique' => $gain->pourcentage_applique,
-                'status' => $gain->status,
-                'created_at' => $gain->created_at,
-                'updated_at' => $gain->updated_at,
-                'wilaya_type' => $gain->wilaya_type,
-                'date_calcul' => $gain->date_calcul,
-                'date_demande' => $gain->date_demande,
-                'date_paiement' => $gain->date_paiement,
-                'note_admin' => $gain->note_admin,
-                'gestionnaire' => $gain->gestionnaire ? [
-                    'id' => $gain->gestionnaire->id,
-                    'user_id' => $gain->gestionnaire->user_id,
-                    'wilaya_id' => $gain->gestionnaire->wilaya_id,
-                    'status' => $gain->gestionnaire->status,
-                    'user' => $gain->gestionnaire->user ? [
-                        'id' => $gain->gestionnaire->user->id,
-                        'nom' => $gain->gestionnaire->user->nom,
-                        'prenom' => $gain->gestionnaire->user->prenom,
-                        'email' => $gain->gestionnaire->user->email,
+            $formattedHistorique = $historique->map(function ($gain) {
+                return [
+                    'id' => $gain->id,
+                    'gestionnaire_id' => $gain->gestionnaire_id,
+                    'livraison_id' => $gain->livraison_id,
+                    'montant_commission' => $gain->montant_commission,
+                    'pourcentage_applique' => $gain->pourcentage_applique,
+                    'status' => $gain->status,
+                    'created_at' => $gain->created_at,
+                    'updated_at' => $gain->updated_at,
+                    'wilaya_type' => $gain->wilaya_type,
+                    'date_calcul' => $gain->date_calcul,
+                    'date_demande' => $gain->date_demande,
+                    'date_paiement' => $gain->date_paiement,
+                    'note_admin' => $gain->note_admin,
+                    'gestionnaire' => $gain->gestionnaire ? [
+                        'id' => $gain->gestionnaire->id,
+                        'user_id' => $gain->gestionnaire->user_id,
+                        'wilaya_id' => $gain->gestionnaire->wilaya_id,
+                        'status' => $gain->gestionnaire->status,
+                        'user' => $gain->gestionnaire->user ? [
+                            'id' => $gain->gestionnaire->user->id,
+                            'nom' => $gain->gestionnaire->user->nom,
+                            'prenom' => $gain->gestionnaire->user->prenom,
+                            'email' => $gain->gestionnaire->user->email,
+                        ] : null
+                    ] : null,
+                    'livraison' => $gain->livraison ? [
+                        'id' => $gain->livraison->id,
+                        'status' => $gain->livraison->status,
+                        'code_pin' => $gain->livraison->code_pin,
                     ] : null
-                ] : null,
-                'livraison' => $gain->livraison ? [
-                    'id' => $gain->livraison->id,
-                    'status' => $gain->livraison->status,
-                    'code_pin' => $gain->livraison->code_pin,
-                ] : null
-            ];
-        });
+                ];
+            });
 
-        return response()->json([
-            'success' => true,
-            'data' => $formattedHistorique
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Erreur historiqueGains: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération de l\'historique'
-        ], 500);
-    }
-}
-
-/**
- * Supprimer un gain de l'historique
- */
-public function supprimerGain(Request $request, $gainId): JsonResponse
-{
-    try {
-        DB::beginTransaction();
-
-        $gain = GestionnaireGain::find($gainId);
-
-        if (!$gain) {
+            return response()->json([
+                'success' => true,
+                'data' => $formattedHistorique
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur historiqueGains: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gain non trouvé'
-            ], 404);
+                'message' => 'Erreur lors de la récupération de l\'historique'
+            ], 500);
         }
+    }
 
-        // Vérifier que le gain est bien dans l'historique (payé ou annulé)
-        if (!in_array($gain->status, ['paye', 'annule'])) {
+    /**
+     * Supprimer un gain de l'historique
+     */
+    public function supprimerGain(Request $request, $gainId): JsonResponse
+    {
+        try {
+            DB::beginTransaction();
+
+            $gain = GestionnaireGain::find($gainId);
+
+            if (!$gain) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gain non trouvé'
+                ], 404);
+            }
+
+            // Vérifier que le gain est bien dans l'historique (payé ou annulé)
+            if (!in_array($gain->status, ['paye', 'annule'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Seuls les gains de l\'historique (payés ou annulés) peuvent être supprimés'
+                ], 400);
+            }
+
+            // Supprimer le gain
+            $gain->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Gain supprimé de l\'historique avec succès'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur supprimerGain: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Seuls les gains de l\'historique (payés ou annulés) peuvent être supprimés'
-            ], 400);
+                'message' => 'Erreur lors de la suppression'
+            ], 500);
         }
-
-        // Supprimer le gain
-        $gain->delete();
-
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Gain supprimé de l\'historique avec succès'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Erreur supprimerGain: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la suppression'
-        ], 500);
     }
-}
 
-/**
- * Restaurer un gain supprimé (soft delete si vous voulez)
- */
-// Optionnel : si vous voulez un soft delete
+    /**
+     * Restaurer un gain supprimé (soft delete si vous voulez)
+     */
+    // Optionnel : si vous voulez un soft delete
 }

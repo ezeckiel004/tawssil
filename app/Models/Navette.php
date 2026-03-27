@@ -77,8 +77,8 @@ class Navette extends Model
     public function wilayasTransit()
     {
         return $this->belongsToMany(Wilaya::class, 'navette_wilaya_transit', 'navette_id', 'wilaya_code')
-                    ->withPivot('ordre')
-                    ->orderBy('pivot_ordre');
+            ->withPivot('ordre')
+            ->orderBy('pivot_ordre');
     }
 
     public function wilayaArrivee()
@@ -104,12 +104,12 @@ class Navette extends Model
     }
 
     /**
- * Relation avec les gains des gestionnaires et hubs
- */
-public function gains()
-{
-    return $this->hasMany(GestionnaireGain::class, 'navette_id');
-}
+     * Relation avec les gains des gestionnaires et hubs
+     */
+    public function gains()
+    {
+        return $this->hasMany(GestionnaireGain::class, 'navette_id');
+    }
 
     /**
      * NOUVELLES RELATIONS POUR LA GESTION DES ACTEURS
@@ -129,8 +129,8 @@ public function gains()
     public function hubs()
     {
         return $this->belongsToMany(Hub::class, 'navette_acteurs', 'navette_id', 'acteur_id')
-                    ->wherePivot('type', 'hub')
-                    ->withPivot('part_pourcentage');
+            ->wherePivot('type', 'hub')
+            ->withPivot('part_pourcentage');
     }
 
     /**
@@ -139,8 +139,8 @@ public function gains()
     public function gestionnaires()
     {
         return $this->belongsToMany(Gestionnaire::class, 'navette_acteurs', 'navette_id', 'acteur_id')
-                    ->wherePivot('type', 'gestionnaire')
-                    ->withPivot('wilaya_code', 'part_pourcentage');
+            ->wherePivot('type', 'gestionnaire')
+            ->withPivot('wilaya_code', 'part_pourcentage');
     }
 
     /**
@@ -328,8 +328,8 @@ public function gains()
         foreach ($acteurs as $acteur) {
             if ($acteur['type'] === 'gestionnaire') {
                 $gestionnaire = Gestionnaire::where('wilaya_id', $acteur['wilaya_code'])
-                                            ->where('status', 'active')
-                                            ->first();
+                    ->where('status', 'active')
+                    ->first();
 
                 if ($gestionnaire) {
                     $this->acteurs()->create([
@@ -422,6 +422,6 @@ public function gains()
     public function scopeTermineesAvecGains($query)
     {
         return $query->where('status', 'terminee')
-                     ->with(['gains', 'acteurs']);
+            ->with(['gains', 'acteurs']);
     }
 }

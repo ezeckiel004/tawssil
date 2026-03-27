@@ -440,60 +440,43 @@ class ComptabiliteController extends Controller
         }
     }
 
-    /**
-     * Statistiques des navettes pour la wilaya du gestionnaire
-     */
+
+
     private function getStatsNavettes($wilayaId, $dateDebut = null, $dateFin = null): array
     {
-        try {
-            $query = Navette::query()
-                ->where(function ($q) use ($wilayaId) {
-                    $q->where('wilaya_depart_id', $wilayaId)
-                        ->orWhere('wilaya_arrivee_id', $wilayaId)
-                        ->orWhere('wilaya_transit_id', $wilayaId);
-                });
+        $query = Navette::query()
+            ->where(function ($q) use ($wilayaId) {
+                $q->where('wilaya_depart_id', $wilayaId)
+                    ->orWhere('wilaya_arrivee_id', $wilayaId)
+                    ->orWhereJsonContains('wilayas_transit', $wilayaId); // Correction ici
+            });
 
-            if ($dateDebut && $dateFin) {
-                $query->whereBetween('created_at', [$dateDebut, $dateFin]);
-            }
-
-            $navettes = $query->get();
-
-            $revenusNavettes = 0;
-            $colisTransportes = 0;
-
-            foreach ($navettes as $navette) {
-                $revenusNavettes += $navette->prix_base + ($navette->nb_colis * $navette->prix_par_colis);
-                $colisTransportes += $navette->nb_colis;
-            }
-
-            return [
-                'total' => $navettes->count(),
-                'planifiees' => $navettes->where('status', 'planifiee')->count(),
-                'en_cours' => $navettes->where('status', 'en_cours')->count(),
-                'terminees' => $navettes->where('status', 'terminee')->count(),
-                'annulees' => $navettes->where('status', 'annulee')->count(),
-                'revenus' => $revenusNavettes,
-                'colis_transportes' => $colisTransportes,
-                'distance_totale' => $navettes->sum('distance_km') ?? 0,
-                'distance_moyenne' => $navettes->count() > 0 ? round($navettes->avg('distance_km') ?? 0, 2) : 0,
-                'taux_remplissage_moyen' => $navettes->count() > 0 ? round($navettes->avg('taux_remplissage') ?? 0, 2) : 0
-            ];
-        } catch (\Exception $e) {
-            Log::error('Erreur getStatsNavettes: ' . $e->getMessage());
-            return [
-                'total' => 0,
-                'planifiees' => 0,
-                'en_cours' => 0,
-                'terminees' => 0,
-                'annulees' => 0,
-                'revenus' => 0,
-                'colis_transportes' => 0,
-                'distance_totale' => 0,
-                'distance_moyenne' => 0,
-                'taux_remplissage_moyen' => 0
-            ];
+        if ($dateDebut && $dateFin) {
+            $query->whereBetween('created_at', [$dateDebut, $dateFin]);
         }
+
+        $navettes = $query->get();
+
+        $revenusNavettes = 0;
+        $colisTransportes = 0;
+
+        foreach ($navettes as $navette) {
+            $revenusNavettes += $navette->prix_base + ($navette->nb_colis * $navette->prix_par_colis);
+            $colisTransportes += $navette->nb_colis;
+        }
+
+        return [
+            'total' => $navettes->count(),
+            'planifiees' => $navettes->where('status', 'planifiee')->count(),
+            'en_cours' => $navettes->where('status', 'en_cours')->count(),
+            'terminees' => $navettes->where('status', 'terminee')->count(),
+            'annulees' => $navettes->where('status', 'annulee')->count(),
+            'revenus' => $revenusNavettes,
+            'colis_transportes' => $colisTransportes,
+            'distance_totale' => $navettes->sum('distance_km') ?? 0,
+            'distance_moyenne' => $navettes->count() > 0 ? round($navettes->avg('distance_km') ?? 0, 2) : 0,
+            'taux_remplissage_moyen' => $navettes->count() > 0 ? round($navettes->avg('taux_remplissage') ?? 0, 2) : 0
+        ];
     }
 
     /**
@@ -638,7 +621,8 @@ class ComptabiliteController extends Controller
         try {
             $livraisons = $this->getStatsLivraisons($wilayaId, $dateDebut, $dateFin);
 
-            $livraisonsPrec = $this->getStatsLivraisons($wilayaId,
+            $livraisonsPrec = $this->getStatsLivraisons(
+                $wilayaId,
                 $dateDebut ? Carbon::parse($dateDebut)->copy()->subDays(30) : null,
                 $dateFin ? Carbon::parse($dateFin)->copy()->subDays(30) : null
             );
@@ -810,25 +794,63 @@ class ComptabiliteController extends Controller
         }
 
         $wilayas = [
-            '01' => 'Adrar', '02' => 'Chlef', '03' => 'Laghouat',
-            '04' => 'Oum El Bouaghi', '05' => 'Batna', '06' => 'Béjaïa',
-            '07' => 'Biskra', '08' => 'Béchar', '09' => 'Blida',
-            '10' => 'Bouira', '11' => 'Tamanrasset', '12' => 'Tébessa',
-            '13' => 'Tlemcen', '14' => 'Tiaret', '15' => 'Tizi Ouzou',
-            '16' => 'Alger', '17' => 'Djelfa', '18' => 'Jijel',
-            '19' => 'Sétif', '20' => 'Saïda', '21' => 'Skikda',
-            '22' => 'Sidi Bel Abbès', '23' => 'Annaba', '24' => 'Guelma',
-            '25' => 'Constantine', '26' => 'Médéa', '27' => 'Mostaganem',
-            '28' => 'M\'Sila', '29' => 'Mascara', '30' => 'Ouargla',
-            '31' => 'Oran', '32' => 'El Bayadh', '33' => 'Illizi',
-            '34' => 'Bordj Bou Arréridj', '35' => 'Boumerdès', '36' => 'El Tarf',
-            '37' => 'Tindouf', '38' => 'Tissemsilt', '39' => 'El Oued',
-            '40' => 'Khenchela', '41' => 'Souk Ahras', '42' => 'Tipaza',
-            '43' => 'Mila', '44' => 'Aïn Defla', '45' => 'Naâma',
-            '46' => 'Aïn Témouchent', '47' => 'Ghardaïa', '48' => 'Relizane',
-            '49' => 'Timimoun', '50' => 'Bordj Badji Mokhtar', '51' => 'Ouled Djellal',
-            '52' => 'Béni Abbès', '53' => 'In Salah', '54' => 'In Guezzam',
-            '55' => 'Touggourt', '56' => 'Djanet', '57' => 'El M\'Ghair',
+            '01' => 'Adrar',
+            '02' => 'Chlef',
+            '03' => 'Laghouat',
+            '04' => 'Oum El Bouaghi',
+            '05' => 'Batna',
+            '06' => 'Béjaïa',
+            '07' => 'Biskra',
+            '08' => 'Béchar',
+            '09' => 'Blida',
+            '10' => 'Bouira',
+            '11' => 'Tamanrasset',
+            '12' => 'Tébessa',
+            '13' => 'Tlemcen',
+            '14' => 'Tiaret',
+            '15' => 'Tizi Ouzou',
+            '16' => 'Alger',
+            '17' => 'Djelfa',
+            '18' => 'Jijel',
+            '19' => 'Sétif',
+            '20' => 'Saïda',
+            '21' => 'Skikda',
+            '22' => 'Sidi Bel Abbès',
+            '23' => 'Annaba',
+            '24' => 'Guelma',
+            '25' => 'Constantine',
+            '26' => 'Médéa',
+            '27' => 'Mostaganem',
+            '28' => 'M\'Sila',
+            '29' => 'Mascara',
+            '30' => 'Ouargla',
+            '31' => 'Oran',
+            '32' => 'El Bayadh',
+            '33' => 'Illizi',
+            '34' => 'Bordj Bou Arréridj',
+            '35' => 'Boumerdès',
+            '36' => 'El Tarf',
+            '37' => 'Tindouf',
+            '38' => 'Tissemsilt',
+            '39' => 'El Oued',
+            '40' => 'Khenchela',
+            '41' => 'Souk Ahras',
+            '42' => 'Tipaza',
+            '43' => 'Mila',
+            '44' => 'Aïn Defla',
+            '45' => 'Naâma',
+            '46' => 'Aïn Témouchent',
+            '47' => 'Ghardaïa',
+            '48' => 'Relizane',
+            '49' => 'Timimoun',
+            '50' => 'Bordj Badji Mokhtar',
+            '51' => 'Ouled Djellal',
+            '52' => 'Béni Abbès',
+            '53' => 'In Salah',
+            '54' => 'In Guezzam',
+            '55' => 'Touggourt',
+            '56' => 'Djanet',
+            '57' => 'El M\'Ghair',
             '58' => 'El Meniaa'
         ];
 
@@ -836,72 +858,71 @@ class ComptabiliteController extends Controller
     }
 
     public function mesGains(Request $request): JsonResponse
-{
-    try {
-        $user = $request->user();
-        $gestionnaire = $user->gestionnaire;
+    {
+        try {
+            $user = $request->user();
+            $gestionnaire = $user->gestionnaire;
 
-        if (!$gestionnaire) {
+            if (!$gestionnaire) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Profil gestionnaire introuvable'
+                ], 403);
+            }
+
+            $periode = $request->get('periode', 'mois');
+            $dates = $this->getPeriodDates($periode, $request);
+
+            $commissionService = new CommissionService();
+            $gains = $commissionService->getGainsGestionnaire(
+                $gestionnaire->id,
+                $dates[0],
+                $dates[1]
+            );
+
+            // Ajouter des statistiques détaillées
+            $gains['details_par_mois'] = $this->getGainsParMois($gestionnaire->id, $dates[0], $dates[1]);
+            $gains['total_attendu'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
+                ->where('status', 'calcule')
+                ->sum('montant_commission');
+            $gains['total_verse'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
+                ->where('status', 'verse')
+                ->sum('montant_commission');
+
+            return response()->json([
+                'success' => true,
+                'data' => $gains
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur récupération gains: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Profil gestionnaire introuvable'
-            ], 403);
+                'message' => 'Erreur lors de la récupération des gains'
+            ], 500);
+        }
+    }
+
+    private function getGainsParMois($gestionnaireId, $debut, $fin)
+    {
+        $mois = [];
+        $current = $debut->copy();
+
+        while ($current <= $fin) {
+            $debutMois = $current->copy()->startOfMonth();
+            $finMois = $current->copy()->endOfMonth();
+
+            $gainsMois = GestionnaireGain::where('gestionnaire_id', $gestionnaireId)
+                ->whereBetween('created_at', [$debutMois, $finMois])
+                ->sum('montant_commission');
+
+            $mois[] = [
+                'mois' => $current->locale('fr')->isoFormat('MMMM YYYY'),
+                'gains' => $gainsMois
+            ];
+
+            $current->addMonth();
         }
 
-        $periode = $request->get('periode', 'mois');
-        $dates = $this->getPeriodDates($periode, $request);
-
-        $commissionService = new CommissionService();
-        $gains = $commissionService->getGainsGestionnaire(
-            $gestionnaire->id,
-            $dates[0],
-            $dates[1]
-        );
-
-        // Ajouter des statistiques détaillées
-        $gains['details_par_mois'] = $this->getGainsParMois($gestionnaire->id, $dates[0], $dates[1]);
-        $gains['total_attendu'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
-            ->where('status', 'calcule')
-            ->sum('montant_commission');
-        $gains['total_verse'] = GestionnaireGain::where('gestionnaire_id', $gestionnaire->id)
-            ->where('status', 'verse')
-            ->sum('montant_commission');
-
-        return response()->json([
-            'success' => true,
-            'data' => $gains
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Erreur récupération gains: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des gains'
-        ], 500);
+        return $mois;
     }
-}
-
-private function getGainsParMois($gestionnaireId, $debut, $fin)
-{
-    $mois = [];
-    $current = $debut->copy();
-
-    while ($current <= $fin) {
-        $debutMois = $current->copy()->startOfMonth();
-        $finMois = $current->copy()->endOfMonth();
-
-        $gainsMois = GestionnaireGain::where('gestionnaire_id', $gestionnaireId)
-            ->whereBetween('created_at', [$debutMois, $finMois])
-            ->sum('montant_commission');
-
-        $mois[] = [
-            'mois' => $current->locale('fr')->isoFormat('MMMM YYYY'),
-            'gains' => $gainsMois
-        ];
-
-        $current->addMonth();
-    }
-
-    return $mois;
-}
 }
