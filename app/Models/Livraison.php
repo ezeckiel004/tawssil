@@ -1,4 +1,6 @@
 <?php
+// app/Models/Livraison.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +21,7 @@ class Livraison extends Model
         'date_ramassage',
         'date_livraison',
         'status',
+        'navette_id' // Ajout
     ];
 
     protected $casts = [
@@ -70,5 +73,24 @@ class Livraison extends Model
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class);
+    }
+
+    public function colis()
+    {
+        return $this->belongsTo(Colis::class, 'colis_id');
+    }
+
+    // Relation avec les navettes
+    public function navettes()
+    {
+        return $this->belongsToMany(Navette::class, 'navette_livraison', 'livraison_id', 'navette_id')
+                    ->withPivot('ordre_chargement', 'date_prise_en_charge', 'date_livraison', 'qr_code_scan', 'incident_notes')
+                    ->withTimestamps();
+    }
+
+    // Relation avec la navette active
+    public function navetteActive()
+    {
+        return $this->belongsTo(Navette::class, 'navette_id');
     }
 }

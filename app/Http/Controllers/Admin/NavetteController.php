@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Navette;
 use App\Models\Livreur;
+use App\Models\Livraison;
 use App\Models\Colis;
 use App\Services\OptimisationTrajetService;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Events\NavetteTerminee;
 
 class NavetteController extends Controller
 {
@@ -27,86 +29,99 @@ class NavetteController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-    /**
-     * Lister toutes les navettes
-     */
-    public function index(Request $request): JsonResponse
-    {
-        try {
-            $query = Navette::with([
-                'wilayaDepart',
-                'wilayaArrivee',
-                'livreur.user',
-                'createur'
-            ])->withCount('colis');
+   // app/Http/Controllers/Admin/NavetteController.php
 
-            // Filtres
-            if ($request->has('status') && $request->status) {
-                $query->where('status', $request->status);
-            }
+public function index(Request $request): JsonResponse
+{
+    try {
+        $query = Navette::with([
+            'wilayaDepart',
+            'wilayaArrivee',
+            'hub',
+            'createur',
+            'acteurs',
+            'gains'         // Cette relation va maintenant charger GestionnaireGain
+        ])->withCount('livraisons');
 
-            if ($request->has('wilaya_depart') && $request->wilaya_depart) {
-                $query->where('wilaya_depart_id', $request->wilaya_depart);
-            }
-
-            if ($request->has('wilaya_arrivee') && $request->wilaya_arrivee) {
-                $query->where('wilaya_arrivee_id', $request->wilaya_arrivee);
-            }
-
-            if ($request->has('date_depart') && $request->date_depart) {
-                $query->whereDate('date_depart', $request->date_depart);
-            }
-
-            if ($request->has('date_debut') && $request->has('date_fin') && $request->date_debut && $request->date_fin) {
-                $query->whereBetween('date_depart', [
-                    Carbon::parse($request->date_debut)->startOfDay(),
-                    Carbon::parse($request->date_fin)->endOfDay()
-                ]);
-            }
-
-            if ($request->has('livreur_id') && $request->livreur_id) {
-                $query->where('livreur_id', $request->livreur_id);
-            }
-
-            // Recherche
-            if ($request->has('search') && $request->search) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('reference', 'like', "%{$search}%")
-                        ->orWhereHas('livreur.user', function ($q) use ($search) {
-                            $q->where('nom', 'like', "%{$search}%")
-                                ->orWhere('prenom', 'like', "%{$search}%");
-                        });
-                });
-            }
-
-            // Tri
-            $orderBy = $request->get('order_by', 'date_depart');
-            $orderDir = $request->get('order_dir', 'desc');
-            $query->orderBy($orderBy, $orderDir);
-
-            $navettes = $query->paginate($request->get('per_page', 20));
-
-            return response()->json([
-                'success' => true,
-                'data' => $navettes
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Erreur NavetteController@index: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la récupération des navettes'
-            ], 500);
+        // Filtres
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
         }
-    }
 
+        if ($request->has('wilaya_depart') && $request->wilaya_depart) {
+            $query->where('wilaya_depart_id', $request->wilaya_depart);
+        }
+
+        if ($request->has('wilaya_arrivee') && $request->wilaya_arrivee) {
+            $query->where('wilaya_arrivee_id', $request->wilaya_arrivee);
+        }
+
+        if ($request->has('date_depart') && $request->date_depart) {
+            $query->whereDate('date_depart', $request->date_depart);
+        }
+
+        if ($request->has('date_debut') && $request->has('date_fin') && $request->date_debut && $request->date_fin) {
+            $query->whereBetween('date_depart', [
+                Carbon::parse($request->date_debut)->startOfDay(),
+                Carbon::parse($request->date_fin)->endOfDay()
+            ]);
+        }
+
+        if ($request->has('hub_id') && $request->hub_id) {
+            $query->where('hub_id', $request->hub_id);
+        }
+
+        // Recherche
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('reference', 'like', "%{$search}%")
+                    ->orWhereHas('hub', function ($q) use ($search) {
+                        $q->where('nom', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Tri
+        $orderBy = $request->get('order_by', 'date_depart');
+        $orderDir = $request->get('order_dir', 'desc');
+        $query->orderBy($orderBy, $orderDir);
+
+        $navettes = $query->paginate($request->get('per_page', 20));
+
+        // Ajouter les totaux calculés pour chaque navette
+        $navettes->getCollection()->transform(function ($navette) {
+            // Calculer le total des gains
+            $totalGains = 0;
+            foreach ($navette->gains as $gain) {
+                $totalGains += floatval($gain->montant_commission);
+            }
+            $navette->total_gains = $totalGains;
+
+            // Nombre d'acteurs
+            $navette->nb_acteurs = $navette->acteurs->count();
+
+            return $navette;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $navettes
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Erreur NavetteController@index: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la récupération des navettes'
+        ], 500);
+    }
+}
     /**
      * Voir une navette spécifique
      */
     public function show($id): JsonResponse
     {
         try {
-            // Vérifier si l'ID est valide (UUID)
             if (!Str::isUuid($id)) {
                 return response()->json([
                     'success' => false,
@@ -114,14 +129,26 @@ class NavetteController extends Controller
                 ], 400);
             }
 
-            // Charger la navette avec ses relations
             $navette = Navette::with([
                 'wilayaDepart',
-                'wilayaTransit',
                 'wilayaArrivee',
-                'livreur.user',
+                'hub',
                 'createur',
-                'colis'
+                'acteurs',
+                'acteurs.gestionnaire.user',
+                'acteurs.hub',
+                'livraisons' => function($query) {
+                    $query->with([
+                        'demandeLivraison' => function($q) {
+                            $q->with([
+                                'client.user',
+                                'colis',
+                                'destinataire.user'
+                            ]);
+                        },
+                        'client.user'
+                    ]);
+                }
             ])->find($id);
 
             if (!$navette) {
@@ -131,8 +158,7 @@ class NavetteController extends Controller
                 ], 404);
             }
 
-            // Ajouter les accesseurs
-            $navette->nb_colis = $navette->nb_colis;
+            $navette->nb_livraisons = $navette->nb_livraisons;
             $navette->poids_total = $navette->poids_total;
             $navette->valeur_totale = $navette->valeur_totale;
             $navette->taux_remplissage = $navette->taux_remplissage;
@@ -160,16 +186,17 @@ class NavetteController extends Controller
         $validator = Validator::make($request->all(), [
             'wilaya_depart_id' => 'required|string|size:2',
             'wilaya_arrivee_id' => 'required|string|size:2',
-            'wilaya_transit_id' => 'nullable|string|size:2',
+            'wilayas_transit' => 'nullable|array',
+            'wilayas_transit.*' => 'string|size:2',
             'heure_depart' => 'required|date_format:H:i',
             'date_depart' => 'required|date',
-            'livreur_id' => 'nullable|exists:livreurs,id',
+            'hub_id' => 'nullable|exists:hubs,id',
             'vehicule_immatriculation' => 'nullable|string|max:20',
             'capacite_max' => 'required|integer|min:1|max:500',
             'prix_base' => 'required|numeric|min:0',
-            'prix_par_colis' => 'required|numeric|min:0',
-            'colis_ids' => 'nullable|array',
-            'colis_ids.*' => 'exists:colis,id',
+            'prix_par_livraison' => 'required|numeric|min:0',
+            'livraison_ids' => 'nullable|array',
+            'livraison_ids.*' => 'exists:livraisons,id',
             'notes' => 'nullable|string'
         ]);
 
@@ -183,7 +210,6 @@ class NavetteController extends Controller
         try {
             DB::beginTransaction();
 
-            // Calculer l'heure d'arrivée estimée
             $distance = $this->optimisationService->getDistance(
                 $request->wilaya_depart_id,
                 $request->wilaya_arrivee_id
@@ -194,18 +220,17 @@ class NavetteController extends Controller
             $dateDepart = Carbon::parse($request->date_depart . ' ' . $request->heure_depart);
             $dateArrivee = $dateDepart->copy()->addHours($dureeEstimee);
 
-            // Créer la navette
             $navette = Navette::create([
                 'wilaya_depart_id' => $request->wilaya_depart_id,
                 'wilaya_arrivee_id' => $request->wilaya_arrivee_id,
-                'wilaya_transit_id' => $request->wilaya_transit_id,
+                'wilayas_transit' => $request->wilayas_transit ?? [],
                 'heure_depart' => $request->heure_depart,
                 'heure_arrivee' => $dateArrivee->format('H:i'),
-                'livreur_id' => $request->livreur_id,
+                'hub_id' => $request->hub_id,
                 'vehicule_immatriculation' => $request->vehicule_immatriculation,
                 'capacite_max' => $request->capacite_max,
                 'prix_base' => $request->prix_base,
-                'prix_par_colis' => $request->prix_par_colis,
+                'prix_par_livraison' => $request->prix_par_livraison,
                 'distance_km' => $distance,
                 'carburant_estime' => $this->optimisationService->estimerCarburant($distance),
                 'peages_estimes' => $this->optimisationService->estimerPeages([$request->wilaya_depart_id, $request->wilaya_arrivee_id]),
@@ -216,36 +241,83 @@ class NavetteController extends Controller
                 'notes' => $request->notes
             ]);
 
-            // Attacher les colis si fournis
-            if ($request->has('colis_ids') && is_array($request->colis_ids)) {
-                $position = 1;
-                foreach ($request->colis_ids as $colisId) {
-                    $navette->colis()->attach($colisId, [
-                        'position_chargement' => $position++,
-                        'date_chargement' => now()
+            // Ajouter les wilayas de transit
+            if ($request->has('wilayas_transit') && is_array($request->wilayas_transit)) {
+                foreach ($request->wilayas_transit as $index => $wilayaCode) {
+                    DB::table('navette_wilaya_transit')->insert([
+                        'navette_id' => $navette->id,
+                        'wilaya_code' => $wilayaCode,
+                        'ordre' => $index,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ]);
+                }
+            }
 
-                    // Mettre à jour la livraison associée
-                    $colis = Colis::find($colisId);
-                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'navette_id' => $navette->id,
-                                    'status' => 'prise_en_charge_ramassage'
-                                ]);
-                            }
-                        }
+            // Ajouter les livraisons
+            if ($request->has('livraison_ids') && is_array($request->livraison_ids)) {
+                $ordre = 1;
+                foreach ($request->livraison_ids as $livraisonId) {
+                    $livraison = Livraison::find($livraisonId);
+
+                    if ($livraison) {
+                        $navette->livraisons()->attach($livraisonId, [
+                            'ordre_chargement' => $ordre++,
+                            'date_prise_en_charge' => now()
+                        ]);
+
+                        $livraison->update([
+                            'navette_id' => $navette->id,
+                            'status' => 'prise_en_charge_ramassage'
+                        ]);
                     }
                 }
             }
 
+            // Calculer la répartition des parts
+            $navette->calculerRepartitionParts();
+
             DB::commit();
+
+            // Recharger la navette avec les relations nécessaires
+            $navette->load(['wilayaDepart', 'wilayasTransit', 'wilayaArrivee', 'hub']);
+
+            // Formater les acteurs pour la réponse
+            $acteursFormatted = [];
+            foreach ($navette->acteurs as $acteur) {
+                if ($acteur->type === 'gestionnaire') {
+                    $gestionnaire = $acteur->gestionnaire;
+                    if ($gestionnaire && $gestionnaire->user) {
+                        $acteursFormatted[] = [
+                            'type' => 'gestionnaire',
+                            'id' => $acteur->acteur_id,
+                            'nom' => $gestionnaire->user->nom . ' ' . $gestionnaire->user->prenom,
+                            'email' => $gestionnaire->user->email,
+                            'wilaya' => $acteur->wilaya_code,
+                            'part' => (float) $acteur->part_pourcentage
+                        ];
+                    }
+                } elseif ($acteur->type === 'hub') {
+                    $hub = $acteur->hub;
+                    if ($hub) {
+                        $acteursFormatted[] = [
+                            'type' => 'hub',
+                            'id' => $acteur->acteur_id,
+                            'nom' => $hub->nom,
+                            'email' => $hub->email,
+                            'part' => (float) $acteur->part_pourcentage
+                        ];
+                    }
+                }
+            }
+
+            $responseData = $navette->toArray();
+            $responseData['repartition'] = $acteursFormatted;
 
             return response()->json([
                 'success' => true,
                 'message' => 'Navette créée avec succès',
-                'data' => $navette->load(['wilayaDepart', 'wilayaArrivee', 'colis', 'livreur.user'])
+                'data' => $responseData
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -291,14 +363,15 @@ class NavetteController extends Controller
             $validator = Validator::make($request->all(), [
                 'wilaya_depart_id' => 'sometimes|string|size:2',
                 'wilaya_arrivee_id' => 'sometimes|string|size:2',
-                'wilaya_transit_id' => 'nullable|string|size:2',
+                'wilayas_transit' => 'nullable|array',
+                'wilayas_transit.*' => 'string|size:2',
                 'heure_depart' => 'sometimes|date_format:H:i',
                 'date_depart' => 'sometimes|date',
-                'livreur_id' => 'nullable|exists:livreurs,id',
+                'hub_id' => 'nullable|exists:hubs,id',
                 'vehicule_immatriculation' => 'nullable|string|max:20',
                 'capacite_max' => 'sometimes|integer|min:1|max:500',
                 'prix_base' => 'sometimes|numeric|min:0',
-                'prix_par_colis' => 'sometimes|numeric|min:0',
+                'prix_par_livraison' => 'sometimes|numeric|min:0',
                 'status' => 'sometimes|in:planifiee,annulee',
                 'notes' => 'nullable|string'
             ]);
@@ -315,19 +388,38 @@ class NavetteController extends Controller
             $data = $request->only([
                 'wilaya_depart_id',
                 'wilaya_arrivee_id',
-                'wilaya_transit_id',
                 'heure_depart',
                 'date_depart',
-                'livreur_id',
+                'hub_id',
                 'vehicule_immatriculation',
                 'capacite_max',
                 'prix_base',
-                'prix_par_colis',
                 'status',
                 'notes'
             ]);
 
-            // Recalculer l'arrivée si nécessaire
+            if ($request->has('prix_par_livraison')) {
+                $data['prix_par_livraison'] = $request->prix_par_livraison;
+            }
+
+            // Gérer les wilayas de transit
+            if ($request->has('wilayas_transit')) {
+                $data['wilayas_transit'] = $request->wilayas_transit;
+
+                DB::table('navette_wilaya_transit')->where('navette_id', $navette->id)->delete();
+
+                foreach ($request->wilayas_transit as $index => $wilayaCode) {
+                    DB::table('navette_wilaya_transit')->insert([
+                        'navette_id' => $navette->id,
+                        'wilaya_code' => $wilayaCode,
+                        'ordre' => $index,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
+            }
+
+            // Recalculer la distance
             if ($request->has('wilaya_depart_id') || $request->has('wilaya_arrivee_id') || $request->has('heure_depart') || $request->has('date_depart')) {
                 $depart = $request->wilaya_depart_id ?? $navette->wilaya_depart_id;
                 $arrivee = $request->wilaya_arrivee_id ?? $navette->wilaya_arrivee_id;
@@ -347,12 +439,15 @@ class NavetteController extends Controller
 
             $navette->update($data);
 
+            // Recalculer la répartition
+            $navette->calculerRepartitionParts();
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Navette mise à jour',
-                'data' => $navette->fresh(['wilayaDepart', 'wilayaArrivee', 'livreur.user'])
+                'data' => $navette->fresh(['wilayaDepart', 'wilayasTransit', 'wilayaArrivee', 'hub'])
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -366,7 +461,6 @@ class NavetteController extends Controller
 
     /**
      * Supprimer une navette
-     * Modifié pour permettre la suppression des navettes planifiées ET annulées
      */
     public function destroy($id): JsonResponse
     {
@@ -387,7 +481,6 @@ class NavetteController extends Controller
                 ], 404);
             }
 
-            // MODIFICATION ICI : Permettre la suppression des navettes planifiées ET annulées
             if (!in_array($navette->status, ['planifiee', 'annulee'])) {
                 return response()->json([
                     'success' => false,
@@ -396,24 +489,16 @@ class NavetteController extends Controller
             }
 
             DB::transaction(function () use ($navette) {
-                // Détacher tous les colis et mettre à jour les livraisons associées
-                foreach ($navette->colis as $colis) {
-                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'navette_id' => null,
-                                    'status' => 'en_attente'
-                                ]);
-                            }
-                        }
-                    }
+                foreach ($navette->livraisons as $livraison) {
+                    $livraison->update([
+                        'navette_id' => null,
+                        'status' => 'en_attente'
+                    ]);
                 }
 
-                // Détacher tous les colis de la navette
-                $navette->colis()->detach();
-
-                // Supprimer la navette
+                $navette->livraisons()->detach();
+                DB::table('navette_wilaya_transit')->where('navette_id', $navette->id)->delete();
+                $navette->acteurs()->delete();
                 $navette->delete();
             });
 
@@ -459,10 +544,10 @@ class NavetteController extends Controller
                 ], 400);
             }
 
-            if (!$navette->livreur_id) {
+            if ($navette->acteurs()->count() === 0) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Un livreur doit être assigné avant de démarrer'
+                    'message' => 'Aucun acteur défini pour cette navette. Vérifiez la configuration.'
                 ], 400);
             }
 
@@ -474,7 +559,7 @@ class NavetteController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Navette démarrée',
-                'data' => $navette
+                'data' => $navette->load(['acteurs'])
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur NavetteController@demarrer: ' . $e->getMessage());
@@ -520,34 +605,29 @@ class NavetteController extends Controller
                     'date_arrivee_reelle' => now()
                 ]);
 
-                // Marquer tous les colis comme déchargés
-                foreach ($navette->colis as $colis) {
-                    $navette->colis()->updateExistingPivot($colis->id, [
-                        'date_dechargement' => now()
+                foreach ($navette->livraisons as $livraison) {
+                    $navette->livraisons()->updateExistingPivot($livraison->id, [
+                        'date_livraison' => now()
                     ]);
 
-                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'status' => 'en_transit'
-                                ]);
-                            }
-                        }
-                    }
+                    $livraison->update([
+                        'status' => 'en_transit'
+                    ]);
                 }
+
+                event(new NavetteTerminee($navette));
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Navette terminée',
-                'data' => $navette
+                'message' => 'Navette terminée et gains calculés',
+                'data' => $navette->load(['acteurs', 'gains'])
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur NavetteController@terminer: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la terminaison'
+                'message' => 'Erreur lors de la terminaison: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -582,20 +662,14 @@ class NavetteController extends Controller
             }
 
             DB::transaction(function () use ($navette) {
-                foreach ($navette->colis as $colis) {
-                    if ($colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'navette_id' => null,
-                                    'status' => 'en_attente'
-                                ]);
-                            }
-                        }
-                    }
+                foreach ($navette->livraisons as $livraison) {
+                    $livraison->update([
+                        'navette_id' => null,
+                        'status' => 'en_attente'
+                    ]);
                 }
 
-                $navette->colis()->detach();
+                $navette->livraisons()->detach();
                 $navette->update(['status' => 'annulee']);
             });
 
@@ -613,9 +687,9 @@ class NavetteController extends Controller
     }
 
     /**
-     * Ajouter des colis à une navette
+     * Ajouter des livraisons à une navette
      */
-    public function ajouterColis(Request $request, $id): JsonResponse
+    public function ajouterLivraisons(Request $request, $id): JsonResponse
     {
         try {
             if (!Str::isUuid($id)) {
@@ -637,25 +711,24 @@ class NavetteController extends Controller
             if (!in_array($navette->status, ['planifiee', 'en_cours'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Impossible d\'ajouter des colis à une navette ' . $navette->status
+                    'message' => 'Impossible d\'ajouter des livraisons à une navette ' . $navette->status
                 ], 400);
             }
 
             $validator = Validator::make($request->all(), [
-                'colis_ids' => 'required|array',
-                'colis_ids.*' => 'required|exists:colis,id'
+                'livraison_ids' => 'required|array',
+                'livraison_ids.*' => 'required|exists:livraisons,id'
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $validator->errors(),
-                    'message' => 'Erreur de validation: certains colis n\'existent pas'
+                    'errors' => $validator->errors()
                 ], 422);
             }
 
-            $nbActuel = $navette->colis()->count();
-            $nbNouveaux = count($request->colis_ids);
+            $nbActuel = $navette->livraisons()->count();
+            $nbNouveaux = count($request->livraison_ids);
 
             if ($nbActuel + $nbNouveaux > $navette->capacite_max) {
                 return response()->json([
@@ -665,51 +738,45 @@ class NavetteController extends Controller
             }
 
             DB::transaction(function () use ($navette, $request, $nbActuel) {
-                $position = $nbActuel + 1;
+                $ordre = $nbActuel + 1;
 
-                foreach ($request->colis_ids as $colisId) {
-                    $colis = Colis::find($colisId);
+                foreach ($request->livraison_ids as $livraisonId) {
+                    $livraison = Livraison::find($livraisonId);
 
-                    if (!$colis) {
-                        throw new \Exception("Colis non trouvé: " . $colisId);
+                    if (!$livraison) {
+                        throw new \Exception("Livraison non trouvée: " . $livraisonId);
                     }
 
-                    $navette->colis()->syncWithoutDetaching([$colisId => [
-                        'position_chargement' => $position++,
-                        'date_chargement' => now()
+                    $navette->livraisons()->syncWithoutDetaching([$livraisonId => [
+                        'ordre_chargement' => $ordre++,
+                        'date_prise_en_charge' => now()
                     ]]);
 
-                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'navette_id' => $navette->id,
-                                    'status' => 'prise_en_charge_ramassage'
-                                ]);
-                            }
-                        }
-                    }
+                    $livraison->update([
+                        'navette_id' => $navette->id,
+                        'status' => 'prise_en_charge_ramassage'
+                    ]);
                 }
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Colis ajoutés à la navette',
-                'data' => $navette->load('colis')
+                'message' => 'Livraisons ajoutées à la navette',
+                'data' => $navette->load('livraisons')
             ]);
         } catch (\Exception $e) {
-            Log::error('Erreur NavetteController@ajouterColis: ' . $e->getMessage());
+            Log::error('Erreur NavetteController@ajouterLivraisons: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'ajout des colis: ' . $e->getMessage()
+                'message' => 'Erreur lors de l\'ajout des livraisons'
             ], 500);
         }
     }
 
     /**
-     * Retirer des colis d'une navette
+     * Retirer des livraisons d'une navette
      */
-    public function retirerColis(Request $request, $id): JsonResponse
+    public function retirerLivraisons(Request $request, $id): JsonResponse
     {
         try {
             if (!Str::isUuid($id)) {
@@ -731,13 +798,13 @@ class NavetteController extends Controller
             if (!in_array($navette->status, ['planifiee', 'en_cours'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Impossible de retirer des colis'
+                    'message' => 'Impossible de retirer des livraisons'
                 ], 400);
             }
 
             $validator = Validator::make($request->all(), [
-                'colis_ids' => 'required|array',
-                'colis_ids.*' => 'exists:colis,id'
+                'livraison_ids' => 'required|array',
+                'livraison_ids.*' => 'exists:livraisons,id'
             ]);
 
             if ($validator->fails()) {
@@ -748,38 +815,34 @@ class NavetteController extends Controller
             }
 
             DB::transaction(function () use ($navette, $request) {
-                foreach ($request->colis_ids as $colisId) {
-                    $navette->colis()->detach($colisId);
+                foreach ($request->livraison_ids as $livraisonId) {
+                    $navette->livraisons()->detach($livraisonId);
 
-                    $colis = Colis::find($colisId);
-                    if ($colis && $colis->demandeLivraisons && $colis->demandeLivraisons->isNotEmpty()) {
-                        foreach ($colis->demandeLivraisons as $demande) {
-                            if ($demande->livraison) {
-                                $demande->livraison->update([
-                                    'navette_id' => null,
-                                    'status' => 'en_attente'
-                                ]);
-                            }
-                        }
+                    $livraison = Livraison::find($livraisonId);
+                    if ($livraison) {
+                        $livraison->update([
+                            'navette_id' => null,
+                            'status' => 'en_attente'
+                        ]);
                     }
                 }
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Colis retirés de la navette'
+                'message' => 'Livraisons retirées de la navette'
             ]);
         } catch (\Exception $e) {
-            Log::error('Erreur NavetteController@retirerColis: ' . $e->getMessage());
+            Log::error('Erreur NavetteController@retirerLivraisons: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors du retrait des colis'
+                'message' => 'Erreur lors du retrait des livraisons'
             ], 500);
         }
     }
 
     /**
-     * Obtenir les suggestions de navettes optimisées basées sur les vrais colis
+     * Obtenir les suggestions de navettes optimisées
      */
     public function suggestions(Request $request): JsonResponse
     {
@@ -797,52 +860,52 @@ class NavetteController extends Controller
         }
 
         try {
-            // Récupérer les colis disponibles
-            $colisDisponibles = Colis::with('demandeLivraisons')
-                ->whereDoesntHave('navettes', function($q) {
-                    $q->whereIn('status', ['planifiee', 'en_cours']);
-                })
+            $livraisonsDisponibles = Livraison::with(['colis', 'demandeLivraison'])
+                ->whereNull('navette_id')
+                ->whereIn('status', ['en_attente', 'pret_a_charger'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            if ($colisDisponibles->isEmpty()) {
+            if ($livraisonsDisponibles->isEmpty()) {
                 return response()->json([
                     'success' => true,
                     'data' => [],
-                    'message' => 'Aucun colis disponible'
+                    'message' => 'Aucune livraison disponible'
                 ]);
             }
 
-            // Grouper les colis par destination (simulé pour l'exemple)
-            $colisParDestination = collect($colisDisponibles)
-                ->groupBy(function($colis) {
-                    // Ici vous devriez avoir une vraie relation pour la destination
-                    // Par exemple: $colis->wilaya_destination_id ?? '00'
-                    return $colis->wilaya_destination_id ?? substr($colis->id, 0, 2);
+            $livraisonsParDestination = $livraisonsDisponibles
+                ->groupBy(function($livraison) {
+                    return $livraison->demandeLivraison?->wilaya_destination ?? substr($livraison->id, 0, 2);
                 })
                 ->filter(function($group) {
-                    return $group->count() >= 3; // Garder les groupes avec au moins 3 colis
+                    return $group->count() >= 2;
                 });
 
             $suggestions = [];
 
-            foreach ($colisParDestination as $wilayaCode => $colisGroup) {
+            foreach ($livraisonsParDestination as $wilayaCode => $livraisonGroup) {
                 $suggestions[] = [
                     'type' => 'destination_unique',
                     'wilaya' => $wilayaCode,
                     'wilaya_nom' => $this->getWilayaName($wilayaCode),
-                    'nb_colis' => $colisGroup->count(),
-                    'poids_total' => $colisGroup->sum('poids'),
-                    'valeur_totale' => $colisGroup->sum('colis_prix'),
-                    'date_plus_ancienne' => $colisGroup->min('created_at')?->toDateString(),
-                    'urgence' => $colisGroup->count() > 10 ? 'haute' : 'moyenne',
-                    'confiance' => min(90, 70 + $colisGroup->count()),
-                    'colis_exemples' => $colisGroup->take(5)->map(function ($colis) {
+                    'nb_livraisons' => $livraisonGroup->count(),
+                    'poids_total' => $livraisonGroup->sum(function($l) {
+                        return $l->colis?->poids ?? 0;
+                    }),
+                    'valeur_totale' => $livraisonGroup->sum(function($l) {
+                        return $l->colis?->colis_prix ?? 0;
+                    }),
+                    'date_plus_ancienne' => $livraisonGroup->min('created_at')?->toDateString(),
+                    'urgence' => $livraisonGroup->count() > 10 ? 'haute' : 'moyenne',
+                    'confiance' => min(90, 70 + $livraisonGroup->count()),
+                    'livraisons_exemples' => $livraisonGroup->take(5)->map(function ($livraison) {
                         return [
-                            'id' => $colis->id,
-                            'label' => $colis->colis_label ?? 'COLIS-' . substr($colis->id, 0, 8),
-                            'prix' => $colis->colis_prix ?? 0,
-                            'poids' => $colis->poids ?? 0
+                            'id' => $livraison->id,
+                            'reference' => $livraison->demandeLivraison?->reference ?? 'LIV-' . substr($livraison->id, 0, 8),
+                            'client' => $livraison->client?->nom ?? 'Client inconnu',
+                            'prix' => $livraison->colis?->colis_prix ?? 0,
+                            'poids' => $livraison->colis?->poids ?? 0
                         ];
                     })->toArray()
                 ];
@@ -863,17 +926,20 @@ class NavetteController extends Controller
     }
 
     /**
-     * Créer une navette optimisée automatiquement
+     * Créer une navette optimisée
      */
     public function creerOptimisee(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'wilaya_depart' => 'required|string|size:2',
+            'wilaya_arrivee' => 'nullable|string|size:2',
+            'wilayas_transit' => 'nullable|array',
+            'wilayas_transit.*' => 'string|size:2',
             'date_limite' => 'nullable|date',
             'priorite' => 'nullable|in:date,urgence,valeur',
             'capacite' => 'nullable|integer|min:1|max:500',
             'prix_base' => 'nullable|numeric|min:0',
-            'prix_par_colis' => 'nullable|numeric|min:0',
+            'prix_par_livraison' => 'nullable|numeric|min:0',
             'heure_depart' => 'nullable|date_format:H:i'
         ]);
 
@@ -891,14 +957,17 @@ class NavetteController extends Controller
                 ? Carbon::parse($request->date_limite ?? now()->toDateString() . ' ' . $request->heure_depart)
                 : Carbon::now();
 
+            $wilayaArrivee = $request->wilaya_arrivee ?? '31';
+
             $navette = Navette::create([
                 'wilaya_depart_id' => $request->wilaya_depart,
-                'wilaya_arrivee_id' => '31', // Oran par défaut
+                'wilaya_arrivee_id' => $wilayaArrivee,
+                'wilayas_transit' => $request->wilayas_transit ?? [],
                 'heure_depart' => $dateDepart->format('H:i'),
                 'heure_arrivee' => $dateDepart->copy()->addHours(8)->format('H:i'),
                 'capacite_max' => $request->capacite ?? 100,
                 'prix_base' => $request->prix_base ?? 300,
-                'prix_par_colis' => $request->prix_par_colis ?? 10,
+                'prix_par_livraison' => $request->prix_par_livraison ?? 10,
                 'status' => 'planifiee',
                 'date_depart' => $dateDepart,
                 'date_arrivee_prevue' => $dateDepart->copy()->addHours(8),
@@ -906,17 +975,30 @@ class NavetteController extends Controller
                 'notes' => 'Navette créée automatiquement via optimisation'
             ]);
 
+            if ($request->has('wilayas_transit') && is_array($request->wilayas_transit)) {
+                foreach ($request->wilayas_transit as $index => $wilayaCode) {
+                    DB::table('navette_wilaya_transit')->insert([
+                        'navette_id' => $navette->id,
+                        'wilaya_code' => $wilayaCode,
+                        'ordre' => $index,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
+            }
+
+            $navette->calculerRepartitionParts();
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Navette optimisée créée avec succès',
-                'data' => $navette
+                'data' => $navette->load(['acteurs'])
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur NavetteController@creerOptimisee: ' . $e->getMessage());
-
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la création'
@@ -936,7 +1018,7 @@ class NavetteController extends Controller
             $stats = [
                 'global' => [
                     'total_navettes' => Navette::whereBetween('date_depart', [$debut, $fin])->count(),
-                    'total_colis_transportes' => DB::table('navette_colis')
+                    'total_livraisons' => DB::table('navette_livraison')
                         ->whereBetween('created_at', [$debut, $fin])
                         ->count(),
                     'distance_totale' => Navette::whereBetween('date_depart', [$debut, $fin])
@@ -956,11 +1038,11 @@ class NavetteController extends Controller
                         ->where('status', 'annulee')
                         ->count()
                 ],
-                'par_livreur' => Navette::whereBetween('date_depart', [$debut, $fin])
-                    ->whereNotNull('livreur_id')
-                    ->select('livreur_id', DB::raw('count(*) as total'))
-                    ->groupBy('livreur_id')
-                    ->with('livreur.user')
+                'par_hub' => Navette::whereBetween('date_depart', [$debut, $fin])
+                    ->whereNotNull('hub_id')
+                    ->select('hub_id', DB::raw('count(*) as total'))
+                    ->groupBy('hub_id')
+                    ->with('hub')
                     ->get()
             ];
 
@@ -985,9 +1067,10 @@ class NavetteController extends Controller
         try {
             $query = Navette::with([
                 'wilayaDepart',
+                'wilayasTransit',
                 'wilayaArrivee',
-                'livreur.user'
-            ])->withCount('colis');
+                'hub'
+            ])->withCount('livraisons');
 
             if ($request->has('status') && $request->status) {
                 $query->where('status', $request->status);
@@ -1018,6 +1101,73 @@ class NavetteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la génération du PDF'
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtenir les livraisons d'une navette
+     */
+    public function getLivraisons($id): JsonResponse
+    {
+        try {
+            if (!Str::isUuid($id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID de navette invalide'
+                ], 400);
+            }
+
+            $navette = Navette::with([
+                'livraisons.client',
+                'livraisons.colis',
+                'livraisons.demandeLivraison'
+            ])->find($id);
+
+            if (!$navette) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Navette introuvable'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'navette' => [
+                        'id' => $navette->id,
+                        'reference' => $navette->reference,
+                        'status' => $navette->status,
+                        'capacite_max' => $navette->capacite_max,
+                        'nb_livraisons' => $navette->livraisons->count()
+                    ],
+                    'livraisons' => $navette->livraisons->map(function($livraison) {
+                        return [
+                            'id' => $livraison->id,
+                            'reference' => $livraison->demandeLivraison?->reference ?? 'N/A',
+                            'client' => $livraison->client?->nom ?? 'Client inconnu',
+                            'colis' => [
+                                'label' => $livraison->colis?->colis_label ?? 'N/A',
+                                'poids' => $livraison->colis?->poids ?? 0,
+                                'prix' => $livraison->colis?->colis_prix ?? 0
+                            ],
+                            'destination' => $livraison->demandeLivraison?->addresse_delivery ?? 'N/A',
+                            'wilaya_destination' => $livraison->demandeLivraison?->wilaya_destination ?? 'N/A',
+                            'status' => $livraison->status,
+                            'ordre_chargement' => $livraison->pivot->ordre_chargement ?? null,
+                            'date_prise_en_charge' => $livraison->pivot->date_prise_en_charge,
+                            'date_livraison' => $livraison->pivot->date_livraison,
+                            'qr_code_scan' => $livraison->pivot->qr_code_scan,
+                            'incident_notes' => $livraison->pivot->incident_notes
+                        ];
+                    })
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur NavetteController@getLivraisons: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des livraisons'
             ], 500);
         }
     }

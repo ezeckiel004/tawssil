@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\ColisController;
 use App\Http\Controllers\Admin\GestionnaireController;
 use App\Http\Controllers\Admin\TraitementCommissionController;
 use App\Http\Controllers\Manager\GainController;
+use App\Http\Controllers\Manager\NavetteController as ManagerNavetteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,10 +148,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/dashboard/charts', [DashboardController::class, 'charts']);
 
+        Route::prefix('hubs')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\HubController::class, 'index']);
+            Route::post('/', [App\Http\Controllers\Admin\HubController::class, 'store']);
+            Route::get('/{id}', [App\Http\Controllers\Admin\HubController::class, 'show']);
+            Route::put('/{id}', [App\Http\Controllers\Admin\HubController::class, 'update']);
+            Route::delete('/{id}', [App\Http\Controllers\Admin\HubController::class, 'destroy']);
+        });
+
         Route::prefix('historique')->group(function () {
-        Route::get('/gains', [App\Http\Controllers\Admin\ComptabiliteController::class, 'historiqueGains']);
-        Route::delete('/gains/{gainId}', [App\Http\Controllers\Admin\ComptabiliteController::class, 'supprimerGain']);
-    });
+            Route::get('/gains', [App\Http\Controllers\Admin\ComptabiliteController::class, 'historiqueGains']);
+            Route::delete('/gains/{gainId}', [App\Http\Controllers\Admin\ComptabiliteController::class, 'supprimerGain']);
+        });
 
         // ======== LIVRAISONS ========
         Route::post('livraisons', [AdminLivraisonController::class, 'store']);
@@ -226,7 +235,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{id}/stats/client', [AdminUserController::class, 'getClientStats']);
         Route::get('/users/{id}/stats/livreur', [AdminUserController::class, 'getLivreurStats']);
 
-        // ======== NAVETTES ========
+        // ======== NAVETTES (ADMIN) ========
         Route::prefix('navettes')->group(function () {
             Route::get('/', [NavetteController::class, 'index']);
             Route::post('/', [NavetteController::class, 'store']);
@@ -240,8 +249,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/{id}/demarrer', [NavetteController::class, 'demarrer']);
             Route::post('/{id}/terminer', [NavetteController::class, 'terminer']);
             Route::post('/{id}/annuler', [NavetteController::class, 'annuler']);
-            Route::post('/{id}/colis', [NavetteController::class, 'ajouterColis']);
-            Route::delete('/{id}/colis', [NavetteController::class, 'retirerColis']);
+            Route::post('/{id}/livraisons', [NavetteController::class, 'ajouterLivraisons']);
+            Route::delete('/{id}/livraisons', [NavetteController::class, 'retirerLivraisons']);
+            Route::get('/{id}/livraisons', [NavetteController::class, 'getLivraisons']);
         });
 
         // ======== COLIS (ADMIN) ========
@@ -262,16 +272,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/bilan-gestionnaire/export', [ComptabiliteController::class, 'exportBilanGestionnaire']);
             Route::get('/bilan-wilaya/{wilayaId}', [ComptabiliteController::class, 'bilanGestionnaire']);
             Route::get('/bilan-wilaya/{wilayaId}/export', [ComptabiliteController::class, 'exportBilanGestionnaire']);
-
-            // Rapports
+            Route::get('/navettes-terminees', [ComptabiliteController::class, 'getNavettesTerminees']);
+            Route::get('/navette/{navetteId}/gains', [ComptabiliteController::class, 'getGainsNavette']);
             Route::get('/rapport', [ComptabiliteController::class, 'rapport']);
             Route::get('/rapport/export', [ComptabiliteController::class, 'exportRapport']);
-
-            // Rapports gestionnaires
             Route::get('/rapport-gestionnaires', [ComptabiliteController::class, 'rapportGestionnaires']);
             Route::get('/rapport-gestionnaires/export', [ComptabiliteController::class, 'exportRapportGestionnaires']);
-
-            // Gains et statistiques
             Route::get('/gains', [ComptabiliteController::class, 'getGainsDetails']);
             Route::get('/gestionnaire/{gestionnaireId}/gains', [ComptabiliteController::class, 'getGainsGestionnaire']);
             Route::get('/statistiques-mensuelles', [ComptabiliteController::class, 'statistiquesMensuelles']);
@@ -293,6 +299,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ==================== ROUTES GESTIONNAIRE (MANAGER) ====================
+    // Utiliser le middleware 'gestionnaire' qui existe déjà
     Route::prefix('manager')->middleware(['auth:sanctum', 'gestionnaire'])->group(function () {
 
         // Dashboard
@@ -331,7 +338,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Codes promo
         Route::apiResource('codes-promo', App\Http\Controllers\Manager\CodePromoController::class);
-
         Route::prefix('codes-promo/{id}')->group(function () {
             Route::post('add-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'addLivreurs']);
             Route::delete('remove-livreurs', [App\Http\Controllers\Manager\CodePromoController::class, 'removeLivreurs']);
@@ -342,6 +348,19 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [App\Http\Controllers\Manager\ComptabiliteController::class, 'index']);
             Route::get('/export', [App\Http\Controllers\Manager\ComptabiliteController::class, 'export']);
             Route::get('/statistiques-mensuelles', [App\Http\Controllers\Manager\ComptabiliteController::class, 'statistiquesMensuelles']);
+        });
+
+        Route::get('hubs', [App\Http\Controllers\Manager\HubController::class, 'index']);
+
+        // ======== NAVETTES (GESTIONNAIRE) ========
+        Route::prefix('navettes')->group(function () {
+            Route::get('/', [ManagerNavetteController::class, 'index']);
+            Route::post('/', [ManagerNavetteController::class, 'store']);
+            Route::get('/disponibles', [ManagerNavetteController::class, 'getLivraisonsDisponibles']);
+            Route::get('/{id}', [ManagerNavetteController::class, 'show']);
+            Route::post('/{id}/demarrer', [ManagerNavetteController::class, 'demarrer']);
+            Route::post('/{id}/terminer', [ManagerNavetteController::class, 'terminer']);
+            Route::post('/{id}/annuler', [ManagerNavetteController::class, 'annuler']);
         });
     });
 });

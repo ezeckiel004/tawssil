@@ -666,6 +666,146 @@ public function exportRapportGestionnaires(Request $request)
     }
 
     /**
+ * Récupérer les gains d'une navette spécifique
+ */
+public function getGainsNavette(Request $request, $navetteId): JsonResponse
+{
+    try {
+        $navette = Navette::find($navetteId);
+
+        if (!$navette) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Navette introuvable'
+            ], 404);
+        }
+
+        // Récupérer tous les gains de cette navette avec les relations
+        $gains = GestionnaireGain::with(['gestionnaire.user', 'hub', 'livraison.demandeLivraison'])
+            ->where('navette_id', $navetteId)
+            ->get();
+
+        // Récupérer la répartition des acteurs
+        $acteurs = $navette->acteurs;
+
+        // Formater les gains par acteur
+        $gainsParActeur = [];
+        $totalGains = 0;
+        $totalPrixLivraisons = 0;
+
+        foreach ($gains as $gain) {
+            if ($gain->gestionnaire_id) {
+                $key = "gestionnaire_{$gain->gestionnaire_id}";
+                if (!isset($gainsParActeur[$key])) {
+                    $gainsParActeur[$key] = [
+                        'type' => 'gestionnaire',
+                        'id' => $gain->gestionnaire_id,
+                        'nom' => $gain->gestionnaire->user->prenom . ' ' . $gain->gestionnaire->user->nom,
+                        'email' => $gain->gestionnaire->user->email,
+                        'wilaya' => $gain->gestionnaire->wilaya_id,
+                        'total_gains' => 0,
+                        'nb_livraisons' => 0,
+                        'details' => []
+                    ];
+                }
+                $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
+                $gainsParActeur[$key]['nb_livraisons']++;
+                $gainsParActeur[$key]['details'][] = [
+                    'livraison_id' => $gain->livraison_id,
+                    'montant' => $gain->montant_commission,
+                    'pourcentage' => $gain->pourcentage_applique,
+                    'date' => $gain->date_calcul->format('d/m/Y H:i'),
+                    'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
+                ];
+            } elseif ($gain->hub_id) {
+                $key = "hub_{$gain->hub_id}";
+                if (!isset($gainsParActeur[$key])) {
+                    $gainsParActeur[$key] = [
+                        'type' => 'hub',
+                        'id' => $gain->hub_id,
+                        'nom' => $gain->hub->nom,
+                        'email' => $gain->hub->email,
+                        'total_gains' => 0,
+                        'nb_livraisons' => 0,
+                        'details' => []
+                    ];
+                }
+                $gainsParActeur[$key]['total_gains'] += $gain->montant_commission;
+                $gainsParActeur[$key]['nb_livraisons']++;
+                $gainsParActeur[$key]['details'][] = [
+                    'livraison_id' => $gain->livraison_id,
+                    'montant' => $gain->montant_commission,
+                    'pourcentage' => $gain->pourcentage_applique,
+                    'date' => $gain->date_calcul->format('d/m/Y H:i'),
+                    'prix_livraison' => $gain->livraison->demandeLivraison->prix ?? 0
+                ];
+            }
+            $totalGains += $gain->montant_commission;
+
+            // Calculer le prix total des livraisons
+            if ($gain->livraison && $gain->livraison->demandeLivraison) {
+                $totalPrixLivraisons += $gain->livraison->demandeLivraison->prix ?? 0;
+            }
+        }
+
+        // Formater la répartition
+        $repartition = [];
+        foreach ($acteurs as $acteur) {
+            if ($acteur->type === 'gestionnaire') {
+                $gestionnaire = $acteur->gestionnaire;
+                if ($gestionnaire && $gestionnaire->user) {
+                    $repartition[] = [
+                        'type' => 'gestionnaire',
+                        'id' => $acteur->acteur_id,
+                        'nom' => $gestionnaire->user->prenom . ' ' . $gestionnaire->user->nom,
+                        'email' => $gestionnaire->user->email,
+                        'wilaya' => $acteur->wilaya_code,
+                        'part_pourcentage' => (float) $acteur->part_pourcentage
+                    ];
+                }
+            } elseif ($acteur->type === 'hub') {
+                $hub = $acteur->hub;
+                if ($hub) {
+                    $repartition[] = [
+                        'type' => 'hub',
+                        'id' => $acteur->acteur_id,
+                        'nom' => $hub->nom,
+                        'email' => $hub->email,
+                        'part_pourcentage' => (float) $acteur->part_pourcentage
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'navette' => [
+                    'id' => $navette->id,
+                    'reference' => $navette->reference,
+                    'status' => $navette->status,
+                    'date_depart' => $navette->date_depart,
+                    'date_arrivee_reelle' => $navette->date_arrivee_reelle
+                ],
+                'repartition' => $repartition,
+                'gains_par_acteur' => array_values($gainsParActeur),
+                'total_gains' => $totalGains,
+                'total_prix_livraisons' => $totalPrixLivraisons,
+                'part_admin' => $totalPrixLivraisons - $totalGains,
+                'date_generation' => Carbon::now()->format('d/m/Y H:i:s')
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Erreur getGainsNavette: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la récupération des gains de la navette'
+        ], 500);
+    }
+}
+
+    /**
      * Statistiques mensuelles
      */
     public function statistiquesMensuelles(Request $request): JsonResponse

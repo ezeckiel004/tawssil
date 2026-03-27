@@ -175,7 +175,7 @@
                     $gestionnaire = $gain->gestionnaire;
                     $user = $gestionnaire?->user;
                     $nomGestionnaire = $user ? ($user->prenom . ' ' . $user->nom) : 'Inconnu';
-                    
+
                     $statutLabels = [
                         'en_attente' => 'En attente',
                         'demande_envoyee' => 'Demande envoyée',
