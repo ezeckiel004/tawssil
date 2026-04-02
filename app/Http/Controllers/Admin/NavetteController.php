@@ -29,93 +29,88 @@ class NavetteController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-   // app/Http/Controllers/Admin/NavetteController.php
+    public function index(Request $request): JsonResponse
+    {
+        try {
+            $query = Navette::with([
+                'wilayaDepart',
+                'wilayaArrivee',
+                'hub',
+                'createur',
+                'acteurs',
+                'gains'
+            ])->withCount('livraisons');
 
-public function index(Request $request): JsonResponse
-{
-    try {
-        $query = Navette::with([
-            'wilayaDepart',
-            'wilayaArrivee',
-            'hub',
-            'createur',
-            'acteurs',
-            'gains'         // Cette relation va maintenant charger GestionnaireGain
-        ])->withCount('livraisons');
-
-        // Filtres
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('wilaya_depart') && $request->wilaya_depart) {
-            $query->where('wilaya_depart_id', $request->wilaya_depart);
-        }
-
-        if ($request->has('wilaya_arrivee') && $request->wilaya_arrivee) {
-            $query->where('wilaya_arrivee_id', $request->wilaya_arrivee);
-        }
-
-        if ($request->has('date_depart') && $request->date_depart) {
-            $query->whereDate('date_depart', $request->date_depart);
-        }
-
-        if ($request->has('date_debut') && $request->has('date_fin') && $request->date_debut && $request->date_fin) {
-            $query->whereBetween('date_depart', [
-                Carbon::parse($request->date_debut)->startOfDay(),
-                Carbon::parse($request->date_fin)->endOfDay()
-            ]);
-        }
-
-        if ($request->has('hub_id') && $request->hub_id) {
-            $query->where('hub_id', $request->hub_id);
-        }
-
-        // Recherche
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('reference', 'like', "%{$search}%")
-                    ->orWhereHas('hub', function ($q) use ($search) {
-                        $q->where('nom', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        // Tri
-        $orderBy = $request->get('order_by', 'date_depart');
-        $orderDir = $request->get('order_dir', 'desc');
-        $query->orderBy($orderBy, $orderDir);
-
-        $navettes = $query->paginate($request->get('per_page', 20));
-
-        // Ajouter les totaux calculés pour chaque navette
-        $navettes->getCollection()->transform(function ($navette) {
-            // Calculer le total des gains
-            $totalGains = 0;
-            foreach ($navette->gains as $gain) {
-                $totalGains += floatval($gain->montant_commission);
+            // Filtres
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
             }
-            $navette->total_gains = $totalGains;
 
-            // Nombre d'acteurs
-            $navette->nb_acteurs = $navette->acteurs->count();
+            if ($request->has('wilaya_depart') && $request->wilaya_depart) {
+                $query->where('wilaya_depart_id', $request->wilaya_depart);
+            }
 
-            return $navette;
-        });
+            if ($request->has('wilaya_arrivee') && $request->wilaya_arrivee) {
+                $query->where('wilaya_arrivee_id', $request->wilaya_arrivee);
+            }
 
-        return response()->json([
-            'success' => true,
-            'data' => $navettes
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Erreur NavetteController@index: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des navettes'
-        ], 500);
+            if ($request->has('date_depart') && $request->date_depart) {
+                $query->whereDate('date_depart', $request->date_depart);
+            }
+
+            if ($request->has('date_debut') && $request->has('date_fin') && $request->date_debut && $request->date_fin) {
+                $query->whereBetween('date_depart', [
+                    Carbon::parse($request->date_debut)->startOfDay(),
+                    Carbon::parse($request->date_fin)->endOfDay()
+                ]);
+            }
+
+            if ($request->has('hub_id') && $request->hub_id) {
+                $query->where('hub_id', $request->hub_id);
+            }
+
+            // Recherche
+            if ($request->has('search') && $request->search) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('reference', 'like', "%{$search}%")
+                        ->orWhereHas('hub', function ($q) use ($search) {
+                            $q->where('nom', 'like', "%{$search}%");
+                        });
+                });
+            }
+
+            // Tri
+            $orderBy = $request->get('order_by', 'date_depart');
+            $orderDir = $request->get('order_dir', 'desc');
+            $query->orderBy($orderBy, $orderDir);
+
+            $navettes = $query->paginate($request->get('per_page', 20));
+
+            // Ajouter les totaux calculés pour chaque navette
+            $navettes->getCollection()->transform(function ($navette) {
+                $totalGains = 0;
+                foreach ($navette->gains as $gain) {
+                    $totalGains += floatval($gain->montant_commission);
+                }
+                $navette->total_gains = $totalGains;
+                $navette->nb_acteurs = $navette->acteurs->count();
+                return $navette;
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $navettes
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur NavetteController@index: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des navettes'
+            ], 500);
+        }
     }
-}
+
     /**
      * Voir une navette spécifique
      */
@@ -332,7 +327,7 @@ public function index(Request $request): JsonResponse
     }
 
     /**
-     * Mettre à jour une navette
+     * Mettre à jour une navette - CORRIGÉ POUR FONCTIONNER COMME LE MANAGER
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -353,28 +348,51 @@ public function index(Request $request): JsonResponse
                 ], 404);
             }
 
-            if (in_array($navette->status, ['terminee', 'en_cours'])) {
+            // Vérifier si la navette est terminée ou annulée (non modifiable)
+            if (in_array($navette->status, ['terminee', 'annulee'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Impossible de modifier une navette ' . $navette->status
+                    'message' => 'Cette navette est ' . $navette->status . ' et ne peut plus être modifiée'
                 ], 400);
             }
 
-            $validator = Validator::make($request->all(), [
-                'wilaya_depart_id' => 'sometimes|string|size:2',
-                'wilaya_arrivee_id' => 'sometimes|string|size:2',
-                'wilayas_transit' => 'nullable|array',
-                'wilayas_transit.*' => 'string|size:2',
-                'heure_depart' => 'sometimes|date_format:H:i',
-                'date_depart' => 'sometimes|date',
-                'hub_id' => 'nullable|exists:hubs,id',
-                'vehicule_immatriculation' => 'nullable|string|max:20',
-                'capacite_max' => 'sometimes|integer|min:1|max:500',
-                'prix_base' => 'sometimes|numeric|min:0',
-                'prix_par_livraison' => 'sometimes|numeric|min:0',
-                'status' => 'sometimes|in:planifiee,annulee',
-                'notes' => 'nullable|string'
-            ]);
+            // Déterminer si la navette est en cours
+            $isEnCours = ($navette->status === 'en_cours');
+
+            // Règles de validation selon le statut (COMME LE MANAGER)
+            $rules = [
+                'notes' => 'nullable|string',
+                'livraison_ids' => 'nullable|array',
+                'livraison_ids.*' => 'exists:livraisons,id'
+            ];
+
+            if (!$isEnCours) {
+                // Pour les navettes planifiées : tous les champs sont modifiables
+                $rules = array_merge($rules, [
+                    'wilaya_depart_id' => 'sometimes|string|size:2',
+                    'wilaya_arrivee_id' => 'sometimes|string|size:2',
+                    'wilayas_transit' => 'nullable|array',
+                    'wilayas_transit.*' => 'string|size:2',
+                    'heure_depart' => 'sometimes|date_format:H:i',
+                    'date_depart' => 'sometimes|date',
+                    'hub_id' => 'nullable|exists:hubs,id',
+                    'vehicule_immatriculation' => 'nullable|string|max:20',
+                    'capacite_max' => 'sometimes|integer|min:1|max:500',
+                    'prix_base' => 'sometimes|numeric|min:0',
+                    'prix_par_livraison' => 'sometimes|numeric|min:0',
+                    'status' => 'sometimes|in:planifiee,en_cours,terminee,annulee'
+                ]);
+            } else {
+                // Pour les navettes en cours : seuls certains champs sont modifiables (COMME LE MANAGER)
+                $rules = array_merge($rules, [
+                    'wilayas_transit' => 'nullable|array',
+                    'wilayas_transit.*' => 'string|size:2',
+                    'hub_id' => 'nullable|exists:hubs,id',
+                    'vehicule_immatriculation' => 'nullable|string|max:20',
+                ]);
+            }
+
+            $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
@@ -385,76 +403,157 @@ public function index(Request $request): JsonResponse
 
             DB::beginTransaction();
 
-            $data = $request->only([
-                'wilaya_depart_id',
-                'wilaya_arrivee_id',
-                'heure_depart',
-                'date_depart',
-                'hub_id',
-                'vehicule_immatriculation',
-                'capacite_max',
-                'prix_base',
-                'status',
-                'notes'
-            ]);
+            $updateData = [];
 
-            if ($request->has('prix_par_livraison')) {
-                $data['prix_par_livraison'] = $request->prix_par_livraison;
+            if (!$isEnCours) {
+                // Planifiée : tous les champs
+                $updateData = $request->only([
+                    'wilaya_depart_id',
+                    'wilaya_arrivee_id',
+                    'hub_id',
+                    'vehicule_immatriculation',
+                    'capacite_max',
+                    'prix_base',
+                    'prix_par_livraison',
+                    'status',
+                    'notes'
+                ]);
+
+                // Gestion spécifique de la date et heure
+                if ($request->has('date_depart') || $request->has('heure_depart')) {
+                    $dateDepartStr = $request->date_depart ?? $navette->date_depart->format('Y-m-d');
+                    $heureDepartStr = $request->heure_depart ?? $navette->heure_depart;
+
+                    $dateDepart = Carbon::parse($dateDepartStr . ' ' . $heureDepartStr);
+                    $updateData['date_depart'] = $dateDepart;
+                    $updateData['heure_depart'] = $heureDepartStr;
+
+                    // Recalculer la distance et la durée
+                    $depart = $request->wilaya_depart_id ?? $navette->wilaya_depart_id;
+                    $arrivee = $request->wilaya_arrivee_id ?? $navette->wilaya_arrivee_id;
+                    $distance = $this->optimisationService->getDistance($depart, $arrivee);
+                    $dureeEstimee = $this->optimisationService->estimerDuree($distance);
+                    $dateArrivee = $dateDepart->copy()->addHours($dureeEstimee);
+
+                    $updateData['heure_arrivee'] = $dateArrivee->format('H:i');
+                    $updateData['date_arrivee_prevue'] = $dateArrivee;
+                    $updateData['distance_km'] = $distance;
+                    $updateData['carburant_estime'] = $this->optimisationService->estimerCarburant($distance);
+                    $updateData['peages_estimes'] = $this->optimisationService->estimerPeages([$depart, $arrivee]);
+                }
+            } else {
+                // En cours : seulement les champs autorisés (COMME LE MANAGER)
+                $updateData = $request->only([
+                    'wilayas_transit',
+                    'hub_id',
+                    'vehicule_immatriculation',
+                    'notes'
+                ]);
             }
 
-            // Gérer les wilayas de transit
-            if ($request->has('wilayas_transit')) {
-                $data['wilayas_transit'] = $request->wilayas_transit;
+            // Appliquer les mises à jour
+            if (!empty($updateData)) {
+                $navette->update($updateData);
+            }
 
+            // Gérer les wilayas de transit (autorisé pour planifiée ET en_cours) - COMME LE MANAGER
+            if ($request->has('wilayas_transit')) {
+                // Supprimer les anciennes wilayas de transit
                 DB::table('navette_wilaya_transit')->where('navette_id', $navette->id)->delete();
 
-                foreach ($request->wilayas_transit as $index => $wilayaCode) {
-                    DB::table('navette_wilaya_transit')->insert([
+                // Ajouter les nouvelles
+                if (is_array($request->wilayas_transit)) {
+                    foreach ($request->wilayas_transit as $index => $wilayaCode) {
+                        DB::table('navette_wilaya_transit')->insert([
+                            'navette_id' => $navette->id,
+                            'wilaya_code' => $wilayaCode,
+                            'ordre' => $index,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
+                }
+            }
+
+            // Gérer les livraisons (autorisé pour planifiée ET en_cours)
+            if ($request->has('livraison_ids')) {
+                $newLivraisonIds = $request->livraison_ids;
+                $currentLivraisonIds = $navette->livraisons->pluck('id')->toArray();
+
+                $toAdd = array_diff($newLivraisonIds, $currentLivraisonIds);
+                $toRemove = array_diff($currentLivraisonIds, $newLivraisonIds);
+
+                $currentCount = count($currentLivraisonIds);
+                $newCount = count($newLivraisonIds);
+
+                if ($newCount > $navette->capacite_max) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => "La capacité maximale est de {$navette->capacite_max} livraisons"
+                    ], 400);
+                }
+
+                // Ajouter les nouvelles livraisons
+                foreach ($toAdd as $livraisonId) {
+                    $ordre = $currentCount + 1;
+                    $navette->livraisons()->attach($livraisonId, [
+                        'ordre_chargement' => $ordre,
+                        'date_prise_en_charge' => now()
+                    ]);
+
+                    Livraison::where('id', $livraisonId)->update([
                         'navette_id' => $navette->id,
-                        'wilaya_code' => $wilayaCode,
-                        'ordre' => $index,
-                        'created_at' => now(),
-                        'updated_at' => now()
+                        'status' => 'prise_en_charge_ramassage'
+                    ]);
+                }
+
+                // Retirer les livraisons supprimées
+                foreach ($toRemove as $livraisonId) {
+                    $navette->livraisons()->detach($livraisonId);
+
+                    Livraison::where('id', $livraisonId)->update([
+                        'navette_id' => null,
+                        'status' => 'en_attente'
+                    ]);
+                }
+
+                // Réordonner les livraisons restantes
+                $remainingLivraisons = $navette->livraisons()->orderBy('ordre_chargement')->get();
+                $ordre = 1;
+                foreach ($remainingLivraisons as $livraison) {
+                    $navette->livraisons()->updateExistingPivot($livraison->id, [
+                        'ordre_chargement' => $ordre++
                     ]);
                 }
             }
 
-            // Recalculer la distance
-            if ($request->has('wilaya_depart_id') || $request->has('wilaya_arrivee_id') || $request->has('heure_depart') || $request->has('date_depart')) {
-                $depart = $request->wilaya_depart_id ?? $navette->wilaya_depart_id;
-                $arrivee = $request->wilaya_arrivee_id ?? $navette->wilaya_arrivee_id;
-                $distance = $this->optimisationService->getDistance($depart, $arrivee);
-                $dureeEstimee = $this->optimisationService->estimerDuree($distance);
-
-                $dateDepart = $request->date_depart
-                    ? Carbon::parse($request->date_depart . ' ' . ($request->heure_depart ?? $navette->heure_depart))
-                    : $navette->date_depart;
-
-                $data['heure_arrivee'] = $dateDepart->copy()->addHours($dureeEstimee)->format('H:i');
-                $data['date_arrivee_prevue'] = $dateDepart->copy()->addHours($dureeEstimee);
-                $data['distance_km'] = $distance;
-                $data['carburant_estime'] = $this->optimisationService->estimerCarburant($distance);
-                $data['peages_estimes'] = $this->optimisationService->estimerPeages([$depart, $arrivee]);
-            }
-
-            $navette->update($data);
-
-            // Recalculer la répartition
+            // Recalculer la répartition des parts si nécessaire
             $navette->calculerRepartitionParts();
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Navette mise à jour',
-                'data' => $navette->fresh(['wilayaDepart', 'wilayasTransit', 'wilayaArrivee', 'hub'])
+                'message' => 'Navette mise à jour avec succès',
+                'data' => $navette->fresh([
+                    'wilayaDepart',
+                    'wilayasTransit',
+                    'wilayaArrivee',
+                    'hub',
+                    'acteurs',
+                    'livraisons.demandeLivraison.client.user',
+                    'livraisons.demandeLivraison.colis',
+                    'livraisons.client.user'
+                ])
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur NavetteController@update: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la mise à jour'
+                'message' => 'Erreur lors de la mise à jour: ' . $e->getMessage()
             ], 500);
         }
     }

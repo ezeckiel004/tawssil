@@ -71,7 +71,7 @@ class CodePromoController extends Controller
             'min_commande' => 'nullable|numeric|min:0',
             'max_utilisations' => 'nullable|integer|min:1',
             'date_debut' => 'nullable|date',
-            'date_fin' => 'nullable|date|after_or_equal:date_debut',
+            'date_fin' => 'nullable|date',
             'livreurs' => 'nullable|array',
             'livreurs.*' => 'exists:livreurs,id'
         ]);
@@ -159,7 +159,7 @@ class CodePromoController extends Controller
             'min_commande' => 'nullable|numeric|min:0',
             'max_utilisations' => 'nullable|integer|min:1',
             'date_debut' => 'nullable|date',
-            'date_fin' => 'nullable|date|after_or_equal:date_debut',
+            'date_fin' => 'nullable|date',
             'status' => 'sometimes|in:actif,inactif,expire',
             'livreurs' => 'nullable|array',
             'livreurs.*' => 'exists:livreurs,id'

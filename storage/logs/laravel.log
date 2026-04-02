@@ -4984,3 +4984,421 @@
 [2026-03-27 16:01:54] local.ERROR: Erreur bilanGestionnaire: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'wilaya_transit_id' in 'where clause' (Connection: mysql, SQL: select * from `navettes` where `created_at` between 2026-03-01 00:00:00 and 2026-03-31 23:59:59 and (`wilaya_depart_id` = 16 or `wilaya_arrivee_id` = 16 or `wilaya_transit_id` = 16) and `navettes`.`deleted_at` is null)  
 [2026-03-27 16:07:50] local.ERROR: Erreur bilanGestionnaire: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'wilaya_transit_id' in 'where clause' (Connection: mysql, SQL: select * from `navettes` where `created_at` between 2026-03-01 00:00:00 and 2026-03-31 23:59:59 and (`wilaya_depart_id` = 16 or `wilaya_arrivee_id` = 16 or `wilaya_transit_id` = 16) and `navettes`.`deleted_at` is null)  
 [2026-03-27 16:07:51] local.ERROR: Erreur bilanGestionnaire: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'wilaya_transit_id' in 'where clause' (Connection: mysql, SQL: select * from `navettes` where `created_at` between 2026-03-01 00:00:00 and 2026-03-31 23:59:59 and (`wilaya_depart_id` = 16 or `wilaya_arrivee_id` = 16 or `wilaya_transit_id` = 16) and `navettes`.`deleted_at` is null)  
+[2026-03-31 09:56:24] local.INFO: Récupération de la livraison avec ID: d1681ca7-d17a-4a6b-91d9-ec373c4c4f2d  
+[2026-03-31 09:56:24] local.INFO: Livraison trouvée: d1681ca7-d17a-4a6b-91d9-ec373c4c4f2d  
+[2026-03-31 09:56:25] local.INFO: Récupération de la livraison avec ID: d1681ca7-d17a-4a6b-91d9-ec373c4c4f2d  
+[2026-03-31 09:56:25] local.INFO: Livraison trouvée: d1681ca7-d17a-4a6b-91d9-ec373c4c4f2d  
+[2026-03-31 15:57:28] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-03-31 15:58:06] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Livreur.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-03-31 15:58:52] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/LivreurAssignation.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-03-31 15:58:54] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/LivreurAssignation.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-03-31 17:06:47] local.ERROR: str_contains(): Argument #1 ($haystack) must be of type string, Closure given {"userId":"1d18d618-b593-41ed-9f7d-a0c7ccd04049","exception":"[object] (TypeError(code: 0): str_contains(): Argument #1 ($haystack) must be of type string, Closure given at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php:1599)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(1599): str_contains(Object(Closure), '.')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(368): Illuminate/Database/Eloquent/Relations/BelongsToMany->qualifyPivotColumn(Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php(132): Illuminate/Database/Eloquent/Relations/BelongsToMany->wherePivot(Object(Closure))
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(82): App/Models/Gestionnaire->livreursAssignes()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App/Http/Controllers/Manager/LivreurController->index(Object(Illuminate/Http/Request))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('index', Array)
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Manager/LivreurController), 'index')
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(33): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(165): App/Http/Controllers/Manager/LivreurController->App/Http/Controllers/Manager/{closure}(Object(Illuminate/Http/Request), Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Middleware/CheckGestionnaireRole.php(22): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): App/Http/Middleware/CheckGestionnaireRole->handle(Object(Illuminate/Http/Request), Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#48 {main}
+"} 
+[2026-03-31 17:06:48] local.ERROR: str_contains(): Argument #1 ($haystack) must be of type string, Closure given {"userId":"1d18d618-b593-41ed-9f7d-a0c7ccd04049","exception":"[object] (TypeError(code: 0): str_contains(): Argument #1 ($haystack) must be of type string, Closure given at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php:1599)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(1599): str_contains(Object(Closure), '.')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(368): Illuminate/Database/Eloquent/Relations/BelongsToMany->qualifyPivotColumn(Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php(132): Illuminate/Database/Eloquent/Relations/BelongsToMany->wherePivot(Object(Closure))
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(82): App/Models/Gestionnaire->livreursAssignes()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App/Http/Controllers/Manager/LivreurController->index(Object(Illuminate/Http/Request))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('index', Array)
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Manager/LivreurController), 'index')
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(33): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(165): App/Http/Controllers/Manager/LivreurController->App/Http/Controllers/Manager/{closure}(Object(Illuminate/Http/Request), Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Middleware/CheckGestionnaireRole.php(22): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): App/Http/Middleware/CheckGestionnaireRole->handle(Object(Illuminate/Http/Request), Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#48 {main}
+"} 
+[2026-03-31 17:07:13] local.ERROR: str_contains(): Argument #1 ($haystack) must be of type string, Closure given {"userId":"1d18d618-b593-41ed-9f7d-a0c7ccd04049","exception":"[object] (TypeError(code: 0): str_contains(): Argument #1 ($haystack) must be of type string, Closure given at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php:1599)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(1599): str_contains(Object(Closure), '.')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(368): Illuminate/Database/Eloquent/Relations/BelongsToMany->qualifyPivotColumn(Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php(132): Illuminate/Database/Eloquent/Relations/BelongsToMany->wherePivot(Object(Closure))
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(82): App/Models/Gestionnaire->livreursAssignes()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App/Http/Controllers/Manager/LivreurController->index(Object(Illuminate/Http/Request))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('index', Array)
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Manager/LivreurController), 'index')
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(33): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(165): App/Http/Controllers/Manager/LivreurController->App/Http/Controllers/Manager/{closure}(Object(Illuminate/Http/Request), Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Middleware/CheckGestionnaireRole.php(22): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): App/Http/Middleware/CheckGestionnaireRole->handle(Object(Illuminate/Http/Request), Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#48 {main}
+"} 
+[2026-03-31 17:07:14] local.ERROR: str_contains(): Argument #1 ($haystack) must be of type string, Closure given {"userId":"1d18d618-b593-41ed-9f7d-a0c7ccd04049","exception":"[object] (TypeError(code: 0): str_contains(): Argument #1 ($haystack) must be of type string, Closure given at C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php:1599)
+[stacktrace]
+#0 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(1599): str_contains(Object(Closure), '.')
+#1 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/BelongsToMany.php(368): Illuminate/Database/Eloquent/Relations/BelongsToMany->qualifyPivotColumn(Object(Closure))
+#2 C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php(132): Illuminate/Database/Eloquent/Relations/BelongsToMany->wherePivot(Object(Closure))
+#3 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(82): App/Models/Gestionnaire->livreursAssignes()
+#4 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App/Http/Controllers/Manager/LivreurController->index(Object(Illuminate/Http/Request))
+#5 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate/Routing/Controller->callAction('index', Array)
+#6 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate/Routing/ControllerDispatcher->dispatch(Object(Illuminate/Routing/Route), Object(App/Http/Controllers/Manager/LivreurController), 'index')
+#7 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate/Routing/Route->runController()
+#8 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate/Routing/Route->run()
+#9 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Routing/Router->Illuminate/Routing/{closure}(Object(Illuminate/Http/Request))
+#10 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Controllers/Manager/LivreurController.php(33): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#11 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(165): App/Http/Controllers/Manager/LivreurController->App/Http/Controllers/Manager/{closure}(Object(Illuminate/Http/Request), Object(Closure))
+#12 C:/Users/DOKI/Documents/Tawssill_API_3/app/Http/Middleware/CheckGestionnaireRole.php(22): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#13 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): App/Http/Middleware/CheckGestionnaireRole->handle(Object(Illuminate/Http/Request), Object(Closure))
+#14 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#15 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/SubstituteBindings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#16 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(159): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#17 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(125): Illuminate/Routing/Middleware/ThrottleRequests->handleRequest(Object(Illuminate/Http/Request), Object(Closure), Array)
+#18 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Middleware/ThrottleRequests.php(87): Illuminate/Routing/Middleware/ThrottleRequests->handleRequestUsingNamedLimiter(Object(Illuminate/Http/Request), Object(Closure), 'api', Object(Closure))
+#19 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Routing/Middleware/ThrottleRequests->handle(Object(Illuminate/Http/Request), Object(Closure), 'api')
+#20 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#21 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Auth/Middleware/Authenticate->handle(Object(Illuminate/Http/Request), Object(Closure), 'sanctum')
+#22 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#23 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#24 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate/Routing/Router->runRouteWithinStack(Object(Illuminate/Routing/Route), Object(Illuminate/Http/Request))
+#25 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate/Routing/Router->runRoute(Object(Illuminate/Http/Request), Object(Illuminate/Routing/Route))
+#26 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate/Routing/Router->dispatchToRoute(Object(Illuminate/Http/Request))
+#27 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch(Object(Illuminate/Http/Request))
+#28 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate/Foundation/Http/Kernel->Illuminate/Foundation/Http/{closure}(Object(Illuminate/Http/Request))
+#29 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#30 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#31 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle(Object(Illuminate/Http/Request), Object(Closure))
+#32 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#33 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle(Object(Illuminate/Http/Request), Object(Closure))
+#34 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/TrimStrings->handle(Object(Illuminate/Http/Request), Object(Closure))
+#35 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#36 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/ValidatePostSize->handle(Object(Illuminate/Http/Request), Object(Closure))
+#37 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#38 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle(Object(Illuminate/Http/Request), Object(Closure))
+#39 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#40 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/HandleCors->handle(Object(Illuminate/Http/Request), Object(Closure))
+#41 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#42 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate/Http/Middleware/TrustProxies->handle(Object(Illuminate/Http/Request), Object(Closure))
+#43 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate/Pipeline/Pipeline->Illuminate/Pipeline/{closure}(Object(Illuminate/Http/Request))
+#44 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then(Object(Closure))
+#45 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter(Object(Illuminate/Http/Request))
+#46 C:/Users/DOKI/Documents/Tawssill_API_3/public/index.php(51): Illuminate/Foundation/Http/Kernel->handle(Object(Illuminate/Http/Request))
+#47 C:/Users/DOKI/Documents/Tawssill_API_3/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('C://Users//DOKI//D...')
+#48 {main}
+"} 
+[2026-03-31 17:11:02] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at C:/Users/DOKI/Documents/Tawssill_API_3/app/Models/Gestionnaire.php:5)
+[stacktrace]
+#0 {main}
+"} 
+[2026-04-01 08:43:52] local.INFO: Livraisons disponibles trouvées {"wilaya_id":"31","wilaya_nom":"Oran","count":0} 
+[2026-04-01 08:53:09] local.INFO: Recherche livraisons disponibles {"wilaya_id":"31","wilaya_nom":"Oran","user_id":"fce1c729-1a76-4d92-bffa-7311eb9dce8b"} 
+[2026-04-01 08:53:09] local.INFO: Livraisons disponibles trouvées {"count":0,"livraison_ids":[]} 
+[2026-04-01 08:55:31] local.INFO: ========== DÉBUT RECHERCHE LIVRAISONS ==========  
+[2026-04-01 08:55:31] local.INFO: Wilaya ID: 31  
+[2026-04-01 08:55:31] local.INFO: Wilaya Nom: Oran  
+[2026-04-01 08:55:31] local.INFO: Gestionnaire ID: c7da12d2-2372-4065-8303-18a64bf19012  
+[2026-04-01 08:55:31] local.INFO: Total livraisons en base: 63  
+[2026-04-01 08:55:31] local.INFO: Livraisons en attente: 13  
+[2026-04-01 08:55:31] local.INFO: Livraisons sans navette: 51  
+[2026-04-01 08:55:31] local.INFO: Livraisons avec demande_livraison: 63  
+[2026-04-01 08:55:31] local.INFO: Valeurs de wilaya_depot trouvées: [{"stdClass":{"wilaya_depot":null,"count":35}},{"stdClass":{"wilaya_depot":"06","count":5}},{"stdClass":{"wilaya_depot":"09","count":4}},{"stdClass":{"wilaya_depot":"13","count":5}},{"stdClass":{"wilaya_depot":"15","count":3}},{"stdClass":{"wilaya_depot":"16","count":3}},{"stdClass":{"wilaya_depot":"19","count":2}},{"stdClass":{"wilaya_depot":"23","count":1}},{"stdClass":{"wilaya_depot":"25","count":2}},{"stdClass":{"wilaya_depot":"31","count":2}},{"stdClass":{"wilaya_depot":"35","count":3}},{"stdClass":{"wilaya_depot":"Alger","count":47}},{"stdClass":{"wilaya_depot":"Batna","count":1}},{"stdClass":{"wilaya_depot":"Bouira","count":1}},{"stdClass":{"wilaya_depot":"Sétif","count":1}},{"stdClass":{"wilaya_depot":"Skikda","count":1}},{"stdClass":{"wilaya_depot":"Tipaza","count":1}}] 
+[2026-04-01 08:55:31] local.INFO: Premières livraisons en attente (sans filtre):  
+[2026-04-01 08:55:31] local.INFO:   Livraison 0: ID=2b319642-0ea6-4eb3-9a6c-a7b502850fe9, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 08:55:31] local.INFO:   Livraison 1: ID=669a12b3-59ef-48f2-9a0c-bdef9f3ce88c, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 08:55:31] local.INFO:   Livraison 2: ID=670a797f-baa2-48ef-86e5-2c116958ac9b, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 08:55:31] local.INFO:   Livraison 3: ID=73787ed2-9583-4b70-af73-21c0d0455744, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 08:55:31] local.INFO:   Livraison 4: ID=8298737a-79af-4b8d-9bf0-81222cb220dd, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 08:55:31] local.INFO: Livraisons filtrées trouvées: 0  
+[2026-04-01 08:55:31] local.INFO: Tentative de requête SQL directe:  
+[2026-04-01 08:55:31] local.INFO: Résultats requête directe: 0  
+[2026-04-01 08:55:31] local.INFO: Détails:  
+[2026-04-01 08:55:31] local.INFO: ========== FIN RECHERCHE LIVRAISONS ==========  
+[2026-04-01 09:04:15] local.INFO: ========== DÉBUT RECHERCHE LIVRAISONS ==========  
+[2026-04-01 09:04:15] local.INFO: Wilaya ID: 31  
+[2026-04-01 09:04:15] local.INFO: Wilaya Nom: Oran  
+[2026-04-01 09:04:15] local.INFO: Gestionnaire ID: c7da12d2-2372-4065-8303-18a64bf19012  
+[2026-04-01 09:04:15] local.INFO: Total livraisons en base: 63  
+[2026-04-01 09:04:15] local.INFO: Livraisons en attente: 13  
+[2026-04-01 09:04:15] local.INFO: Livraisons sans navette: 51  
+[2026-04-01 09:04:15] local.INFO: Livraisons avec demande_livraison: 63  
+[2026-04-01 09:04:15] local.INFO: Valeurs de wilaya_depot trouvées: [{"stdClass":{"wilaya_depot":null,"count":35}},{"stdClass":{"wilaya_depot":"06","count":5}},{"stdClass":{"wilaya_depot":"09","count":4}},{"stdClass":{"wilaya_depot":"13","count":5}},{"stdClass":{"wilaya_depot":"15","count":3}},{"stdClass":{"wilaya_depot":"16","count":3}},{"stdClass":{"wilaya_depot":"19","count":2}},{"stdClass":{"wilaya_depot":"23","count":1}},{"stdClass":{"wilaya_depot":"25","count":2}},{"stdClass":{"wilaya_depot":"31","count":2}},{"stdClass":{"wilaya_depot":"35","count":3}},{"stdClass":{"wilaya_depot":"Alger","count":47}},{"stdClass":{"wilaya_depot":"Batna","count":1}},{"stdClass":{"wilaya_depot":"Bouira","count":1}},{"stdClass":{"wilaya_depot":"Sétif","count":1}},{"stdClass":{"wilaya_depot":"Skikda","count":1}},{"stdClass":{"wilaya_depot":"Tipaza","count":1}}] 
+[2026-04-01 09:04:15] local.INFO: Premières livraisons en attente (sans filtre):  
+[2026-04-01 09:04:15] local.INFO:   Livraison 0: ID=2b319642-0ea6-4eb3-9a6c-a7b502850fe9, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:04:15] local.INFO:   Livraison 1: ID=669a12b3-59ef-48f2-9a0c-bdef9f3ce88c, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:04:15] local.INFO:   Livraison 2: ID=670a797f-baa2-48ef-86e5-2c116958ac9b, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:04:15] local.INFO:   Livraison 3: ID=73787ed2-9583-4b70-af73-21c0d0455744, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:04:15] local.INFO:   Livraison 4: ID=8298737a-79af-4b8d-9bf0-81222cb220dd, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:04:15] local.INFO: Livraisons filtrées trouvées: 0  
+[2026-04-01 09:04:15] local.INFO: Tentative de requête SQL directe:  
+[2026-04-01 09:04:15] local.INFO: Résultats requête directe: 0  
+[2026-04-01 09:04:15] local.INFO: Détails:  
+[2026-04-01 09:04:15] local.INFO: ========== FIN RECHERCHE LIVRAISONS ==========  
+[2026-04-01 09:05:54] local.INFO: ========== DÉBUT RECHERCHE LIVRAISONS ==========  
+[2026-04-01 09:05:54] local.INFO: Wilaya ID: 16  
+[2026-04-01 09:05:54] local.INFO: Wilaya Nom: Alger  
+[2026-04-01 09:05:54] local.INFO: Gestionnaire ID: 763c841d-e41b-44b4-90fc-6a34efa655e8  
+[2026-04-01 09:05:54] local.INFO: Total livraisons en base: 63  
+[2026-04-01 09:05:54] local.INFO: Livraisons en attente: 13  
+[2026-04-01 09:05:54] local.INFO: Livraisons sans navette: 51  
+[2026-04-01 09:05:54] local.INFO: Livraisons avec demande_livraison: 63  
+[2026-04-01 09:05:54] local.INFO: Valeurs de wilaya_depot trouvées: [{"stdClass":{"wilaya_depot":null,"count":35}},{"stdClass":{"wilaya_depot":"06","count":5}},{"stdClass":{"wilaya_depot":"09","count":4}},{"stdClass":{"wilaya_depot":"13","count":5}},{"stdClass":{"wilaya_depot":"15","count":3}},{"stdClass":{"wilaya_depot":"16","count":3}},{"stdClass":{"wilaya_depot":"19","count":2}},{"stdClass":{"wilaya_depot":"23","count":1}},{"stdClass":{"wilaya_depot":"25","count":2}},{"stdClass":{"wilaya_depot":"31","count":2}},{"stdClass":{"wilaya_depot":"35","count":3}},{"stdClass":{"wilaya_depot":"Alger","count":47}},{"stdClass":{"wilaya_depot":"Batna","count":1}},{"stdClass":{"wilaya_depot":"Bouira","count":1}},{"stdClass":{"wilaya_depot":"Sétif","count":1}},{"stdClass":{"wilaya_depot":"Skikda","count":1}},{"stdClass":{"wilaya_depot":"Tipaza","count":1}}] 
+[2026-04-01 09:05:54] local.INFO: Premières livraisons en attente (sans filtre):  
+[2026-04-01 09:05:54] local.INFO:   Livraison 0: ID=2b319642-0ea6-4eb3-9a6c-a7b502850fe9, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:05:54] local.INFO:   Livraison 1: ID=669a12b3-59ef-48f2-9a0c-bdef9f3ce88c, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:05:54] local.INFO:   Livraison 2: ID=670a797f-baa2-48ef-86e5-2c116958ac9b, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:05:54] local.INFO:   Livraison 3: ID=73787ed2-9583-4b70-af73-21c0d0455744, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:05:54] local.INFO:   Livraison 4: ID=8298737a-79af-4b8d-9bf0-81222cb220dd, wilaya_depot=Alger, wilaya=Alger  
+[2026-04-01 09:05:54] local.INFO: Livraisons filtrées trouvées: 13  
+[2026-04-01 09:05:54] local.INFO: ========== FIN RECHERCHE LIVRAISONS ==========  
+[2026-04-01 10:32:33] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:32:33] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:32:33] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:32:33] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:32:33] local.INFO: Répartition calculée pour la navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce: 7 acteurs, part de 14.29% chacun  
+[2026-04-01 10:33:05] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:33:05] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:33:05] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce)  
+[2026-04-01 10:33:06] local.INFO: Répartition calculée pour la navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce: 6 acteurs, part de 16.67% chacun  
+[2026-04-01 10:33:18] local.INFO: ========================================  
+[2026-04-01 10:33:18] local.INFO: Navette b9d531a4-5f39-4855-9ee5-7739f6bef2ce (NAV-6G081M2V) - Gains calculés  
+[2026-04-01 10:33:18] local.INFO:   - Prix total des livraisons: 2400 DA  
+[2026-04-01 10:33:18] local.INFO:   - Total commissions versées: 1200.24 DA  
+[2026-04-01 10:33:18] local.INFO:   - Part société mère (admin): 1199.76 DA  
+[2026-04-01 10:33:18] local.INFO:   - Nombre d'acteurs: 3  
+[2026-04-01 10:33:18] local.INFO: ========================================  
+[2026-04-01 14:38:17] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 09 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:38:17] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:38:17] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:38:17] local.INFO: Répartition calculée pour la navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49: 5 acteurs, part de 20% chacun  
+[2026-04-01 14:42:35] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 09 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:42:35] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:42:35] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:42:35] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:42:35] local.INFO: Répartition calculée pour la navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49: 7 acteurs, part de 14.29% chacun  
+[2026-04-01 14:52:04] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 09 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:52:04] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:52:04] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:52:04] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:52:04] local.INFO: Répartition calculée pour la navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49: 7 acteurs, part de 14.29% chacun  
+[2026-04-01 14:55:45] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 09 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:55:45] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:55:45] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:55:45] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 14:55:45] local.INFO: Répartition calculée pour la navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49: 7 acteurs, part de 14.29% chacun  
+[2026-04-01 15:01:51] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 09 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 15:01:51] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 10 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 15:01:51] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 12 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 15:01:51] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49)  
+[2026-04-01 15:01:51] local.INFO: Répartition calculée pour la navette 4a93897a-f556-4153-8f34-dcc9d3e6ad49: 7 acteurs, part de 14.29% chacun  
+[2026-04-01 15:04:55] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 08 (navette 7d0abb0f-8fd7-48d3-a46e-c5cd50cc03c4)  
+[2026-04-01 15:04:55] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 13 (navette 7d0abb0f-8fd7-48d3-a46e-c5cd50cc03c4)  
+[2026-04-01 15:04:55] local.INFO: Répartition calculée pour la navette 7d0abb0f-8fd7-48d3-a46e-c5cd50cc03c4: 5 acteurs, part de 20% chacun  
+[2026-04-01 15:06:06] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 15:06:06] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 15:06:06] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 15:06:06] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 4 acteurs, part de 25% chacun  
+[2026-04-01 16:54:19] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 579e7fb1-388f-46ea-b420-5c6e193cf927)  
+[2026-04-01 16:54:19] local.INFO: Répartition calculée pour la navette 579e7fb1-388f-46ea-b420-5c6e193cf927: 2 acteurs, part de 50% chacun  
+[2026-04-01 17:03:29] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:29] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:29] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:29] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 5 acteurs, part de 20% chacun  
+[2026-04-01 17:03:54] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:54] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:54] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:03:54] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 5 acteurs, part de 20% chacun  
+[2026-04-01 17:04:30] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:04:30] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:04:30] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:04:30] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 5 acteurs, part de 20% chacun  
+[2026-04-01 17:05:15] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:05:15] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:05:15] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:05:15] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 5 acteurs, part de 20% chacun  
+[2026-04-01 17:15:18] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:18] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 11 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:18] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:18] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:18] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 6 acteurs, part de 16.67% chacun  
+[2026-04-01 17:15:42] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 14 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:42] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 02 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:42] local.WARNING: Aucun gestionnaire actif trouvé pour la wilaya 07 (navette 3f586961-ec47-4282-9dfc-6795523faa0e)  
+[2026-04-01 17:15:42] local.INFO: Répartition calculée pour la navette 3f586961-ec47-4282-9dfc-6795523faa0e: 5 acteurs, part de 20% chacun  
+[2026-04-02 08:54:48] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 08:54:48] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 09:02:12] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:02:12] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:02:23] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-02-01 00:00:00","date_fin":"2026-02-28 23:59:59"} 
+[2026-04-02 09:02:23] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:02:29] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:02:29] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:02:47] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-02-01 00:00:00","date_fin":"2026-02-28 23:59:59"} 
+[2026-04-02 09:02:47] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:10:55] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:10:55] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:11:14] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-02-01 00:00:00","date_fin":"2026-02-28 23:59:59"} 
+[2026-04-02 09:11:14] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:11:23] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-01-01 00:00:00","date_fin":"2026-01-31 23:59:59"} 
+[2026-04-02 09:11:23] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:11:30] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-02-01 00:00:00","date_fin":"2026-02-28 23:59:59"} 
+[2026-04-02 09:11:30] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:11:35] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:11:35] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:14:23] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:14:23] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:15:55] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-02-01 00:00:00","date_fin":"2026-02-28 23:59:59"} 
+[2026-04-02 09:15:55] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:16:59] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-05-01 00:00:00","date_fin":"2026-05-31 23:59:59"} 
+[2026-04-02 09:16:59] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:17:03] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 09:17:03] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 09:26:20] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 09:26:21] local.INFO: GainsNavetteController: Gains trouvés {"nombre":9,"total_montant":345.68} 
+[2026-04-02 09:26:29] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-05-01 00:00:00","date_fin":"2026-05-31 23:59:59"} 
+[2026-04-02 09:26:29] local.INFO: GainsNavetteController: Gains trouvés {"nombre":0,"total_montant":0} 
+[2026-04-02 09:26:34] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 09:26:34] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 09:59:49] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 09:59:49] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:03:16] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:03:16] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:03:19] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:03:19] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:13:28] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"c7da12d2-2372-4065-8303-18a64bf19012","periode":"mois","date_debut":"2026-03-01 00:00:00","date_fin":"2026-03-31 23:59:59"} 
+[2026-04-02 10:13:28] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":195.0} 
+[2026-04-02 10:16:14] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:16:14] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:16:35] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:16:35] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:25:41] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:25:41] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 10:39:34] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 10:39:34] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-02 13:42:08] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
+[2026-04-02 13:42:08] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
