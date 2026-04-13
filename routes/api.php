@@ -309,7 +309,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ==================== ROUTES GESTIONNAIRE (MANAGER) ====================
-    // Utiliser le middleware 'gestionnaire' qui existe déjà
     Route::prefix('manager')->middleware(['auth:sanctum', 'gestionnaire'])->group(function () {
 
         // Dashboard
@@ -330,13 +329,17 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/demander-multiple', [GainController::class, 'demanderPaiementMultiple']);
         });
 
-        // Livraisons
+        // ⭐ LIVRAISONS - AVEC LES NOUVELLES ROUTES D'ASSIGNATION ⭐
         Route::prefix('livraisons')->group(function () {
             Route::get('/', [App\Http\Controllers\Manager\LivraisonController::class, 'index']);
             Route::get('search', [App\Http\Controllers\Manager\LivraisonController::class, 'search']);
             Route::get('status/{status}', [App\Http\Controllers\Manager\LivraisonController::class, 'byStatus']);
             Route::get('{id}', [App\Http\Controllers\Manager\LivraisonController::class, 'show']);
             Route::patch('{id}/status', [App\Http\Controllers\Manager\LivraisonController::class, 'updateStatus']);
+
+            // ⭐ NOUVELLES ROUTES POUR L'ASSIGNATION DES LIVREURS PAR MANAGER
+            Route::patch('{id}/assign-livreur', [App\Http\Controllers\Manager\LivraisonController::class, 'assignLivreur']);
+            Route::get('disponibles/livreurs', [App\Http\Controllers\Manager\LivraisonController::class, 'getLivreursDisponibles']);
         });
 
         // Livreurs
@@ -368,12 +371,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [ManagerNavetteController::class, 'store']);
             Route::get('/disponibles', [ManagerNavetteController::class, 'getLivraisonsDisponibles']);
             Route::get('/{id}', [ManagerNavetteController::class, 'show']);
-            Route::put('/{id}', [ManagerNavetteController::class, 'update']);  // ← AJOUTER CETTE ROUTE
+            Route::put('/{id}', [ManagerNavetteController::class, 'update']);
             Route::delete('/{id}', [ManagerNavetteController::class, 'destroy']);
             Route::post('/{id}/demarrer', [ManagerNavetteController::class, 'demarrer']);
             Route::post('/{id}/terminer', [ManagerNavetteController::class, 'terminer']);
             Route::post('/{id}/annuler', [ManagerNavetteController::class, 'annuler']);
-            Route::get('/{id}/livraisons-disponibles', [ManagerNavetteController::class, 'getLivraisonsDisponiblesForNavette']); // ← AJOUTER CETTE ROUTE
+            Route::get('/{id}/livraisons-disponibles', [ManagerNavetteController::class, 'getLivraisonsDisponiblesForNavette']);
         });
 
         // ==================== GAINS NAVETTES (GESTIONNAIRE) ====================
@@ -387,22 +390,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // ==================== CASH ON DELIVERY (COD) ====================
         Route::prefix('cash-delivery')->group(function () {
-            // Gestionnaires disponibles
             Route::get('/gestionnaires', [App\Http\Controllers\Manager\CashDeliveryController::class, 'getGestionnairesDisponibles']);
-
-            // Envoyer une demande
             Route::post('/envoyer', [App\Http\Controllers\Manager\CashDeliveryController::class, 'envoyer']);
-
-            // Actions sur les demandes
             Route::post('/{id}/accepter', [App\Http\Controllers\Manager\CashDeliveryController::class, 'accepter']);
             Route::post('/{id}/refuser', [App\Http\Controllers\Manager\CashDeliveryController::class, 'refuser']);
             Route::post('/{id}/annuler', [App\Http\Controllers\Manager\CashDeliveryController::class, 'annuler']);
-
-            // Listes
             Route::get('/envoyees', [App\Http\Controllers\Manager\CashDeliveryController::class, 'demandesEnvoyees']);
             Route::get('/recues', [App\Http\Controllers\Manager\CashDeliveryController::class, 'demandesRecues']);
-
-            // Statistiques
             Route::get('/statistiques', [App\Http\Controllers\Manager\CashDeliveryController::class, 'statistiques']);
         });
     });

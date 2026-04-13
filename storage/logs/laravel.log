@@ -5402,3 +5402,25 @@
 [2026-04-02 10:39:34] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
 [2026-04-02 13:42:08] local.INFO: GainsNavetteController: Recherche des gains {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","periode":"mois","date_debut":"2026-04-01 00:00:00","date_fin":"2026-04-30 23:59:59"} 
 [2026-04-02 13:42:08] local.INFO: GainsNavetteController: Gains trouvés {"nombre":3,"total_montant":400.08000000000004} 
+[2026-04-13 14:37:11] local.INFO: Livreurs disponibles pour gestionnaire {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":2,"natifs":2,"assignes":1} 
+[2026-04-13 14:37:37] local.INFO: Livreurs disponibles pour gestionnaire {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":1,"natifs":2,"assignes":1} 
+[2026-04-13 14:45:12] local.INFO: Livreurs disponibles pour gestionnaire (sans filtre type) {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":3,"natifs":2,"assignes":1} 
+[2026-04-13 14:45:24] local.INFO: Manager - Début assignation livreur pour livraison ID: a9f36c61-6172-4c05-a873-b15eda19b7e4  
+[2026-04-13 14:45:25] local.INFO: Manager wilaya: 16  
+[2026-04-13 14:45:25] local.WARNING: Manager tentant d'assigner un livreur à une livraison hors de sa wilaya {"gestionnaire_wilaya":"16","wilaya_depart":"Alger","wilaya_arrivee":"Oran"} 
+[2026-04-13 14:45:44] local.INFO: Livreurs disponibles pour gestionnaire (sans filtre type) {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":3,"natifs":2,"assignes":1} 
+[2026-04-13 14:45:50] local.INFO: Manager - Début assignation livreur pour livraison ID: a9f36c61-6172-4c05-a873-b15eda19b7e4  
+[2026-04-13 14:45:50] local.INFO: Manager wilaya: 16  
+[2026-04-13 14:45:50] local.WARNING: Manager tentant d'assigner un livreur à une livraison hors de sa wilaya {"gestionnaire_wilaya":"16","wilaya_depart":"Alger","wilaya_arrivee":"Oran"} 
+[2026-04-13 14:59:33] local.INFO: Livreurs disponibles pour gestionnaire (sans filtre type) {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":3,"natifs":2,"assignes":1} 
+[2026-04-13 14:59:38] local.INFO: Manager - Début assignation livreur pour livraison ID: a9f36c61-6172-4c05-a873-b15eda19b7e4  
+[2026-04-13 14:59:38] local.INFO: Manager wilaya: 16  
+[2026-04-13 14:59:38] local.INFO: Normalisation wilayas {"depart_raw":"Alger","depart_code":"16","arrivee_raw":"Oran","arrivee_code":"31","gestionnaire_code":"16"} 
+[2026-04-13 14:59:38] local.INFO: Livreur natif de la wilaya {"livreur_id":"df18158b-74cc-43ea-9ccd-e9a0eb7707fe","wilaya_livreur":"16","wilaya_gestionnaire":"16"} 
+[2026-04-13 14:59:38] local.INFO: Manager - Ramasseur assigné {"livraison_id":"a9f36c61-6172-4c05-a873-b15eda19b7e4","livreur_id":"df18158b-74cc-43ea-9ccd-e9a0eb7707fe","gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","nouveau_statut":"prise_en_charge_ramassage"} 
+[2026-04-13 15:01:30] local.INFO: Livreurs disponibles pour gestionnaire (sans filtre type) {"gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","wilaya":"16","total":3,"natifs":2,"assignes":1} 
+[2026-04-13 15:01:37] local.INFO: Manager - Début assignation livreur pour livraison ID: 72688af4-776e-4821-97bb-8d51c8978ae6  
+[2026-04-13 15:01:37] local.INFO: Manager wilaya: 16  
+[2026-04-13 15:01:37] local.INFO: Normalisation wilayas {"depart_raw":"Alger","depart_code":"16","arrivee_raw":"Oran","arrivee_code":"31","gestionnaire_code":"16"} 
+[2026-04-13 15:01:37] local.INFO: Livreur natif de la wilaya {"livreur_id":"df18158b-74cc-43ea-9ccd-e9a0eb7707fe","wilaya_livreur":"16","wilaya_gestionnaire":"16"} 
+[2026-04-13 15:01:37] local.INFO: Manager - Ramasseur assigné {"livraison_id":"72688af4-776e-4821-97bb-8d51c8978ae6","livreur_id":"df18158b-74cc-43ea-9ccd-e9a0eb7707fe","gestionnaire_id":"763c841d-e41b-44b4-90fc-6a34efa655e8","nouveau_statut":"prise_en_charge_ramassage"} 
